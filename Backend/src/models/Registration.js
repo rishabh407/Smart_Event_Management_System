@@ -25,6 +25,12 @@ const registrationSchema = new mongoose.Schema(
       default: null
     },
 
+    // Attendance Qr Code
+    qrCode: {
+  type: String,
+  default: null
+},
+
     status: {
       type: String,
       enum: ["registered", "attended", "cancelled"],
@@ -34,11 +40,15 @@ const registrationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Individual unique
+
 // Prevent duplicate registration
 registrationSchema.index(
   { competitionId: 1, studentId: 1 },
   { unique: true, sparse: true }
 );
+
+// Team Unique
 
 registrationSchema.index(
   { competitionId: 1, teamId: 1 },
@@ -46,3 +56,4 @@ registrationSchema.index(
 );
 
 export default mongoose.model("Registration", registrationSchema);
+

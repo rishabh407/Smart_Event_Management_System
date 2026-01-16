@@ -14,6 +14,7 @@ import competitionRoutes from "./src/routes/competition.routes.js";
 // import teamRoutes from "./src/routes/team.routes.js";
 import teamRoutes from "./src/routes/team.routes.js";
 import registrationRoutes from "./src/routes/registration.routes.js";
+import attendanceRoutes from "./src/routes/attendance.routes.js";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/competitions", competitionRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/registrations", registrationRoutes);
+app.use("/api/attendance", attendanceRoutes);
 // app.use("/api/events", eventRoutes);
 // app.use("/api/registrations", registrationRoutes);
 // app.use("/api/teams", teamRoutes);
@@ -57,3 +59,5 @@ app.get("/", (req, res) => {
 });
 
 export default app;
+
+
