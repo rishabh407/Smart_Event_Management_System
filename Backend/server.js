@@ -9,12 +9,10 @@ import { protect } from "./src/middlewares/auth.middleware.js";
 import departmentRoutes from "./src/routes/departments.routes.js";
 import eventRoutes from "./src/routes/event.routes.js";
 import competitionRoutes from "./src/routes/competition.routes.js";
-// import eventRoutes from "./src/routes/event.routes.js";
-// import registrationRoutes from "./src/routes/registration.routes.js";
-// import teamRoutes from "./src/routes/team.routes.js";
 import teamRoutes from "./src/routes/team.routes.js";
 import registrationRoutes from "./src/routes/registration.routes.js";
 import attendanceRoutes from "./src/routes/attendance.routes.js";
+import resultRoutes from "./src/routes/result.routes.js";
 
 dotenv.config();
 
@@ -32,9 +30,7 @@ app.use("/api/competitions", competitionRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/attendance", attendanceRoutes);
-// app.use("/api/events", eventRoutes);
-// app.use("/api/registrations", registrationRoutes);
-// app.use("/api/teams", teamRoutes);
+app.use("/api/results", resultRoutes);
 
 
 app.get("/api/test/protected", protect, (req, res) => {

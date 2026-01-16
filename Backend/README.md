@@ -19,3 +19,9 @@ Student shows qr teacher scans backend verifies . Attendance Marked.
 so we need to install one package for this whole process.
 
 npm install qrcode
+
+How certificates generation happens 
+
+Step 1 = Teachers provide results for a particular competition . And we saved it into the database.
+
+Step2 = Teacher provide design template and the system creates certificate for students who participate or students who don't won .
