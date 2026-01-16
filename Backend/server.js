@@ -13,7 +13,7 @@ import teamRoutes from "./src/routes/team.routes.js";
 import registrationRoutes from "./src/routes/registration.routes.js";
 import attendanceRoutes from "./src/routes/attendance.routes.js";
 import resultRoutes from "./src/routes/result.routes.js";
-
+import certificateTemplateRoutes from "./src/routes/certificateTemplate.routes.js";
 dotenv.config();
 
 const app = express();
@@ -31,7 +31,7 @@ app.use("/api/teams", teamRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/results", resultRoutes);
-
+app.use("/api/certificates/templates", certificateTemplateRoutes);
 
 app.get("/api/test/protected", protect, (req, res) => {
   res.json({

@@ -25,3 +25,10 @@ How certificates generation happens
 Step 1 = Teachers provide results for a particular competition . And we saved it into the database.
 
 Step2 = Teacher provide design template and the system creates certificate for students who participate or students who don't won .
+
+CERTIFICATE SYSTEM — ARCHITECTURE
+We will build this in 3 clear layers:
+
+1️⃣ Certificate Template System
+2️⃣ Certificate Generator Engine
+3️⃣ Certificate Download API
