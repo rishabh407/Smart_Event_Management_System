@@ -14,6 +14,8 @@ import registrationRoutes from "./src/routes/registration.routes.js";
 import attendanceRoutes from "./src/routes/attendance.routes.js";
 import resultRoutes from "./src/routes/result.routes.js";
 import certificateTemplateRoutes from "./src/routes/certificateTemplate.routes.js";
+import certificateRoutes from "./src/routes/certificate.routes.js";
+
 dotenv.config();
 
 const app = express();
@@ -32,6 +34,7 @@ app.use("/api/registrations", registrationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/results", resultRoutes);
 app.use("/api/certificates/templates", certificateTemplateRoutes);
+app.use("/api/certificates", certificateRoutes);
 
 app.get("/api/test/protected", protect, (req, res) => {
   res.json({

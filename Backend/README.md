@@ -32,3 +32,10 @@ We will build this in 3 clear layers:
 1️⃣ Certificate Template System
 2️⃣ Certificate Generator Engine
 3️⃣ Certificate Download API
+
+Outstanding — now we build the real engine:
+👉 Automatic PDF certificate generation based on attendance + results + templates.
+
+This is the core “wow factor” of your project.
+
+we use pdfkit library for converting certificates into the pdf.

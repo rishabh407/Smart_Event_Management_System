@@ -19,7 +19,7 @@ const certificateTemplateSchema = new mongoose.Schema(
       required: true
     },
 
-    templateImage: {
+    templatePath: {
       type: String, // Cloudinary URL or local path
       required: true
     },

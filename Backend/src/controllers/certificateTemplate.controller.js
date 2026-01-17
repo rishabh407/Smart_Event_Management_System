@@ -2,9 +2,9 @@ import { v4 as uuidv4 } from "uuid";
 import CertificateTemplate from "../models/CertificateTemplate.js";
 
 export const uploadTemplate = async (req, res) => {
-  const { competitionId, type, templateImage, textConfig } = req.body;
-
-  if (!competitionId || !type || !templateImage) {
+  const { competitionId, type, templatePath, textConfig } = req.body;
+  console.log(req.body);
+  if (!competitionId || !type || !templatePath) {
     return res.status(400).json({
       message: "Missing template data"
     });
@@ -14,7 +14,7 @@ export const uploadTemplate = async (req, res) => {
     templateId: uuidv4(),
     competitionId,
     type,
-    templateImage,
+    templatePath,
     textConfig
   });
 
