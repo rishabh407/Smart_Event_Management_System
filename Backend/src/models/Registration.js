@@ -36,6 +36,10 @@ const registrationSchema = new mongoose.Schema(
       enum: ["registered", "attended", "cancelled"],
       default: "registered",
     },
+    certificateGenerated: {
+       type: Boolean,
+       default: false,
+    },
   },
   { timestamps: true }
 );
