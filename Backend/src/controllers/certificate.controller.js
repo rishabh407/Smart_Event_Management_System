@@ -178,7 +178,7 @@ export const generateCertificates = async (req, res) => {
   let participationType;
   let winnerType;
 
-  if (competition.eventType === "team") {
+  if (competition.type?.trim().toLowerCase() === "team") {
     participationType = "participant_hackathon";
     winnerType = "winner_hackathon";
   } else {
@@ -250,7 +250,7 @@ export const generateCertificates = async (req, res) => {
 
     // ================= TEAM COMPETITION =================
 
-    if (competition.type === "team" && reg.teamId) {
+    if (competition.type?.trim().toLowerCase() === "team" && reg.teamId) {
 
       const team = await Team.findOne({ teamId: reg.teamId });
 

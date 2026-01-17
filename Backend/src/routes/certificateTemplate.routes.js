@@ -6,6 +6,6 @@ import { uploadTemplateMiddleware } from "../middlewares/uploadTemplateinMulter.
 
 const router = express.Router();
 
-router.post("/upload", protect,uploadTemplateMiddleware, teacherOnly, uploadTemplate);
+router.post("/upload", protect,uploadTemplateMiddleware.single("file"), teacherOnly, uploadTemplate);
 
 export default router;
