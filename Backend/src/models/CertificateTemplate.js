@@ -15,7 +15,8 @@ const certificateTemplateSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["participation", "winner"],
+      enum: ["participation", "winner","participant_hackathon", 
+    "winner_hackathon"],
       required: true
     },
 
@@ -24,14 +25,20 @@ const certificateTemplateSchema = new mongoose.Schema(
       required: true
     },
 
-    textConfig: {
-      nameX: Number,
-      nameY: Number,
-      competitionX: Number,
-      competitionY: Number,
-      positionX: Number,
-      positionY: Number
-    }
+textConfig: {
+  nameX: Number,
+  nameY: Number,
+
+  teamX: Number,
+  teamY: Number,
+
+  competitionX: Number,
+  competitionY: Number,
+
+  positionX: Number,
+  positionY: Number
+}
+
   },
   { timestamps: true }
 );
