@@ -7,7 +7,7 @@ import {
 } from "../controllers/event.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
-import { teacherOnly } from "../middlewares/role.middleware.js";
+import { hodOnly,} from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
@@ -17,6 +17,6 @@ router.get("/department/:departmentId", getEventsByDepartment);
 router.get("/:eventId", getEventById);
 
 // Protected (HOD / Teacher)
-router.post("/", protect, teacherOnly, createEvent);
+router.post("/", protect, hodOnly, createEvent);
 
 export default router;

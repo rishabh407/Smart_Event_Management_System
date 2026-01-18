@@ -350,7 +350,7 @@ export const register = async (req, res) => {
   }
 
   // Role validation
-  if (!["student", "teacher", "hod"].includes(role)) {
+  if (!["student", "teacher", "hod","spteacher"].includes(role)) {
     return res.status(400).json({ message: "Invalid role" });
   }
 
@@ -364,7 +364,7 @@ export const register = async (req, res) => {
   }
 
   // Teacher & HOD validation
-  if ((role === "teacher" || role === "hod")) {
+  if ((role === "teacher" || role === "hod" || role==="spteacher")) {
     if (!departmentId || !email || !password) {
       return res.status(400).json({
         message: "Email, password and departmentId required for teacher and hod"

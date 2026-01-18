@@ -6,7 +6,7 @@ import {
 } from "../controllers/competition.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
-import { teacherOnly } from "../middlewares/role.middleware.js";
+import { specialTeacher} from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
@@ -15,6 +15,6 @@ router.get("/event/:eventId", getCompetitionsByEvent);
 router.get("/:competitionId", getCompetitionById);
 
 // Protected (HOD / Teacher)
-router.post("/", protect, teacherOnly, createCompetition);
+router.post("/", protect, specialTeacher, createCompetition);
 
 export default router;

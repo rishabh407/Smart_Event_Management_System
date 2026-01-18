@@ -11,3 +11,10 @@ export const hodOnly = (req, res, next) => {
   }
   next();
 };
+
+export const specialTeacher = (req, res, next) => {
+  if (req.user.role !== "spteacher") {
+    return res.status(403).json({ message: "Spteacher only" });
+  }
+  next();
+};
