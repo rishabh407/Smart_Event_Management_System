@@ -217,6 +217,11 @@ export const registerStudent = async (req, res) => {
     message: "All student fields required"
    });
   }
+     if (!["HOD", "COORDINATOR"].includes(req.user.role)) {
+  return res.status(403).json({
+    message: "Only staff can create students"
+  });
+}
 
   // 2. Check existing roll number
   const existingStudent = await User.findOne({ rollNumber });
@@ -244,6 +249,9 @@ export const registerStudent = async (req, res) => {
    password: hashedPassword,
 
    role: "STUDENT",
+  
+   // Auto assign department
+  departmentId: req.user.departmentId,
 
    isFirstLogin: true   // 🔥 FORCE PASSWORD CHANGE
 

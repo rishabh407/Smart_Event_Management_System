@@ -78,12 +78,18 @@ import attendanceRoutes from "./src/routes/attendance.routes.js";
 import resultRoutes from "./src/routes/result.routes.js";
 import certificateTemplateRoutes from "./src/routes/certificateTemplate.routes.js";
 import certificateRoutes from "./src/routes/certificate.routes.js";
-
+import path from "path";
+import { fileURLToPath } from "url";
 dotenv.config();
 
 const app = express();
-app.use(cookieParser());
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+app.use(cookieParser());
 app.use(cors({
   origin: "http://localhost:5173", // React URL
   credentials: true
@@ -100,7 +106,6 @@ app.use("/api/teams", teamRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/results", resultRoutes);
-
 app.use("/api/templates", certificateTemplateRoutes);
 app.use("/api/certificates", certificateRoutes);
 
@@ -128,5 +133,5 @@ app.get("/", (req, res) => {
 
 export default app;
 
-// Student First Password AAAAAA.
+// Student First Password aaaaaa.
 

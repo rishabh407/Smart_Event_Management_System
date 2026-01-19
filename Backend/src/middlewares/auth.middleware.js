@@ -42,8 +42,8 @@ import User from "../models/User.js";
 export const protect = async (req, res, next) => {
 
   const token = req.cookies.accessToken;
-
-  if (!token) {
+ console.log(token);  
+ if (!token) {
     return res.status(401).json({ message: "Not authenticated" });
   }
 

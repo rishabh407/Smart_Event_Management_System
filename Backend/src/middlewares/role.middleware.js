@@ -13,11 +13,13 @@ export const teacherOnly = (req, res, next) => {
 
 
 export const hodOnly = (req, res, next) => {
-  if (req.user.role !== "HOD") {
+  if (req.user.role !== "HOD" &&  req.user.role!=="COORDINATOR") {
     return res.status(403).json({ message: "HOD only" });
   }
   next();
 };
+
+
 
 export const specialTeacher = (req, res, next) => {
   if (req.user.role !== "COORDINATOR") {
