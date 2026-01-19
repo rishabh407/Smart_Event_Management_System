@@ -1,6 +1,11 @@
 import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
-import { createTeam, deleteTeam, joinTeam, leaveTeam } from "../controllers/team.controller.js";
+import {
+  createTeam,
+  joinTeam,
+  leaveTeam,
+  deleteTeam,
+} from "../controllers/team.controller.js";
 
 const router = express.Router();
 

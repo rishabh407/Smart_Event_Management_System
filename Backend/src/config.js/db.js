@@ -6,6 +6,7 @@ const connectDB = async () => {
         "dbName":"EventDatabase",
     });
     console.log("✅ MongoDB connected");
+    console.log("Connected DB:", mongoose.connection.name);
   } catch (err) {
     console.error("❌ DB Error:", err.message);
     process.exit(1);

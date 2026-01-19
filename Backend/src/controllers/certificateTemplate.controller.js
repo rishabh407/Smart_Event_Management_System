@@ -1,114 +1,127 @@
-// import { v4 as uuidv4 } from "uuid";
-// import CertificateTemplate from "../models/CertificateTemplate.js";
-
-
-// export const uploadTemplate = async (req, res) => {
-//   console.log("BODY:", req.body);
-// console.log("FILE:", req.file);
-
-//   const { competitionId, type } = req.body;
-
-//   if (!competitionId || !type || !req.file) {
-//     return res.status(400).json({
-//       message: "Missing template data"
-//     });
-//   }
-
-//   // Build template path automatically
-//   const templatePath = `assets/certificates/${req.file.filename}`;
-
-//   // Build textConfig from form-data fields
-//   const textConfig = {
-//     nameX: req.body.nameX,
-//     nameY: req.body.nameY,
-
-//     teamX: req.body.teamX,
-//     teamY: req.body.teamY,
-
-//     competitionX: req.body.competitionX,
-//     competitionY: req.body.competitionY,
-
-//     positionX: req.body.positionX,
-//     positionY: req.body.positionY
-//   };
-
-//   const template = await CertificateTemplate.create({
-//     templateId: uuidv4(),
-//     competitionId,
-//     type,
-//     templatePath,
-//     textConfig
-//   });
-
-//   res.status(201).json({
-//     message: "Template uploaded successfully",
-//     template
-//   });
-// };
-
-
-import { v4 as uuidv4 } from "uuid";
 import CertificateTemplate from "../models/CertificateTemplate.js";
+import Competition from "../models/Competition.js";
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 export const uploadTemplate = async (req, res) => {
 
-  console.log("BODY:", req.body);
-  console.log("FILE:", req.file);
+  try {
 
-  const competitionId = req.body.competitionId?.trim();
-  const type = req.body.type?.trim();
+    const { competitionId, type } = req.body;
 
-  if (!competitionId || !type || !req.file) {
-    return res.status(400).json({
-      message: "Missing template data"
+    if (!competitionId || !type || !req.file) {
+      return res.status(400).json({
+        message: "Missing template data"
+      });
+    }
+      console.log(competitionId,type);
+    if (!mongoose.Types.ObjectId.isValid(competitionId)) {
+      return res.status(400).json({
+        message: "Invalid competition id"
+      });
+    }
+
+    const competition = await Competition.findById(competitionId);
+    console.log(competition);
+    if (!competition) {
+      return res.status(404).json({
+        message: "Competition not found"
+      });
+    }
+
+    const templatePath = `assets/certificates/${req.file.filename}`;
+
+    const textConfig = {
+      ...(req.body.nameX && { nameX: Number(req.body.nameX) }),
+      ...(req.body.nameY && { nameY: Number(req.body.nameY) }),
+      ...(req.body.teamX && { teamX: Number(req.body.teamX) }),
+      ...(req.body.teamY && { teamY: Number(req.body.teamY) }),
+      ...(req.body.positionX && { positionX: Number(req.body.positionX) }),
+      ...(req.body.positionY && { positionY: Number(req.body.positionY) })
+    };
+
+    const template = await CertificateTemplate.create({
+      competition: competitionId,
+      type,
+      templatePath,
+      textConfig
     });
+
+    res.status(201).json({
+      message: "Template uploaded successfully",
+      template
+    });
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({ message: error.message });
+
   }
-
-  // ✅ Always use multer filename
-  const templatePath = `assets/certificates/${req.file.filename}`;
-
-  // ✅ Convert coordinates to Number
-  // const textConfig = {
-  //   nameX: Number(req.body.nameX),
-  //   nameY: Number(req.body.nameY),
-
-  //   teamX: Number(req.body.teamX),
-  //   teamY: Number(req.body.teamY),
-
-  //   competitionX: Number(req.body.competitionX),
-  //   competitionY: Number(req.body.competitionY),
-
-  //   positionX: Number(req.body.positionX),
-  //   positionY: Number(req.body.positionY)
-  // };
-
-const textConfig = {
-
-  ...(req.body.nameX && { nameX: Number(req.body.nameX) }),
-  ...(req.body.nameY && { nameY: Number(req.body.nameY) }),
-
-  ...(req.body.teamX && { teamX: Number(req.body.teamX) }),
-  ...(req.body.teamY && { teamY: Number(req.body.teamY) }),
-
-  ...(req.body.competitionX && { competitionX: Number(req.body.competitionX) }),
-  ...(req.body.competitionY && { competitionY: Number(req.body.competitionY) }),
-
-  ...(req.body.positionX && { positionX: Number(req.body.positionX) }),
-  ...(req.body.positionY && { positionY: Number(req.body.positionY) })
-
 };
 
 
-  const template = await CertificateTemplate.create({
-    templateId: uuidv4(),
-    competitionId,
-    type,
-    templatePath,
-    textConfig
-  });
+export const deleteTemplate = async (req, res) => {
 
-  res.status(201).json({
-    message: "Template uploaded successfully",
-    template
-  });
+  try {
+
+    const { templateId } = req.params;
+
+    const template = await CertificateTemplate.findById(templateId);
+
+    if (!template) {
+      return res.status(404).json({
+        message: "Template not found"
+      });
+    }
+
+    // Fetch competition
+    const competition = await Competition.findById(template.competition);
+
+    if (!competition) {
+      return res.status(404).json({
+        message: "Competition not found"
+      });
+    }
+
+    // ================= AUTHORIZATION =================
+    // Only assigned INCHARGE teacher allowed
+
+    const isIncharge = competition.assignedTeachers.some(t =>
+      t.teacher.toString() === req.user._id.toString() &&
+      t.role === "INCHARGE"
+    );
+
+    if (!isIncharge) {
+      return res.status(403).json({
+        message: "Not authorized to delete this template"
+      });
+    }
+
+    // ================= DELETE FILE =================
+
+    const filePath = path.join(process.cwd(), template.templatePath);
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    // ================= DELETE DB RECORD =================
+
+    await CertificateTemplate.findByIdAndDelete(templateId);
+
+    res.json({
+      message: "Template deleted successfully"
+    });
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
 };
+

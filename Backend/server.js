@@ -5,7 +5,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./src/config.js/db.js";
 import authRoutes from "./src/routes/auth.routes.js";
-import { protect } from "./src/middlewares/auth.middleware.js";
 import departmentRoutes from "./src/routes/departments.routes.js";
 import eventRoutes from "./src/routes/event.routes.js";
 import competitionRoutes from "./src/routes/competition.routes.js";
@@ -22,7 +21,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
 // app.use(morgan("dev"));
 
 app.use("/api/auth", authRoutes);
@@ -33,15 +32,17 @@ app.use("/api/teams", teamRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/results", resultRoutes);
-app.use("/api/certificates/templates", certificateTemplateRoutes);
+
+app.use("/api/templates", certificateTemplateRoutes);
 app.use("/api/certificates", certificateRoutes);
 
-app.get("/api/test/protected", protect, (req, res) => {
-  res.json({
-    message: "You are authenticated",
-    user: req.user,
-  });
-});
+// Serve generated PDFs
+app.use("/certificates", express.static("certificates"));
+// import bcrypt from "bcrypt";
+
+// const hash = await bcrypt.hash("hod123", 10);
+// console.log(hash);
+
 
 const startServer = async () => {
   await connectDB();

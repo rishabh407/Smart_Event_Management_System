@@ -1,88 +1,3 @@
-// import mongoose from "mongoose";
-
-// const userSchema = new mongoose.Schema(
-//   {
-//     userId: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//     },
-
-//     fullName: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-
-//     email: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       lowercase: true,
-//     },
-
-//     password: {
-//       type: String,
-//       required: true,
-//       select: false,
-//     },
-
-//     role: {
-//       type: String,
-//       enum: ["student", "teacher", "hod"],
-//       required: true,
-//     },
-
-//     // =====================
-//     // STUDENT FIELDS
-//     // =====================
-
-//     rollNumber: {
-//       type: String,
-//       default: null,
-//       unique: true,
-//       sparse: true
-//     },
-
-//     isFirstLogin: {
-//     type: Boolean,
-//     default: false
-//   },
-
-//     course: {
-//       type: String,
-//       default: null,
-//     },
-
-//     year: {
-//       type: Number,
-//       default: null,
-//     },
-
-//     section: {
-//       type: String,
-//       default: null,
-//     },
-
-//     // =====================
-//     // COMMON
-//     // =====================
-
-//     departmentId: {
-//       type: String,
-//       default: null,
-//     },
-
-//     createdAt: {
-//       type: Date,
-//       default: Date.now,
-//     },
-//   }
-// );
-
-// export default mongoose.model("User", userSchema);
-
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -114,7 +29,7 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["student", "teacher", "hod","spteacher"],
+      enum: ["STUDENT", "TEACHER", "HOD", "COORDINATOR"],
       required: true,
     },
 
@@ -153,15 +68,17 @@ const userSchema = new mongoose.Schema(
     // =====================
 
     departmentId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
       default: null,
     },
 
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    isActive: {
+      type: Boolean,
+      default: true,
     },
-  }
+  },
+  { timestamps: true }
 );
 
 export default mongoose.model("User", userSchema);

@@ -2,48 +2,67 @@ import mongoose from "mongoose";
 
 const resultSchema = new mongoose.Schema(
   {
-    resultId: {
-      type: String,
+    competition: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Competition",
       required: true,
-      unique: true
     },
 
-    competitionId: {
-      type: String,
-      required: true
+    // Individual winner
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
 
-    // Winner (individual or team)
-    participantId: {
-      type: String,
-      required: true
-    },
-
-    type: {
-      type: String,
-      enum: ["student", "team"],
-      required: true
+    // Team winner
+    team: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Team",
+      default: null,
     },
 
     position: {
       type: Number,
       enum: [1, 2, 3],
-      required: true
-    }
+      required: true,
+    },
+
+    declaredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-// Prevent duplicate positions
+// Prevent same position twice
 resultSchema.index(
-  { competitionId: 1, position: 1 },
+  { competition: 1, position: 1 },
   { unique: true }
 );
 
-// Prevent duplicate winner entries
+// Prevent same student winning twice
 resultSchema.index(
-  { competitionId: 1, participantId: 1 },
-  { unique: true }
+  { competition: 1, student: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      student: { $ne: null },
+    },
+  }
+);
+
+// Prevent same team winning twice
+resultSchema.index(
+  { competition: 1, team: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      team: { $ne: null },
+    },
+  }
 );
 
 export default mongoose.model("Result", resultSchema);

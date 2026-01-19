@@ -39,3 +39,9 @@ Outstanding — now we build the real engine:
 This is the core “wow factor” of your project.
 
 we use pdfkit library for converting certificates into the pdf.
+
+
+************************
+1) Store Hod Data Manually Into The Database First 
+
+2) Create department Only HOD

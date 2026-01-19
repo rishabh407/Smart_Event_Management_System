@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 export const protect = async (req, res, next) => {
+
   let token;
 
   if (
@@ -14,18 +15,23 @@ export const protect = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({ message: "Not authorized" });
   }
-
+  
   try {
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = await User.findOne({ userId: decoded.userId }).select("-password");
+    console.log("TOKEN ID =>", decoded.id);
 
-    if (!req.user) {
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
 
+    req.user = user;
     next();
+
   } catch (error) {
-    return res.status(401).json({ message: "Token invalid or expired" });
+    return res.status(401).json({ message: "Invalid token" });
   }
 };

@@ -2,17 +2,6 @@ import mongoose from "mongoose";
 
 const eventSchema = new mongoose.Schema(
   {
-    eventId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
-    departmentId: {
-      type: String,
-      required: true,
-    },
-
     title: {
       type: String,
       required: true,
@@ -31,7 +20,7 @@ const eventSchema = new mongoose.Schema(
 
     bannerImage: {
       type: String,
-      default: null, // URL (later)
+      default: "",
     },
 
     startDate: {
@@ -53,6 +42,24 @@ const eventSchema = new mongoose.Schema(
       type: String,
       enum: ["upcoming", "ongoing", "completed"],
       default: "upcoming",
+    },
+
+    departmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+      required: true,
+    },
+
+    coordinator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   { timestamps: true }

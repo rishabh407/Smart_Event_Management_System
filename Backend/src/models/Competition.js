@@ -2,14 +2,9 @@ import mongoose from "mongoose";
 
 const competitionSchema = new mongoose.Schema(
   {
-    competitionId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
     eventId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
       required: true,
     },
 
@@ -70,15 +65,17 @@ const competitionSchema = new mongoose.Schema(
       required: true,
     },
 
+    // Teachers assigned to this competition
     assignedTeachers: [
       {
-        teacherId: {
-          type: String,
+        teacher: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
           required: true,
         },
         role: {
           type: String,
-          enum: ["incharge", "coordinator", "judge"],
+          enum: ["INCHARGE", "JUDGE"],
           required: true,
         },
       },
@@ -89,6 +86,13 @@ const competitionSchema = new mongoose.Schema(
       enum: ["upcoming", "ongoing", "completed"],
       default: "upcoming",
     },
+ 
+    // 🔐 RESULT LOCK
+    resultsDeclared: {
+      type: Boolean,
+      default: false,
+    },
+     
   },
   { timestamps: true }
 );

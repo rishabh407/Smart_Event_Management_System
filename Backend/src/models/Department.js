@@ -1,24 +1,21 @@
+
 import mongoose from "mongoose";
 
 const departmentSchema = new mongoose.Schema(
   {
-    departmentId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
     name: {
       type: String,
       required: true,
+      unique: true,
       trim: true,
     },
 
     shortName: {
       type: String,
       required: true,
-      trim: true,
+      unique: true,
       uppercase: true,
+      trim: true,
     },
 
     description: {
@@ -26,13 +23,9 @@ const departmentSchema = new mongoose.Schema(
       default: "",
     },
 
-    hodId: {
-      type: String, // userId of HOD
-      default: null,
-    },
-
-    email: {
-      type: String,
+    hod: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       default: null,
     },
 

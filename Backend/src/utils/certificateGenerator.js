@@ -1,183 +1,26 @@
-// import PDFDocument from "pdfkit";
-// import fs from "fs";
-// import path from "path";
-
-// export const generateCertificatePDF = async ({
-//   name,
-//   position,
-//   templatePath,
-//   textConfig
-// }) => {
-//   const certificatesDir = "certificates";
-
-//   // Create certificates folder if not exists
-//   if (!fs.existsSync(certificatesDir)) {
-//     fs.mkdirSync(certificatesDir);
-//   }
-
-//   const doc = new PDFDocument({
-//     size: "A4",
-//     layout: "landscape"
-//   });
-
-//   const outputPath = `${certificatesDir}/${Date.now()}-${name}.pdf`;
-
-//   const stream = fs.createWriteStream(outputPath);
-//   doc.pipe(stream);
-
-//   // Resolve template absolute path
-//   const resolvedTemplatePath = path.resolve(templatePath);
-
-//   // Safety check
-//   if (!fs.existsSync(resolvedTemplatePath)) {
-//     throw new Error("Certificate template file not found");
-//   }
-
-//   // Draw background template
-//   doc.image(resolvedTemplatePath, 0, 0, {
-//     width: 842
-//   });
-
-//   // Student Name
-//   doc.fontSize(30)
-//     .fillColor("black")
-//     .text(name, textConfig.nameX, textConfig.nameY);
-
-//   // // Competition Name
-//   // doc.fontSize(20)
-//   //   .text(
-//   //     competitionName,
-//   //     textConfig.competitionX,
-//   //     textConfig.competitionY
-//   //   );
-
-//   // Winner Position
-//   if (position) {
-//     doc.fontSize(22)
-//       .text(
-//         position,
-//         textConfig.positionX,
-//         textConfig.positionY
-//       );
-//   }
-
-//   doc.end();
-
-//   return new Promise((resolve) => {
-//     stream.on("finish", () => resolve(outputPath));
-//   });
-// };
-
-
-// import PDFDocument from "pdfkit";
-// import fs from "fs";
-// import path from "path";
-// import { fileURLToPath } from "url";
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// export const generateCertificatePDF = async ({
-//   name,
-//   teamName,
-//   position,
-//   templatePath,
-//   textConfig
-// }) => {
-
-//   const certificatesDir = "certificates";
-   
-//   if (!fs.existsSync(certificatesDir)) {
-//     fs.mkdirSync(certificatesDir);
-//   }
-
-//   const doc = new PDFDocument({
-//     size: "A4",
-//     layout: "landscape"
-//   });
-
-//   const outputPath = `${certificatesDir}/${Date.now()}-${name}.pdf`;
-
-//   const stream = fs.createWriteStream(outputPath);
-//   doc.pipe(stream);
-
-//   // const resolvedTemplatePath = path.resolve(templatePath);
-
-// const resolvedTemplatePath = path.join(
-//   __dirname,
-//   "..",
-//   "..",
-//   templatePath
-// );
-// console.log("TEMPLATE PATH:", resolvedTemplatePath);
-
-
-//   if (!fs.existsSync(resolvedTemplatePath)) {
-//     throw new Error("Certificate template file not found");
-//   }
-
-//   // Draw background image
-//   doc.image(resolvedTemplatePath, 0, 0, {
-//     width: 842
-//   });
-
-//   // -------- Student Name --------
-//   doc.fontSize(30)
-//     .fillColor("black")
-//     .text(name, textConfig.nameX, textConfig.nameY);
-
-//   // -------- Team Name (Hackathon) --------
-//   if (teamName && textConfig.teamX && textConfig.teamY) {
-//     doc.fontSize(22)
-//       .fillColor("black")
-//       .text(teamName, textConfig.teamX, textConfig.teamY);
-//   }
-
-//   // -------- Winner Position --------
-//   if (position && textConfig.positionX && textConfig.positionY) {
-//     doc.fontSize(22)
-//       .fillColor("black")
-//       .text(
-//         position,
-//         textConfig.positionX,
-//         textConfig.positionY
-//       );
-//   }
-
-//   doc.end();
-
-//   return new Promise((resolve) => {
-//     stream.on("finish", () => resolve(outputPath));
-//   });
-// };
-
-
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ES module dirname fix
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const generateCertificatePDF = async ({
   name,
   teamName,
+  competitionName,
   position,
   templatePath,
-  textConfig
+  textConfig,
 }) => {
-
   try {
 
-    console.log("PDF FUNCTION CALLED");
-    console.log("DB TEMPLATE PATH =>", templatePath);
+    // ================= PROJECT ROOT =================
 
-    // ================= BASE PROJECT ROOT =================
-    // utils folder -> src -> Backend
     const projectRoot = path.join(__dirname, "..", "..");
 
-    // ================= OUTPUT CERTIFICATE FOLDER =================
+    // ================= CERTIFICATE OUTPUT FOLDER =================
 
     const certificatesDir = path.join(projectRoot, "certificates");
 
@@ -185,33 +28,31 @@ export const generateCertificatePDF = async ({
       fs.mkdirSync(certificatesDir, { recursive: true });
     }
 
+    // ================= SAFE FILE NAME =================
+
+    const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
+
     const outputPath = path.join(
       certificatesDir,
-      `${Date.now()}-${name}.pdf`
+      `${Date.now()}_${safeName}.pdf`
     );
 
-    // ================= FIX TEMPLATE PATH =================
+    // ================= TEMPLATE PATH FIX =================
 
-    // Convert Windows "\" to "/"
     const safeTemplatePath = templatePath.replace(/\\/g, "/");
 
-    const resolvedTemplatePath = path.join(
-      projectRoot,
-      safeTemplatePath
-    );
-
-    console.log("FINAL TEMPLATE PATH =>", resolvedTemplatePath);
-    console.log("FILE EXISTS =>", fs.existsSync(resolvedTemplatePath));
+    const resolvedTemplatePath = path.join(projectRoot, safeTemplatePath);
 
     if (!fs.existsSync(resolvedTemplatePath)) {
-      throw new Error("Certificate template file not found at: " + resolvedTemplatePath);
+      throw new Error("Template file not found: " + resolvedTemplatePath);
     }
 
     // ================= CREATE PDF =================
 
     const doc = new PDFDocument({
       size: "A4",
-      layout: "landscape"
+      layout: "landscape",
+      margin: 0,
     });
 
     const stream = fs.createWriteStream(outputPath);
@@ -219,55 +60,93 @@ export const generateCertificatePDF = async ({
 
     // ================= DRAW BACKGROUND =================
 
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+
     doc.image(resolvedTemplatePath, 0, 0, {
-      width: 842
+      width: pageWidth,
+      height: pageHeight,
     });
 
     // ================= DRAW STUDENT NAME =================
 
-    doc.fontSize(30)
-      .fillColor("black")
-      .text(name, textConfig.nameX, textConfig.nameY);
+    if (textConfig.nameX && textConfig.nameY) {
+      doc
+        .fontSize(30)
+        .fillColor("black")
+        .text(name, textConfig.nameX, textConfig.nameY, {
+          width: 600,
+          align: "center",
+        });
+    }
 
     // ================= DRAW TEAM NAME =================
 
-    if (teamName && textConfig.teamX && textConfig.teamY) {
-      doc.fontSize(22)
+    if (
+      teamName &&
+      textConfig.teamX &&
+      textConfig.teamY
+    ) {
+      doc
+        .fontSize(22)
         .fillColor("black")
-        .text(teamName, textConfig.teamX, textConfig.teamY);
+        .text(teamName, textConfig.teamX, textConfig.teamY, {
+          width: 600,
+          align: "center",
+        });
+    }
+
+    // ================= DRAW COMPETITION NAME =================
+
+    if (
+      competitionName &&
+      textConfig.competitionX &&
+      textConfig.competitionY
+    ) {
+      doc
+        .fontSize(22)
+        .fillColor("black")
+        .text(
+          competitionName,
+          textConfig.competitionX,
+          textConfig.competitionY,
+          {
+            width: 600,
+            align: "center",
+          }
+        );
     }
 
     // ================= DRAW POSITION =================
 
-    if (position && textConfig.positionX && textConfig.positionY) {
-      doc.fontSize(22)
+    if (
+      position &&
+      textConfig.positionX &&
+      textConfig.positionY
+    ) {
+      doc
+        .fontSize(22)
         .fillColor("black")
         .text(
-          position,
+          position.toString(),
           textConfig.positionX,
-          textConfig.positionY
+          textConfig.positionY,
+          {
+            width: 200,
+            align: "center",
+          }
         );
     }
 
     doc.end();
 
     return new Promise((resolve, reject) => {
-
-      stream.on("finish", () => {
-        console.log("PDF GENERATED =>", outputPath);
-        resolve(outputPath);
-      });
-
-      stream.on("error", (err) => {
-        reject(err);
-      });
-
+      stream.on("finish", () => resolve(outputPath));
+      stream.on("error", reject);
     });
 
   } catch (error) {
-
-    console.error("PDF GENERATION ERROR =>", error);
+    console.error("PDF GENERATION ERROR:", error);
     throw error;
-
   }
 };

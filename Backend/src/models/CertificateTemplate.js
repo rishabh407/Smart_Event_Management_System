@@ -1,46 +1,39 @@
 import mongoose from "mongoose";
 
-const certificateTemplateSchema = new mongoose.Schema(
-  {
-    templateId: {
-      type: String,
-      required: true,
-      unique: true
-    },
+const certificateTemplateSchema = new mongoose.Schema({
 
-    competitionId: {
-      type: String,
-      required: true
-    },
+competition: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Competition",
+  required: true
+},
 
-    type: {
-      type: String,
-      enum: ["participation", "winner","participant_hackathon", 
-    "winner_hackathon"],
-      required: true
-    },
-
-    templatePath: {
-      type: String, // Cloudinary URL or local path
-      required: true
-    },
-
-textConfig: {
-  nameX: Number,
-  nameY: Number,
-
-  teamX: Number,
-  teamY: Number,
-
-  competitionX: Number,
-  competitionY: Number,
-
-  positionX: Number,
-  positionY: Number
-}
-
+  type: {
+    type: String,
+    enum: ["participation", "winner", "participant_hackathon", "winner_hackathon"],
+    required: true,
   },
-  { timestamps: true }
+
+  templatePath: {
+    type: String,
+    required: true,
+  },
+
+  textConfig: {
+    nameX: Number,
+    nameY: Number,
+    teamX: Number,
+    teamY: Number,
+    positionX: Number,
+    positionY: Number
+  }
+
+}, { timestamps: true });
+
+// ✅ Prevent duplicate template per competition + type
+certificateTemplateSchema.index(
+  { competition: 1, type: 1 },
+  { unique: true }
 );
 
 export default mongoose.model("CertificateTemplate", certificateTemplateSchema);

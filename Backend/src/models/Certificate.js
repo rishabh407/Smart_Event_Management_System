@@ -1,56 +1,49 @@
 import mongoose from "mongoose";
 
-const certificateSchema = new mongoose.Schema(
-  {
-    certificateId: {
-      type: String,
-      required: true,
-      unique: true
-    },
+const certificateSchema = new mongoose.Schema({
 
-    competitionId: {
-      type: String,
-      required: true
-    },
-
-    userId: {
-      type: String,
-      default: null
-    },
-
-    teamId: {
-      type: String,
-      default: null
-    },
-
-    type: {
-      type: String,
-      enum: ["participation", "winner"],
-      required: true
-    },
-
-    position: {
-      type: Number,
-      default: null
-    },
-
-    pdfUrl: {
-      type: String,
-      required: true
-    }
+  competition: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Competition",
+    required: true
   },
-  { timestamps: true }
-);
 
-// Prevent duplicate certificate per participant
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+
+  team: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Team",
+    default: null
+  },
+
+  type: {
+    type: String,
+    enum: ["participation", "winner"],
+    required: true
+  },
+
+  position: {
+    type: Number,
+    default: null
+  },
+
+  pdfUrl: {
+    type: String,
+    required: true
+  }
+
+}, { timestamps: true });
+
+// Prevent duplicate certificate
 certificateSchema.index(
-  { competitionId: 1, userId: 1 },
-  { unique: true, partialFilterExpression: { userId: { $exists: true, $ne: null } } }
+  { competition: 1, user: 1 },
+  { unique: true }
 );
 
-certificateSchema.index(
-  { competitionId: 1, teamId: 1 },
-  { unique: true, partialFilterExpression: { teamId: { $exists: true, $ne: null } } }
-);
-
-export default mongoose.model("Certificate", certificateSchema);
+// export default mongoose.model("Certificate", certificateSchema);
+export default mongoose.models.Certificate ||
+mongoose.model("Certificate", certificateSchema);

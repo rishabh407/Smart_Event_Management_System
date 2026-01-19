@@ -2,30 +2,34 @@ import mongoose from "mongoose";
 
 const registrationSchema = new mongoose.Schema(
   {
-    registrationId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
-    competitionId: {
-      type: String,
+    competition: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Competition",
       required: true,
     },
 
-    // Individual participation
-    studentId: {
-      type: String,
+    // For individual competition
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       default: null,
     },
 
-    // Team participation
-    teamId: {
-      type: String,
+    // For team competition
+    team: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Team",
       default: null,
     },
 
-    // Attendance Qr Code
+    // Who submitted registration (student or team leader)
+    registeredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    // QR code for attendance verification
     qrCode: {
       type: String,
       default: null,
@@ -36,51 +40,33 @@ const registrationSchema = new mongoose.Schema(
       enum: ["registered", "attended", "cancelled"],
       default: "registered",
     },
+
     certificateGenerated: {
-       type: Boolean,
-       default: false,
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
 );
 
-// Team registration uniqueness
+// Prevent duplicate individual registration
 registrationSchema.index(
-  { competitionId: 1, teamId: 1 },
-  // we group records like '
-  //   (C1, T1)
-  // (C1, T2)
-  // (C2, T1)
+  { competition: 1, student: 1 },
   {
     unique: true,
-    // this ensures no duplicate records exists like 
-  //   (C1, T1)
-  //   (C1, T1)
     partialFilterExpression: {
-      teamId: { $exists: true, $ne: null },
+      student: { $exists: true, $ne: null },
     },
-    // partialFilterExpression =  This is magic part 
-    // It says : 
-   
-    // ONLY apply this index
-    // when condition is TRUE
-// Condition = teamId: { $exists: true, $ne: null }
-// Means:
-
-// Apply index ONLY if:
-
-// ✔ teamId field exists
-// ✔ teamId is NOT null
   }
 );
 
-// Individual registration uniqueness
+// Prevent duplicate team registration
 registrationSchema.index(
-  { competitionId: 1, studentId: 1 },
+  { competition: 1, team: 1 },
   {
     unique: true,
     partialFilterExpression: {
-      studentId: { $exists: true, $ne: null },
+      team: { $exists: true, $ne: null },
     },
   }
 );

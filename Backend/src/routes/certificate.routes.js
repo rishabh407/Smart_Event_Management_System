@@ -9,3 +9,5 @@ router.post("/generate", protect, teacherOnly, generateCertificates);
 router.get("/my", protect, getMyCertificates);
 
 export default router;
+
+

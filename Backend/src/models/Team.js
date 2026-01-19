@@ -2,39 +2,38 @@ import mongoose from "mongoose";
 
 const teamSchema = new mongoose.Schema(
   {
-    teamId: {
-      type: String,
-      required: true,
-      unique: true
-    },
-
     teamName: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     competitionId: {
-      type: String,
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Competition",
+      required: true,
     },
 
-    leaderId: {
-      type: String, // userId
-      required: true
+    leader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
 
     members: [
       {
-        type: String // userId
-      }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
     ],
 
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }
+    isSubmitted: {
+      type: Boolean,
+      default: false, // becomes true after registration submit
+    },
+  },
+  { timestamps: true }
 );
 
 export default mongoose.model("Team", teamSchema);
