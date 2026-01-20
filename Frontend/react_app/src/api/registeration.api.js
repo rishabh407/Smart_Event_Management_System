@@ -1,0 +1,13 @@
+import api from "./axios";
+
+export const getMyRegistrations = () => {
+  return api.get("/registrations/my");
+};
+
+export const registerIndividual = (data) => {
+  return api.post("/registrations/individual", data);
+};
+
+export const cancelRegistration = (id) => {
+  return api.patch(`/registrations/${id}/cancel`);
+};

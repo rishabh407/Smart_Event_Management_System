@@ -8,9 +8,13 @@ import ChangePassword from "./pages/ChangePassword";
 import StudentLayout from "./layouts/StudentLayout";
 import Dashboard from "./pages/student/Dashboard";
 import Events from "./pages/student/Events";
-import Registrations from "./pages/student/Registerations";
 import Certificates from "./pages/student/Certificates";
 import Team from "./pages/student/Team";
+import Competitions from "./pages/student/Competition";
+import CompetitionRegisteration from "./pages/student/CompetitionRegisteration";
+import MyRegistrations from "./pages/student/Registerations";
+import IndividualRegistration from "./pages/student/IndividualRegisteration";
+import TeamRegisteration from "./pages/student/TeamRegisteration";
 
 const App = () => {
   return (
@@ -37,10 +41,18 @@ const App = () => {
             </ProtectedRoute>
           }
         >
+        <Route path="/student/events/:eventId" element={<Competitions/>} />
+        <Route
+  path="/student/events/:eventId/competitions/:competitionId/register"
+  element={<CompetitionRegisteration />}
+/>
+
           <Route index element={<Dashboard />} />
             <Route path="events" element={<Events />} />
-            <Route path="registrations" element={<Registrations />} />
-            <Route path="certificates" element={<Certificates />} />
+            <Route path="/student/event/competition/individualregisteration" element={<IndividualRegistration />} />
+            <Route path="/student/event/competition/teamregisteration" element={<TeamRegisteration/>} />
+            <Route path="/student/registrations" element={<MyRegistrations/>} />
+            <Route path="certificates" element={<Certificates/>} />
             <Route path="team" element={<Team />} />
         </Route>
 

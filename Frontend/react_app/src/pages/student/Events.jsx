@@ -176,9 +176,9 @@ src={`http://localhost:5000${event.bannerImage}`}
 
               {/* Button */}
               <button
-                // onClick={() =>
-                //   navigate(`/student/events/${event._id}`)
-                // }
+                onClick={() =>
+                  navigate(`/student/events/${event._id}`)
+                }
                 className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
               >
                 View Competitions
