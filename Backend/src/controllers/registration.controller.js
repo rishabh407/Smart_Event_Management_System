@@ -3,72 +3,6 @@ import Competition from "../models/Competition.js";
 import Team from "../models/Team.js";
 import QRCode from "qrcode";
 
-// =================================
-// INDIVIDUAL REGISTRATION (STUDENT)
-// =================================
-
-// export const registerIndividual = async (req, res) => {
-//   try {
-//     const { competitionId } = req.body;
-
-//     if (!competitionId) {
-//       return res.status(400).json({
-//         message: "competitionId required",
-//       });
-//     }
-
-//     // Only student allowed
-//     if (req.user.role !== "STUDENT") {
-//       return res.status(403).json({
-//         message: "Only students can register",
-//       });
-//     x}
-
-//     const competition = await Competition.findById(competitionId);
-
-//     if (!competition) {
-//       return res.status(404).json({
-//         message: "Competition not found",
-//       });
-//     }
-
-//     if (competition.type !== "individual") {
-//       return res.status(400).json({
-//         message: "This competition is not individual type",
-//       });
-//     }
-
-//     if (new Date() > competition.registrationDeadline) {
-//       return res.status(400).json({
-//         message: "Registration deadline passed",
-//       });
-//     }
-
-//     // Generate QR Code
-//     const qrPayload = JSON.stringify({
-//       competitionId,
-//       studentId: req.user._id,
-//       type: "individual",
-//     });
-
-//     const qrImage = await QRCode.toDataURL(qrPayload);
-
-//     const registration = await Registration.create({
-//       competition: competitionId,
-//       student: req.user._id,
-//       registeredBy: req.user._id,
-//       qrCode: qrImage,
-//     });
-
-//     res.status(201).json({
-//       message: "Registered successfully",
-//       registration,
-//     });
-
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 export const registerIndividual = async (req, res) => {
 
@@ -212,6 +146,16 @@ export const registerTeam = async (req, res) => {
         message: "Team not found",
       });
     }
+    const alreadyRegistered = await Registration.findOne({
+ competition: competitionId,
+ team: teamId
+});
+
+if (alreadyRegistered) {
+ return res.status(400).json({
+  message: "Team already registered"
+ });
+}
 
     // Prevent double submit
     if (team.isSubmitted) {
@@ -219,7 +163,7 @@ export const registerTeam = async (req, res) => {
         message: "Team already submitted",
       });
     }
-
+    
     // Only leader can submit team
     if (team.leader.toString() !== req.user._id.toString()) {
       return res.status(403).json({
@@ -291,8 +235,8 @@ if (competition.resultsDeclared === true) {
     // 🔐 LOCK TEAM AFTER SUBMISSION
     team.isSubmitted = true;
     await team.save();
-competition.resultsDeclared = true;
-await competition.save();
+// competition.resultsDeclared = true;
+// await competition.save();
 
 
 
@@ -306,27 +250,79 @@ await competition.save();
   }
 };
 
+// export const getMyRegistrations = async (req, res) => {
+
+//   try {
+
+//     const userId = req.user._id;
+
+//     const registrations = await Registration.find({
+//       $or: [
+//         { student: userId },
+//         { registeredBy: userId }
+//       ]
+//     })
+//       .populate("competition", "name venue startTime endTime")
+//       .sort({ createdAt: -1 });
+
+//     res.status(200).json({
+//       success: true,
+//       data: registrations
+//     });
+
+//   } catch (error) {
+
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error"
+//     });
+
+//   }
+
+// };
+
 export const getMyRegistrations = async (req, res) => {
 
   try {
 
     const userId = req.user._id;
 
-    const registrations = await Registration.find({
-      $or: [
-        { student: userId },
-        { registeredBy: userId }
-      ]
+    // 1️⃣ Individual registrations
+    const individualRegs = await Registration.find({
+      student: userId
     })
       .populate("competition", "name venue startTime endTime")
       .sort({ createdAt: -1 });
 
+    // 2️⃣ Find user's teams
+    const teams = await Team.find({
+      members: userId
+    }).select("_id");
+
+    const teamIds = teams.map(t => t._id);
+
+    // 3️⃣ Team registrations
+    const teamRegs = await Registration.find({
+      team: { $in: teamIds }
+    })
+      .populate("competition", "name venue startTime endTime")
+      .populate("team", "teamName")
+      .sort({ createdAt: -1 });
+
+    // 4️⃣ Merge
+    const allRegistrations = [
+      ...individualRegs,
+      ...teamRegs
+    ];
+
     res.status(200).json({
       success: true,
-      data: registrations
+      data: allRegistrations
     });
 
   } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
       success: false,
@@ -336,6 +332,7 @@ export const getMyRegistrations = async (req, res) => {
   }
 
 };
+
 
 export const cancelRegistration = async (req, res) => {
 

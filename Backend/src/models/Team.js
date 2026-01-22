@@ -32,8 +32,15 @@ const teamSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // becomes true after registration submit
     },
+
   },
+
   { timestamps: true }
+);
+
+teamSchema.index(
+ { competitionId: 1, teamName: 1 },
+ { unique: true }
 );
 
 export default mongoose.model("Team", teamSchema);

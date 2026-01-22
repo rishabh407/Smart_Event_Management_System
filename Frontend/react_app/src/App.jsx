@@ -46,14 +46,14 @@ const App = () => {
   path="/student/events/:eventId/competitions/:competitionId/register"
   element={<CompetitionRegisteration />}
 />
-
+          
           <Route index element={<Dashboard />} />
             <Route path="events" element={<Events />} />
             <Route path="/student/event/competition/individualregisteration" element={<IndividualRegistration />} />
             <Route path="/student/event/competition/teamregisteration" element={<TeamRegisteration/>} />
             <Route path="/student/registrations" element={<MyRegistrations/>} />
             <Route path="certificates" element={<Certificates/>} />
-            <Route path="team" element={<Team />} />
+            <Route path="/student/team" element={<Team />} />
         </Route>
 
 

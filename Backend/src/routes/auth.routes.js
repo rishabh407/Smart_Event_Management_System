@@ -25,4 +25,5 @@ router.post("/change-password", protect, changePassword);
 router.post("/refresh", refreshToken);
 router.post("/logout", logout);
 router.get("/me", protect, getMe);
+
 export default router;

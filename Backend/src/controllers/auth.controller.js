@@ -546,14 +546,14 @@ export const getMe = async (req, res) => {
   try {
 
     // protect middleware already attached user
-    const user = req.user;
-
+    const userdata = req.user;
+  //  console.log(user._id);
     res.json({
       user: {
-        id: user._id,
-        fullName: user.fullName,
-        role: user.role,
-        email: user.email
+        id: userdata._id,
+        fullName: userdata.fullName,
+        role: userdata.role,
+        email: userdata.email
       }
     });
 

@@ -11,3 +11,7 @@ export const registerIndividual = (data) => {
 export const cancelRegistration = (id) => {
   return api.patch(`/registrations/${id}/cancel`);
 };
+
+export const registerTeam = (data) => {
+  return api.post("/registrations/team", data);
+};
