@@ -7,11 +7,8 @@ const MyRegistrations = () => {
   const [cancelLoadingId, setCancelLoadingId] = useState(null);
 
   useEffect(() => {
-
     const fetchRegistrations = async () => {
-
       try {
-
         const res = await getMyRegistrations();
         setRegistrations(res.data.data);
 

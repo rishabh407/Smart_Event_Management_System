@@ -5,7 +5,7 @@ import {
   joinTeam,
   getMyTeams
 } from "../../api/team.api";
-import { registerTeam } from "../../api/registeration.api";
+import { getMyRegistrations, registerTeam } from "../../api/registeration.api";
 
 const TeamRegistration = () => {
 
@@ -15,7 +15,7 @@ const TeamRegistration = () => {
   const [teamName, setTeamName] = useState("");
   const [joinTeamId, setJoinTeamId] = useState("");
   const [teams, setTeams] = useState([]);
-
+  const [registrations, setRegistrations] = useState([]);
   useEffect(() => {
     fetchMyTeams();
   }, []);
@@ -30,6 +30,7 @@ const TeamRegistration = () => {
       console.error(error);
     }
   };
+
   // ---------------- CREATE TEAM ----------------
   const handleCreateTeam = async () => {
 

@@ -146,16 +146,12 @@ export const registerTeam = async (req, res) => {
         message: "Team not found",
       });
     }
-    const alreadyRegistered = await Registration.findOne({
- competition: competitionId,
- team: teamId
-});
 
-if (alreadyRegistered) {
- return res.status(400).json({
-  message: "Team already registered"
- });
-}
+    const alreadyRegistered = await Registration.findOne({
+  competition: competitionId,
+  team: teamId,
+  status: { $ne: "cancelled" }
+});
 
     // Prevent double submit
     if (team.isSubmitted) {
@@ -249,37 +245,6 @@ if (competition.resultsDeclared === true) {
     res.status(500).json({ message: error.message });
   }
 };
-
-// export const getMyRegistrations = async (req, res) => {
-
-//   try {
-
-//     const userId = req.user._id;
-
-//     const registrations = await Registration.find({
-//       $or: [
-//         { student: userId },
-//         { registeredBy: userId }
-//       ]
-//     })
-//       .populate("competition", "name venue startTime endTime")
-//       .sort({ createdAt: -1 });
-
-//     res.status(200).json({
-//       success: true,
-//       data: registrations
-//     });
-
-//   } catch (error) {
-
-//     res.status(500).json({
-//       success: false,
-//       message: "Server error"
-//     });
-
-//   }
-
-// };
 
 export const getMyRegistrations = async (req, res) => {
 
@@ -389,6 +354,14 @@ export const cancelRegistration = async (req, res) => {
       success: true,
       message: "Registration cancelled successfully"
     });
+if (registration.team) {
+  const team = await Team.findById(registration.team);
+  if (team) {
+    team.isSubmitted = false;
+    await team.save();
+  }
+
+}
 
   } catch (error) {
 
