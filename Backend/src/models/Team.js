@@ -8,6 +8,14 @@ const teamSchema = new mongoose.Schema(
       trim: true,
     },
 
+    joinCode: {
+      type: String,
+      unique: true,
+      required: true,
+      uppercase: true,
+      index: true
+    },
+
     competitionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Competition",
@@ -30,17 +38,16 @@ const teamSchema = new mongoose.Schema(
 
     isSubmitted: {
       type: Boolean,
-      default: false, // becomes true after registration submit
+      default: false,
     },
 
   },
-
   { timestamps: true }
 );
 
 teamSchema.index(
- { competitionId: 1, teamName: 1 },
- { unique: true }
+  { competitionId: 1, teamName: 1 },
+  { unique: true }
 );
 
 export default mongoose.model("Team", teamSchema);
