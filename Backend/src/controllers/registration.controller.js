@@ -167,6 +167,19 @@ export const registerTeam = async (req, res) => {
       });
     }
 
+    // 🚫 Cancel attempt limit check
+const cancelCount = await Registration.countDocuments({
+  competition: competitionId,
+  team: teamId,
+  status: "cancelled"
+});
+
+if (cancelCount >= 2) {
+  return res.status(403).json({
+    message: "Registration limit exceeded. You cannot register again for this competition."
+  });
+}
+
     const competition = await Competition.findById(competitionId);
 
     // Prevent redeclaration
