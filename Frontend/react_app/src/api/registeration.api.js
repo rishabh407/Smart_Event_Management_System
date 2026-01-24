@@ -15,3 +15,7 @@ export const cancelRegistration = (id) => {
 export const registerTeam = (data) => {
   return api.post("/registrations/team", data);
 };
+
+export const deleteRegistration = (id) => {
+  return api.delete(`/registrations/${id}/delete`);
+};

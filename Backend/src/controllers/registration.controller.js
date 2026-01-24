@@ -311,7 +311,6 @@ export const getMyRegistrations = async (req, res) => {
 
 };
 
-
 export const cancelRegistration = async (req, res) => {
 
   try {
@@ -377,6 +376,61 @@ if (registration.team) {
 }
 
   } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+
+  }
+
+};
+
+// ================================
+// DELETE CANCELLED REGISTRATION
+// ================================
+
+export const deleteRegistration = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const registration = await Registration.findById(id);
+
+    if (!registration) {
+      return res.status(404).json({
+        success: false,
+        message: "Registration not found"
+      });
+    }
+
+    // Only owner can delete
+    if (registration.registeredBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized"
+      });
+    }
+
+    // Only cancelled allowed
+    if (registration.status !== "cancelled") {
+      return res.status(400).json({
+        success: false,
+        message: "Only cancelled registrations can be deleted"
+      });
+    }
+
+    await Registration.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Registration deleted permanently"
+    });
+
+  } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
       success: false,

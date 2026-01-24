@@ -2,6 +2,7 @@ import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
 import {
   cancelRegistration,
+  deleteRegistration,
   getMyRegistrations,
   registerIndividual,
   registerTeam,
@@ -17,6 +18,6 @@ router.get("/my",protect,getMyRegistrations);
 router.post("/team", protect, registerTeam);
 
 router.patch("/:id/cancel", protect, cancelRegistration);
-
+router.delete("/:id/delete",protect,deleteRegistration);
 export default router;
 
