@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const eventSchema = new mongoose.Schema(
   {
     title: {
@@ -46,21 +45,21 @@ const eventSchema = new mongoose.Schema(
 
     // ---------- CONTROL FLAGS ----------
 
-    isPublished: {
-      type: Boolean,
-      default: false,
-    },
+// ---------- CONTROL FLAGS ----------
+isPublished: {
+  type: Boolean,
+  default: false,
+},
 
-    registrationOpen: {
-      type: Boolean,
-      default: true,
-    },
+publishedAt: {
+  type: Date,
+  default: null,
+},
 
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
-
+isDeleted: {
+  type: Boolean,
+  default: false,
+},
     // ---------- RELATIONS ----------
 
     departmentId: {

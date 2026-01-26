@@ -5,7 +5,6 @@ import User from "../models/User.js";
 // ============================
 // CREATE EVENT (HOD ONLY)
 // ============================
-
 export const createEvent = async (req, res) => {
 
   try {
@@ -117,7 +116,6 @@ export const createEvent = async (req, res) => {
 
 };
 
-
 // ============================
 // GET ALL PUBLISHED EVENTS
 // ============================
@@ -143,11 +141,8 @@ export const getAllEvents = async (req, res) => {
     res.status(500).json({
       message: "Server error"
     });
-
   }
-
 };
-
 
 // ============================
 // STUDENT EVENTS (DEPARTMENT)
@@ -177,6 +172,140 @@ export const getStudentEvents = async (req, res) => {
       .sort({ startDate: 1 });
 
     res.status(200).json(events);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+};
+
+export const getMyEvents = async (req, res) => {
+
+  try {
+
+    const events = await Event.find({
+      createdBy: req.user._id,
+      isDeleted: false
+    })
+    .sort({ createdAt: -1 });
+
+    res.status(200).json(events);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
+export const updateEvent = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const {
+      title,
+      shortDescription,
+      description,
+      startDate,
+      endDate,
+      venueOverview,
+      coordinatorId
+    } = req.body;
+
+    // ---------------- FIND EVENT ----------------
+
+    const event = await Event.findById(id);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found"
+      });
+    }
+
+    // ---------------- SECURITY ----------------
+
+    // Only creator HOD
+    if (event.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Not authorized to edit this event"
+      });
+    }
+
+    // Cannot edit deleted event
+    if (event.isDeleted) {
+      return res.status(400).json({
+        message: "Cannot edit deleted event"
+      });
+    }
+
+    // Cannot edit after event started
+    if (new Date() >= event.startDate) {
+      return res.status(400).json({
+        message: "Cannot edit event after it has started"
+      });
+    }
+
+    // ---------------- DATE VALIDATION ----------------
+
+    if (startDate && endDate) {
+      if (new Date(startDate) >= new Date(endDate)) {
+        return res.status(400).json({
+          message: "End date must be after start date"
+        });
+      }
+    }
+
+    // ---------------- COORDINATOR CHECK ----------------
+
+    if (coordinatorId) {
+
+      const coordinator = await User.findById(coordinatorId);
+
+      if (!coordinator || coordinator.role !== "COORDINATOR") {
+        return res.status(400).json({
+          message: "Invalid coordinator"
+        });
+      }
+
+      if (
+        coordinator.departmentId.toString() !==
+        req.user.departmentId.toString()
+      ) {
+        return res.status(403).json({
+          message: "Coordinator must belong to same department"
+        });
+      }
+
+      event.coordinator = coordinatorId;
+    }
+
+    // ---------------- IMAGE UPDATE ----------------
+
+    if (req.file) {
+      event.bannerImage = `/uploads/events/${req.file.filename}`;
+    }
+
+    // ---------------- FIELD UPDATE ----------------
+
+    if (title) event.title = title;
+    if (shortDescription) event.shortDescription = shortDescription;
+    if (description) event.description = description;
+    if (venueOverview) event.venueOverview = venueOverview;
+    if (startDate) event.startDate = startDate;
+    if (endDate) event.endDate = endDate;
+
+    await event.save();
+
+    res.status(200).json({
+      message: "Event updated successfully",
+      event
+    });
 
   } catch (error) {
 
@@ -189,3 +318,211 @@ export const getStudentEvents = async (req, res) => {
   }
 
 };
+
+export const publishEvent = async (req, res) => {
+
+  try {
+
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found"
+      });
+    }
+
+    event.isPublished = true;
+    event.publishedAt = new Date();
+
+    await event.save();
+
+    res.status(200).json({
+      message: "Event published"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
+
+export const unpublishEvent = async (req, res) => {
+
+  try {
+
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found"
+      });
+    }
+
+    event.isPublished = false;
+
+    await event.save();
+
+    res.status(200).json({
+      message: "Event unpublished"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
+// export const deleteEvent = async (req, res) => {
+
+//   try {
+
+//     const event = await Event.findById(req.params.id);
+
+//     if (!event) {
+//       return res.status(404).json({
+//         message: "Event not found"
+//       });
+//     }
+
+//     event.isDeleted = true;
+
+//     await event.save();
+
+//     res.status(200).json({
+//       message: "Event deleted"
+//     });
+
+//   } catch (error) {
+
+//     res.status(500).json({
+//       message: "Server error"
+//     });
+
+//   }
+
+// };
+
+export const deleteEvent = async (req, res) => {
+
+  try {
+
+    const event = await Event.findById(req.params.id);
+
+    if (!event || event.isDeleted) {
+      return res.status(404).json({
+        message: "Event not found"
+      });
+    }
+
+    // ---------------- BLOCK DELETE IF ONGOING OR COMPLETED ----------------
+
+    const now = new Date();
+
+    if (now >= event.startDate) {
+      return res.status(400).json({
+        message: "Ongoing or completed events cannot be deleted"
+      });
+    }
+
+    // ---------------- SOFT DELETE ----------------
+
+    event.isDeleted = true;
+    await event.save();
+
+    res.status(200).json({
+      message: "Event deleted successfully"
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
+
+export const restoreEvent = async (req, res) => {
+
+  try {
+
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found"
+      });
+    }
+
+    event.isDeleted = false;
+
+    await event.save();
+
+    res.status(200).json({
+      message: "Event restored"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
+
+
+export const getEventById = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const event = await Event.findById(id)
+      .populate("coordinator", "fullName");
+
+    if (!event || event.isDeleted) {
+      return res.status(404).json({
+        message: "Event not found"
+      });
+    }
+
+    // Only HOD who created it OR same department HOD
+    if (
+      req.user.role !== "HOD" ||
+      event.departmentId.toString() !== req.user.departmentId.toString()
+    ) {
+      return res.status(403).json({
+        message: "Access denied"
+      });
+    }
+
+    res.status(200).json(event);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+

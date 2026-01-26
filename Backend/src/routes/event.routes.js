@@ -1,11 +1,75 @@
+// import express from "express";
+// import { createEvent, getAllEvents, getStudentEvents } from "../controllers/event.controller.js";
+// import { protect } from "../middlewares/auth.middleware.js";
+// import { hodOnly } from "../middlewares/role.middleware.js";
+// import { eventUpload } from "../middlewares/eventUpload.js";
+// const router = express.Router();
+
+// router.post("/", protect,eventUpload.single("banner"),hodOnly, createEvent);
+// router.get("/",protect,getAllEvents);
+// router.get("/student/my", protect, getStudentEvents);
+// export default router;
+
 import express from "express";
-import { createEvent, getAllEvents, getStudentEvents } from "../controllers/event.controller.js";
+import {
+  createEvent,
+  getAllEvents,
+  getStudentEvents,
+  getMyEvents,
+  updateEvent,
+  publishEvent,
+  unpublishEvent,
+  deleteEvent,
+  restoreEvent,
+  getEventById
+} from "../controllers/event.controller.js";
+
 import { protect } from "../middlewares/auth.middleware.js";
 import { hodOnly } from "../middlewares/role.middleware.js";
 import { eventUpload } from "../middlewares/eventUpload.js";
+
 const router = express.Router();
 
-router.post("/", protect,eventUpload.single("banner"),hodOnly, createEvent);
-router.get("/",protect,getAllEvents);
+// CREATE EVENT
+router.post(
+  "/",
+  protect,
+  hodOnly,
+  eventUpload.single("banner"),
+  createEvent
+);
+
+// PUBLIC EVENTS
+router.get("/", protect, getAllEvents);
+
+// STUDENT EVENTS
 router.get("/student/my", protect, getStudentEvents);
+
+// ================= HOD MANAGEMENT =================
+
+// HOD OWN EVENTS
+router.get("/hod/my", protect, hodOnly, getMyEvents);
+
+// UPDATE EVENT
+router.put(
+  "/:id/update",
+  protect,
+  hodOnly,
+  eventUpload.single("banner"),
+  updateEvent
+);
+
+// PUBLISH / UNPUBLISH
+router.patch("/:id/publish", protect, hodOnly, publishEvent);
+router.patch("/:id/unpublish", protect, hodOnly, unpublishEvent);
+
+// DELETE / RESTORE
+router.patch("/:id/delete", protect, hodOnly, deleteEvent);
+router.patch("/:id/restore", protect, hodOnly, restoreEvent);
+router.get("/:id", protect, hodOnly, getEventById);
+
+// router.patch("/:id/close-registration", protect, hodOnly, closeRegistration);
+// router.patch("/:id/open-registration", protect, hodOnly, openRegistration);
+
 export default router;
+
