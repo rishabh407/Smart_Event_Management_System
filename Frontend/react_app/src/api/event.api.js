@@ -20,19 +20,10 @@ export const getStudentEvents = () => {
 // HOD events
 export const getMyEvents = () => api.get("/events/hod/my");
 
-// Publish / Unpublish
-export const publishEvent = (id) =>
-  api.patch(`/events/${id}/publish`);
-
-export const unpublishEvent = (id) =>
-  api.patch(`/events/${id}/unpublish`);
-
 // Delete / Restore
-export const deleteEvent = (id) =>
-  api.patch(`/events/${id}/delete`);
+export const deleteEvent = (id) => api.patch(`/events/${id}/delete`);
 
-export const restoreEvent = (id) =>
-  api.patch(`/events/${id}/restore`);
+export const restoreEvent = (id) => api.patch(`/events/${id}/restore`);
 
 export const updateEvent = (id, formData) => {
   return api.put(`/events/${id}/update`, formData);
@@ -40,4 +31,24 @@ export const updateEvent = (id, formData) => {
 
 export const getEventById = (id) => {
   return api.get(`/events/${id}`);
+};
+
+// HOD DASHBOARD STATS
+export const getHodDashboardStats = (params = {}) => {
+  return api.get("/events/hod/dashboard-stats", {
+    params,
+  });
+};
+
+// Event Performance Ranking
+export const getEventPerformanceRanking = () => {
+  return api.get("/events/hod/performance-ranking");
+};
+
+export const publishEvent = (id) => {
+  api.patch(`/events/${id}/publish`);
+};
+
+export const unpublishEvent = (id) => {
+  api.patch(`/events/${id}/unpublish`);
 };

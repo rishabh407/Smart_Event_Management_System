@@ -21,7 +21,9 @@ import {
   unpublishEvent,
   deleteEvent,
   restoreEvent,
-  getEventById
+  getEventById,
+  getHodDashboardStats,
+  getEventPerformanceRanking
 } from "../controllers/event.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
@@ -67,6 +69,13 @@ router.patch("/:id/unpublish", protect, hodOnly, unpublishEvent);
 router.patch("/:id/delete", protect, hodOnly, deleteEvent);
 router.patch("/:id/restore", protect, hodOnly, restoreEvent);
 router.get("/:id", protect, hodOnly, getEventById);
+router.get("/hod/dashboard-stats",protect,hodOnly,getHodDashboardStats);
+router.get(
+  "/hod/performance-ranking",
+  protect,
+  hodOnly,
+  getEventPerformanceRanking
+);
 
 // router.patch("/:id/close-registration", protect, hodOnly, closeRegistration);
 // router.patch("/:id/open-registration", protect, hodOnly, openRegistration);

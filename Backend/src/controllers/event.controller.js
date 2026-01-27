@@ -321,95 +321,30 @@ export const updateEvent = async (req, res) => {
 
 export const publishEvent = async (req, res) => {
 
-  try {
+  const event = await Event.findById(req.params.id);
 
-    const event = await Event.findById(req.params.id);
+  if (!event) return res.status(404).json({ message: "Event not found" });
 
-    if (!event) {
-      return res.status(404).json({
-        message: "Event not found"
-      });
-    }
+  event.isPublished = true;
+  event.publishedAt = new Date();
 
-    event.isPublished = true;
-    event.publishedAt = new Date();
+  await event.save();
 
-    await event.save();
-
-    res.status(200).json({
-      message: "Event published"
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Server error"
-    });
-
-  }
-
+  res.json({ message: "Event published" });
 };
-
 
 export const unpublishEvent = async (req, res) => {
 
-  try {
+  const event = await Event.findById(req.params.id);
 
-    const event = await Event.findById(req.params.id);
+  if (!event) return res.status(404).json({ message: "Event not found" });
 
-    if (!event) {
-      return res.status(404).json({
-        message: "Event not found"
-      });
-    }
+  event.isPublished = false;
 
-    event.isPublished = false;
+  await event.save();
 
-    await event.save();
-
-    res.status(200).json({
-      message: "Event unpublished"
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Server error"
-    });
-
-  }
-
+  res.json({ message: "Event unpublished" });
 };
-
-// export const deleteEvent = async (req, res) => {
-
-//   try {
-
-//     const event = await Event.findById(req.params.id);
-
-//     if (!event) {
-//       return res.status(404).json({
-//         message: "Event not found"
-//       });
-//     }
-
-//     event.isDeleted = true;
-
-//     await event.save();
-
-//     res.status(200).json({
-//       message: "Event deleted"
-//     });
-
-//   } catch (error) {
-
-//     res.status(500).json({
-//       message: "Server error"
-//     });
-
-//   }
-
-// };
 
 export const deleteEvent = async (req, res) => {
 
@@ -526,3 +461,151 @@ export const getEventById = async (req, res) => {
 
 };
 
+export const getHodDashboardStats = async (req, res) => {
+
+  try {
+
+    const hodId = req.user._id;
+
+    const { from, to } = req.query;
+
+    let filter = {
+      createdBy: hodId,
+      isDeleted: false
+    };
+
+    // ---------- DATE FILTER ----------
+
+    if (from && to) {
+
+      filter.createdAt = {
+        $gte: new Date(from),
+        $lte: new Date(to)
+      };
+
+    }
+
+    const events = await Event.find(filter);
+
+    const total = events.length;
+
+    const upcoming = events.filter(
+      e => e.liveStatus === "upcoming"
+    ).length;
+
+    const ongoing = events.filter(
+      e => e.liveStatus === "ongoing"
+    ).length;
+
+    const completed = events.filter(
+      e => e.liveStatus === "completed"
+    ).length;
+
+    // ---------- MONTHLY TREND ----------
+
+    const monthlyStats = {};
+
+    events.forEach(event => {
+
+      const month = new Date(event.createdAt)
+        .toLocaleString("default", { month: "short" });
+
+      monthlyStats[month] = (monthlyStats[month] || 0) + 1;
+
+    });
+
+    const monthlyChart = Object.keys(monthlyStats).map(month => ({
+      month,
+      count: monthlyStats[month]
+    }));
+
+    res.status(200).json({
+
+      total,
+      upcoming,
+      ongoing,
+      completed,
+
+      charts: {
+
+        statusChart: [
+          { name: "Upcoming", value: upcoming },
+          { name: "Ongoing", value: ongoing },
+          { name: "Completed", value: completed }
+        ],
+
+        monthlyChart
+
+      }
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
+export const getEventPerformanceRanking = async (req, res) => {
+
+  try {
+
+    const hodDepartment = req.user.departmentId;
+
+    const ranking = await Registration.aggregate([
+
+      {
+        $lookup: {
+          from: "events",
+          localField: "competition",
+          foreignField: "_id",
+          as: "eventData"
+        }
+      },
+
+      { $unwind: "$eventData" },
+
+      {
+        $match: {
+          "eventData.departmentId": hodDepartment
+        }
+      },
+
+      {
+        $group: {
+          _id: "$eventData._id",
+          title: { $first: "$eventData.title" },
+          banner: { $first: "$eventData.bannerImage" },
+          registrations: { $sum: 1 }
+        }
+      },
+
+      {
+        $sort: { registrations: -1 }
+      },
+
+      {
+        $limit: 10
+      }
+
+    ]);
+
+    res.status(200).json(ranking);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Performance ranking fetch failed"
+    });
+
+  }
+
+};

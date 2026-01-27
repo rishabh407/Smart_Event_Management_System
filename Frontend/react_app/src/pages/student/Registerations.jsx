@@ -451,13 +451,11 @@ const MyRegistrations = () => {
             : reg
         )
       );
-
     } catch (error) {
       alert(error.response?.data?.message || "Cancel failed");
     } finally {
       setCancelLoadingId(null);
     }
-
   };
 
   // ---------------- DELETE HANDLER ----------------
@@ -469,13 +467,9 @@ const MyRegistrations = () => {
     );
 
     if (!confirmDelete) return;
-
     try {
-
       setDeleteLoadingId(registrationId);
-
       await deleteRegistration(registrationId);
-
       // Remove from UI
       setRegistrations((prev) =>
         prev.filter((reg) => reg._id !== registrationId)
