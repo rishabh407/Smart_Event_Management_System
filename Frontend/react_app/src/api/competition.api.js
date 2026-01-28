@@ -42,3 +42,7 @@ export const assignTeacher = (data) => {
 export const removeTeacher = (data) => {
  return api.post("/assignments/remove", data);
 };
+
+export const getCompetitionDetails = (id) => {
+ return api.get(`/competitions/${id}/details`);
+};

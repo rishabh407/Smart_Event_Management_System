@@ -153,6 +153,16 @@ const handleUnpublish = async (id) => {
       >
        Edit
       </button>
+       
+       <button
+ onClick={() =>
+  navigate(`/coordinator/competitions/details/${comp._id}`)
+ }
+ className="bg-gray-700 text-white px-3 py-1 rounded"
+>
+ View
+</button>
+
 
       {comp.isPublished ? (
 

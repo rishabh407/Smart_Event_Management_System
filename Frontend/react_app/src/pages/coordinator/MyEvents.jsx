@@ -1,7 +1,97 @@
+// import { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { getCoordinatorEvents } from "../../api/event.api";
+
+// const MyEvents = () => {
+
+//  const [events, setEvents] = useState([]);
+//  const [loading, setLoading] = useState(true);
+
+//  const navigate = useNavigate();
+
+//  const fetchEvents = async () => {
+
+//   try {
+
+//    const res = await getCoordinatorEvents();
+//    console.log("MY EVENTS:", res.data);
+
+//    setEvents(res.data);
+//    setLoading(false);
+
+//   } catch (error) {
+
+//    console.log(error);
+//    setLoading(false);
+
+//   }
+
+//  };
+
+//  useEffect(() => {
+//   fetchEvents();
+//  }, []);
+
+//  if (loading) {
+//   return <p>Loading events...</p>;
+//  }
+
+//  return (
+
+//   <div>
+
+//    <h1 className="text-2xl font-bold mb-5">
+//     My Assigned Events
+//    </h1>
+
+//    {events.length === 0 && (
+//     <p className="text-gray-500">
+//      No events assigned yet.
+//     </p>
+//    )}
+
+//    {events.map(event => (
+
+//     <div
+//      key={event._id}
+//      className="bg-white p-4 mb-3 rounded shadow flex justify-between items-center"
+//     >
+
+//      <div>
+//       <h2 className="font-semibold">
+//        {event.title}
+//       </h2>
+
+//       <p className="text-sm text-gray-600">
+//        Venue: {event.venueOverview}
+//       </p>
+//      </div>
+
+//      <button
+//       onClick={() =>
+//        navigate(`/coordinator/events/${event._id}/competitions`)
+//       }
+//       className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+//      >
+//       Manage Competitions
+//      </button>
+
+//     </div>
+
+//    ))}
+
+//   </div>
+
+//  );
+// };
+
+// export default MyEvents;
+
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCoordinatorEvents } from "../../api/event.api";
-const CoordinatorDashboard = () => {
+const MyEvents = () => {
 
  const [events, setEvents] = useState([]);
  const [loading, setLoading] = useState(true);
@@ -124,4 +214,4 @@ if (loading) {
  );
 };
 
-export default CoordinatorDashboard;
+export default MyEvents;

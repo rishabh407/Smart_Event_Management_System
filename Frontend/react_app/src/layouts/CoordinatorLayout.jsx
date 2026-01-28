@@ -3,15 +3,6 @@ import { useAuth } from "../context/AuthContext";
 
 const CoordinatorLayout = () => {
   const { user, logout } = useAuth();
-//  const navigate = useNavigate();
-
-//  const handleLogout = () => {
-
-//   Cookies.remove("accessToken");
-//   Cookies.remove("refreshToken");
-
-//   navigate("/");
-//  };
 
  const linkStyle = ({ isActive }) =>
   `block px-4 py-2 rounded transition ${
@@ -39,7 +30,14 @@ const CoordinatorLayout = () => {
      >
       Dashboard
      </NavLink>
+<NavLink
+ to="/coordinator/events"
+ end
+ className={linkStyle}
+>
 
+ My Events
+</NavLink>
      <button
       onClick={logout}
       className="w-full mt-6 bg-red-600 hover:bg-red-700 py-2 rounded"

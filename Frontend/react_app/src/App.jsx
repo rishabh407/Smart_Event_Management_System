@@ -24,6 +24,8 @@ import ManageCompetitions from "./pages/coordinator/ManageCompetitions";
 import CreateCompetitions from "./pages/coordinator/CreateCompetitions";
 import EditCompetition from "./pages/coordinator/EditCompetition";
 import AssignTeachers from "./pages/coordinator/AssignTeachers";
+import MyEvents from "./pages/coordinator/MyEvents";
+import CompetitionDetails from "./pages/coordinator/CompetitionDetails";
 const App = () => {
   return (
     <BrowserRouter>
@@ -97,6 +99,9 @@ const App = () => {
  {/* Dashboard */}
  <Route path="dashboard" element={<CoordinatorDashboard />} />
 
+ {/* My Events page (NEW) */}
+ <Route path="events" element={<MyEvents />} />
+
  {/* Event based competition management */}
  <Route
   path="events/:eventId/competitions"
@@ -110,6 +115,11 @@ const App = () => {
  path="competitions/edit/:id"
  element={<EditCompetition/>}
 />
+<Route
+ path="competitions/details/:id"
+ element={<CompetitionDetails />}
+/>
+
 <Route
  path="competitions/:competitionId/assign-teachers"
  element={<AssignTeachers />}

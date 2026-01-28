@@ -20,6 +20,7 @@ import { protect } from "../middlewares/auth.middleware.js";
 import {
     createCompetition,
  getCompetitionById,
+ getCompetitionDetails,
  getCompetitionsByEvent,
  publishCompetition,
  unpublishCompetition,
@@ -67,6 +68,13 @@ router.patch(
  protect,
  coordinatorOnly,
  unpublishCompetition
+);
+
+router.get(
+ "/:id/details",
+ protect,
+ coordinatorOnly,
+ getCompetitionDetails
 );
 
 export default router;
