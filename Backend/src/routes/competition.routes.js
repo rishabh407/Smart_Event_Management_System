@@ -19,15 +19,34 @@ import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
 import {
     createCompetition,
+ getCompetitionById,
  getCompetitionsByEvent,
  publishCompetition,
- unpublishCompetition
+ unpublishCompetition,
+ updateCompetition
 } from "../controllers/competition.controller.js";
 import { coordinatorOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
 router.post("/", protect, createCompetition);
+
+// GET single competition (for edit page)
+router.get(
+ "/:id",
+ protect,
+ coordinatorOnly,
+ getCompetitionById
+);
+
+// UPDATE competition
+router.put(
+ "/:id",
+ protect,
+ coordinatorOnly,
+ updateCompetition
+);
+
 
 router.get(
  "/event/:eventId",

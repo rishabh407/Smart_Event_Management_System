@@ -307,3 +307,90 @@ export const unpublishCompetition = async (req, res) => {
  }
 };
 
+
+export const getCompetitionById = async (req, res) => {
+
+ try {
+
+  const { id } = req.params;
+
+  const competition = await Competition.findById(id);
+
+  if (!competition) {
+   return res.status(404).json({
+    message: "Competition not found"
+   });
+  }
+
+  res.status(200).json(competition);
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   message: "Server error"
+  });
+
+ }
+};
+
+
+export const updateCompetition = async (req, res) => {
+
+ try {
+
+  const { id } = req.params;
+
+  const competition = await Competition.findById(id);
+
+  if (!competition) {
+   return res.status(404).json({
+    message: "Competition not found"
+   });
+  }
+
+  // Prevent editing after start
+  if (new Date() >= competition.startTime) {
+   return res.status(400).json({
+    message: "Competition already started"
+   });
+  }
+
+  const allowedFields = [
+   "name",
+   "shortDescription",
+   "venue",
+   "registrationDeadline",
+   "startTime",
+   "endTime",
+   "maxParticipants",
+   "minTeamSize",
+   "maxTeamSize"
+  ];
+
+  allowedFields.forEach(field => {
+
+   if (req.body[field] !== undefined) {
+    competition[field] = req.body[field];
+   }
+
+  });
+
+  await competition.save();
+
+  res.status(200).json({
+   message: "Competition updated successfully",
+   competition
+  });
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   message: "Server error"
+  });
+
+ }
+};

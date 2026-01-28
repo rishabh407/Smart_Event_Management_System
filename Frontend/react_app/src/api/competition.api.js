@@ -27,3 +27,8 @@ export const createCompetition = (data) => {
  return api.post("/competitions", data);
 };
 
+
+// Update competition
+export const updateCompetition = (id, data) => {
+ return api.put(`/competitions/${id}`, data);
+};

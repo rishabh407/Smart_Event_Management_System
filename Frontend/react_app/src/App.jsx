@@ -22,7 +22,7 @@ import CoordinatorLayout from "./layouts/CoordinatorLayout";
 import CoordinatorDashboard from "./pages/coordinator/CoordinatorDashboard";
 import ManageCompetitions from "./pages/coordinator/ManageCompetitions";
 import CreateCompetitions from "./pages/coordinator/CreateCompetitions";
-
+import EditCompetition from "./pages/coordinator/EditCompetition";
 const App = () => {
   return (
     <BrowserRouter>
@@ -104,6 +104,10 @@ const App = () => {
  <Route
  path="events/:eventId/competitions/create"
  element={<CreateCompetitions />}
+/>
+<Route
+ path="competitions/edit/:id"
+ element={<EditCompetition/>}
 />
 
 </Route>
