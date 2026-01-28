@@ -1,123 +1,103 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getCoordinatorEvents } from "../../api/event.api";
+import { getCoordinatorDashboardStats } from "../../api/competition.api";
+
 const CoordinatorDashboard = () => {
 
- const [events, setEvents] = useState([]);
+ const [stats, setStats] = useState(null);
  const [loading, setLoading] = useState(true);
- const navigate = useNavigate();
- const fetchevents=async()=>{
-  await getCoordinatorEvents()
-   .then(res => {
-    console.log(res.data);
-    setEvents(res.data);
-    setLoading(false);
-   })
-   .catch(err => {
-    console.log(err);
-    setLoading(false);
-   });
- }
+
+ const fetchStats = async () => {
+
+  try {
+
+   const res = await getCoordinatorDashboardStats();
+   setStats(res.data);
+   setLoading(false);
+
+  } catch (error) {
+
+   console.error(error);
+   setLoading(false);
+
+  }
+
+ };
+
  useEffect(() => {
-  fetchevents();
+  fetchStats();
  }, []);
 
-if (loading) {
- return (
-  <div className="text-center mt-10 text-gray-600">
-    Loading your events...
-  </div>
- );
-}
+ if (loading) return <p>Loading dashboard...</p>;
 
  return (
 
   <div>
 
-   <h1 className="text-2xl font-bold mb-5">
-    My Assigned Events
+   <h1 className="text-2xl font-bold mb-6">
+    Coordinator Dashboard
    </h1>
 
-   {events.length === 0 && (
-    <p className="text-gray-500">
-     No events assigned yet.
-    </p>
-   )}
+   {/* STATS GRID */}
 
-{events.map(event => (
+   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
-  <div
-    key={event._id}
-    className="bg-white rounded-lg shadow mb-4 overflow-hidden"
-  >
+    {/* TOTAL COMPETITIONS */}
 
-    {/* Banner */}
-    <img
-      src={`http://localhost:5000${event.bannerImage}`}
-      alt="event banner"
-      className="w-full h-40 object-cover"
-    />
+    <div className="bg-white p-4 rounded shadow">
 
-    <div className="p-4">
+     <p className="text-gray-500">
+      Total Competitions
+     </p>
 
-      {/* Title + Status */}
-      <div className="flex justify-between items-center mb-2">
-
-        <h2 className="text-lg font-semibold">
-          {event.title}
-        </h2>
-
-        <span
-          className={`px-3 py-1 text-sm rounded-full ${
-            event.liveStatus === "upcoming"
-              ? "bg-yellow-100 text-yellow-700"
-              : event.liveStatus === "ongoing"
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-200 text-gray-700"
-          }`}
-        >
-          {event.liveStatus}
-        </span>
-
-      </div>
-
-      {/* Description */}
-      <p className="text-gray-600 text-sm mb-2">
-        {event.shortDescription}
-      </p>
-
-      {/* Venue + Dates */}
-      <div className="text-sm text-gray-500 mb-3">
-
-        <p>
-          📍 Venue: {event.venueOverview}
-        </p>
-
-        <p>
-          📅 Start: {new Date(event.startDate).toLocaleDateString()}
-        </p>
-
-        <p>
-          ⏳ End: {new Date(event.endDate).toLocaleDateString()}
-        </p>
-
-      </div>
-
-      {/* Action Button */}
-      <button
-        onClick={() =>
-          navigate(`/coordinator/events/${event._id}/competitions`)
-        }
-        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-      >
-        Manage Competitions
-      </button>
+     <h2 className="text-2xl font-bold">
+      {stats.totalCompetitions}
+     </h2>
 
     </div>
 
-  </div>
+    {/* PUBLISHED */}
 
-))}
+    <div className="bg-white p-4 rounded shadow">
+
+     <p className="text-gray-500">
+      Published Competitions
+     </p>
+
+     <h2 className="text-2xl font-bold">
+      {stats.publishedCompetitions}
+     </h2>
+
+    </div>
+
+    {/* TOTAL REGISTRATIONS */}
+
+    <div className="bg-white p-4 rounded shadow">
+
+     <p className="text-gray-500">
+      Total Registrations
+     </p>
+
+     <h2 className="text-2xl font-bold">
+      {stats.totalRegistrations}
+     </h2>
+
+    </div>
+
+    {/* ACTIVE */}
+
+    <div className="bg-white p-4 rounded shadow">
+
+     <p className="text-gray-500">
+      Active Registrations
+     </p>
+
+     <h2 className="text-2xl font-bold">
+      {stats.activeRegistrations}
+     </h2>
+
+    </div>
+
+   </div>
 
   </div>
 

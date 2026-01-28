@@ -22,6 +22,7 @@ import {
  getCompetitionById,
  getCompetitionDetails,
  getCompetitionsByEvent,
+ getCoordinatorDashboardStats,
  getPublicCompetitionsByEvent,
  publishCompetition,
  unpublishCompetition,
@@ -76,6 +77,14 @@ router.get(
  coordinatorOnly,
  getCompetitionDetails
 );
+
+router.get(
+ "/coordinator/dashboard-stats",
+ protect,
+ coordinatorOnly,
+ getCoordinatorDashboardStats
+);
+
 
 router.get("/events/:eventId",protect,getPublicCompetitionsByEvent);
 

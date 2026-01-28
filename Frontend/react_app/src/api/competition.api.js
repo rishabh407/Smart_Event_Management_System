@@ -50,3 +50,7 @@ export const removeTeacher = (data) => {
 export const getCompetitionDetails = (id) => {
  return api.get(`/competitions/${id}/details`);
 };
+
+export const getCoordinatorDashboardStats = () => {
+ return api.get("/competitions/coordinator/dashboard-stats");
+};

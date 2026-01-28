@@ -1,5 +1,6 @@
 import Competition from "../models/Competition.js";
 import Event from "../models/Event.js";
+import Registration from "../models/Registration.js";
 import User from "../models/User.js";
 
 // ============================
@@ -402,6 +403,66 @@ export const updateCompetition = async (req, res) => {
   res.status(200).json({
    message: "Competition updated successfully",
    competition
+  });
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   message: "Server error"
+  });
+
+ }
+};
+
+export const getCoordinatorDashboardStats = async (req, res) => {
+
+ try {
+
+  if (req.user.role !== "COORDINATOR") {
+   return res.status(403).json({
+    message: "Access denied"
+   });
+  }
+
+  // Get coordinator events
+  const events = await Event.find({
+   coordinator: req.user._id
+  }).select("_id");
+
+  const eventIds = events.map(e => e._id);
+
+  // Get competitions of those events
+  const competitions = await Competition.find({
+   eventId: { $in: eventIds },
+   isDeleted: false
+  });
+
+  const competitionIds = competitions.map(c => c._id);
+
+  // Total registrations
+  const totalRegistrations = await Registration.countDocuments({
+   competition: { $in: competitionIds }
+  });
+
+  // Active registrations
+  const activeRegistrations = await Registration.countDocuments({
+   competition: { $in: competitionIds },
+   status: "registered"
+  });
+
+  const publishedCount = competitions.filter(
+   c => c.isPublished === true
+  ).length;
+
+  res.status(200).json({
+
+   totalCompetitions: competitions.length,
+   publishedCompetitions: publishedCount,
+   totalRegistrations,
+   activeRegistrations
+
   });
 
  } catch (error) {
