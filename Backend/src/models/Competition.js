@@ -54,6 +54,11 @@ isPublished: {
  default: false
 }
 ,
+isDeleted: {
+ type: Boolean,
+ default: false
+},
+
     venue: {
       type: String,
       required: true,

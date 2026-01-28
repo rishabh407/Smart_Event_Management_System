@@ -18,6 +18,7 @@
 import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
 import {
+    createCompetition,
  getCompetitionsByEvent,
  publishCompetition,
  unpublishCompetition
@@ -25,6 +26,8 @@ import {
 import { coordinatorOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
+
+router.post("/", protect, createCompetition);
 
 router.get(
  "/event/:eventId",

@@ -21,6 +21,7 @@ import HodLayout from "./layouts/HodLayout";
 import CoordinatorLayout from "./layouts/CoordinatorLayout";
 import CoordinatorDashboard from "./pages/coordinator/CoordinatorDashboard";
 import ManageCompetitions from "./pages/coordinator/ManageCompetitions";
+import CreateCompetitions from "./pages/coordinator/CreateCompetitions";
 
 const App = () => {
   return (
@@ -100,11 +101,15 @@ const App = () => {
   path="events/:eventId/competitions"
   element={<ManageCompetitions />}
  />
- 
+ <Route
+ path="events/:eventId/competitions/create"
+ element={<CreateCompetitions />}
+/>
+
 </Route>
 
 
-        {/* HOD PANEL */}
+{/*=============================== HOD PANEL ======================*/}
         <Route
           path="/hod"
           element={

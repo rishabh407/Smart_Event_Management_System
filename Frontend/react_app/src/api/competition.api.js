@@ -23,3 +23,7 @@ export const unpublishCompetition = (id) => {
  return api.patch(`/competitions/${id}/unpublish`);
 };
 
+export const createCompetition = (data) => {
+ return api.post("/competitions", data);
+};
+

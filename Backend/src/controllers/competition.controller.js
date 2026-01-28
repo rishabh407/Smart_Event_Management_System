@@ -79,22 +79,41 @@ export const createCompetition = async (req, res) => {
 
     // ---------------- CREATE ----------------
 
-    const competition = await Competition.create({
-      eventId,
-      name,
-      shortDescription,
-      rules,
-      type,
-      minTeamSize,
-      maxTeamSize,
-      maxParticipants,
-      registrationDeadline,
-      venue,
-      startTime,
-      endTime,
-      assignedTeachers,
-      resultsDeclared: false
-    });
+    // const competition = await Competition.create({
+    //   eventId,
+    //   name,
+    //   shortDescription,
+    //   rules,
+    //   type,
+    //   minTeamSize,
+    //   maxTeamSize,
+    //   maxParticipants,
+    //   registrationDeadline,
+    //   venue,
+    //   startTime,
+    //   endTime,
+    //   assignedTeachers,
+    //   resultsDeclared: false
+    // });
+
+const competition = await Competition.create({
+ eventId,
+ name,
+ shortDescription,
+ rules,
+ type,
+ minTeamSize,
+ maxTeamSize,
+ maxParticipants,
+ registrationDeadline,
+ venue,
+ startTime,
+ endTime,
+ assignedTeachers,
+ resultsDeclared: false,
+ isPublished: false,
+ isDeleted: false
+});
 
     res.status(201).json({
       message: "Competition created successfully",
