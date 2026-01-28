@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import Login from "./pages/Login";
 import TeacherDashboard from "./pages/TeacherDashboard";
-import CoordinatorDashboard from "./pages/CoordinationDashboard";
 import ChangePassword from "./pages/ChangePassword";
 import StudentLayout from "./layouts/StudentLayout";
 import Dashboard from "./pages/student/Dashboard";
@@ -19,6 +18,9 @@ import CreateEvent from "./pages/hod/CreateEvent";
 import HodDashboard from "./pages/hod/HodDashboard";
 import EditEvent from "./pages/hod/EditEvent";
 import HodLayout from "./layouts/HodLayout";
+import CoordinatorLayout from "./layouts/CoordinatorLayout";
+import CoordinatorDashboard from "./pages/coordinator/CoordinatorDashboard";
+import ManageCompetitions from "./pages/coordinator/ManageCompetitions";
 
 const App = () => {
   return (
@@ -74,14 +76,35 @@ const App = () => {
           }
         />
 
-        <Route
-          path="/coordinator"
-          element={
-            <ProtectedRoute>
-              <CoordinatorDashboard />
-            </ProtectedRoute>
-          }
-        />
+{/* COORDINATE PANEL*/}
+
+{/* ================= COORDINATOR PANEL ================= */}
+
+<Route
+ path="/coordinator"
+ element={
+  <ProtectedRoute>
+   <CoordinatorLayout />
+  </ProtectedRoute>
+ }
+>
+
+ {/* Default page */}
+ <Route index element={<CoordinatorDashboard />} />
+
+ {/* Dashboard */}
+ <Route path="dashboard" element={<CoordinatorDashboard />} />
+
+ {/* Event based competition management */}
+ <Route
+  path="events/:eventId/competitions"
+  element={<ManageCompetitions />}
+ />
+ 
+</Route>
+
+
+        {/* HOD PANEL */}
         <Route
           path="/hod"
           element={

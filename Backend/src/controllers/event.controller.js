@@ -609,3 +609,26 @@ export const getEventPerformanceRanking = async (req, res) => {
   }
 
 };
+
+export const getCoordinatorEvents = async (req, res) => {
+
+ try {
+
+  const events = await Event.find({
+   coordinator: req.user._id,
+   isDeleted: false,
+   isPublished: true
+  }).sort({ startDate: 1 });
+
+  res.status(200).json(events);
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   message: "Server error"
+  });
+
+ }
+};

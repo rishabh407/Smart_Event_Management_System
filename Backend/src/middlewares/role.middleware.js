@@ -21,9 +21,13 @@ export const hodOnly = (req, res, next) => {
 
 
 
-export const specialTeacher = (req, res, next) => {
-  if (req.user.role !== "COORDINATOR") {
-    return res.status(403).json({ message: "Spteacher only" });
-  }
-  next();
+export const coordinatorOnly = (req, res, next) => {
+
+ if (req.user.role !== "COORDINATOR") {
+  return res.status(403).json({
+   message: "Coordinator access only"
+  });
+ }
+
+ next();
 };

@@ -23,11 +23,12 @@ import {
   restoreEvent,
   getEventById,
   getHodDashboardStats,
-  getEventPerformanceRanking
+  getEventPerformanceRanking,
+  getCoordinatorEvents
 } from "../controllers/event.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
-import { hodOnly } from "../middlewares/role.middleware.js";
+import { coordinatorOnly, hodOnly } from "../middlewares/role.middleware.js";
 import { eventUpload } from "../middlewares/eventUpload.js";
 
 const router = express.Router();
@@ -77,8 +78,12 @@ router.get(
   getEventPerformanceRanking
 );
 
-// router.patch("/:id/close-registration", protect, hodOnly, closeRegistration);
-// router.patch("/:id/open-registration", protect, hodOnly, openRegistration);
+router.get(
+ "/coordinator/my",
+ protect,
+ coordinatorOnly,
+ getCoordinatorEvents
+);
 
 export default router;
 

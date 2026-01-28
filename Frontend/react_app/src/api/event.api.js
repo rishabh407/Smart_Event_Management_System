@@ -52,3 +52,7 @@ export const publishEvent = (id) => {
 export const unpublishEvent = (id) => {
   api.patch(`/events/${id}/unpublish`);
 };
+
+export const getCoordinatorEvents = () => {
+ return api.get("/events/coordinator/my");
+};

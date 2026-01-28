@@ -1,16 +1,50 @@
+// import express from "express";
+// import { createCompetition, getAllCompetitionsByEvent, getCompetitionDetails } from "../controllers/competition.controller.js";
+// import { protect } from "../middlewares/auth.middleware.js";
+// import { coordinateOnly } from "../middlewares/role.middleware.js";
+
+// const router = express.Router();
+
+// // Create competition (Coordinator only → checked inside controller)
+// router.post("/", protect, createCompetition);
+
+// router.get("/event/:eventId",protect,coordinateOnly,getAllCompetitionsByEvent);
+
+// router.get("/:id", protect, getCompetitionDetails);
+
+// export default router;
+
+
 import express from "express";
-import { createCompetition, getAllCompetitionsByEvent, getCompetitionDetails } from "../controllers/competition.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
+import {
+ getCompetitionsByEvent,
+ publishCompetition,
+ unpublishCompetition
+} from "../controllers/competition.controller.js";
+import { coordinatorOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
-// Create competition (Coordinator only → checked inside controller)
-router.post("/", protect, createCompetition);
+router.get(
+ "/event/:eventId",
+ protect,
+ coordinatorOnly,
+ getCompetitionsByEvent
+);
 
-router.get("/event/:eventId",protect,getAllCompetitionsByEvent);
+router.patch(
+ "/:id/publish",
+ protect,
+ coordinatorOnly,
+ publishCompetition
+);
 
-router.get("/:id", protect, getCompetitionDetails);
+router.patch(
+ "/:id/unpublish",
+ protect,
+ coordinatorOnly,
+ unpublishCompetition
+);
 
 export default router;
-
-// api/competitions/65687676576578.

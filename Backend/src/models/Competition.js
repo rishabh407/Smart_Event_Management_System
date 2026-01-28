@@ -49,7 +49,11 @@ const competitionSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-
+isPublished: {
+ type: Boolean,
+ default: false
+}
+,
     venue: {
       type: String,
       required: true,
