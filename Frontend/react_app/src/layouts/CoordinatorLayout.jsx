@@ -22,7 +22,7 @@ const CoordinatorLayout = () => {
      Coordinator Panel
     </h2>
 
-    <nav className="space-y-3">
+    {/* <nav className="space-y-3">
 
      <NavLink
       to="/coordinator/dashboard"
@@ -45,7 +45,26 @@ const CoordinatorLayout = () => {
       Logout
      </button>
 
-    </nav>
+    </nav> */}
+
+<nav className="space-y-3">
+
+ <NavLink to="/coordinator/dashboard" className={linkStyle}>
+  Dashboard
+ </NavLink>
+
+ <NavLink to="/coordinator/events" className={linkStyle}>
+  My Events
+ </NavLink>
+
+ <button
+  onClick={logout}
+  className="w-full mt-6 bg-red-600 hover:bg-red-700 py-2 rounded"
+ >
+  Logout
+ </button>
+
+</nav>
 
    </aside>
 

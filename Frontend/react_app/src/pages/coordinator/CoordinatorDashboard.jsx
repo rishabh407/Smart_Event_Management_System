@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getCoordinatorDashboardStats } from "../../api/competition.api";
+import PageHeader from "../../components/PageHeader";
 
 const CoordinatorDashboard = () => {
 
@@ -33,9 +34,11 @@ const CoordinatorDashboard = () => {
 
   <div>
 
-   <h1 className="text-2xl font-bold mb-6">
-    Coordinator Dashboard
-   </h1>
+<PageHeader
+ title="Coordinator Dashboard"
+ subtitle="Overview of competitions and registrations"
+/>
+
 
    {/* STATS GRID */}
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import Login from "./pages/Login";
 import TeacherDashboard from "./pages/TeacherDashboard";
@@ -95,8 +95,8 @@ const App = () => {
 >
 
  {/* Default page */}
- <Route index element={<CoordinatorDashboard />} />
-
+ {/* <Route index element={<CoordinatorDashboard />} /> */}
+<Route index element={<Navigate to="dashboard" />} />
  {/* Dashboard */}
  <Route path="dashboard" element={<CoordinatorDashboard />} />
 
