@@ -26,6 +26,7 @@ import EditCompetition from "./pages/coordinator/EditCompetition";
 import AssignTeachers from "./pages/coordinator/AssignTeachers";
 import MyEvents from "./pages/coordinator/MyEvents";
 import CompetitionDetails from "./pages/coordinator/CompetitionDetails";
+import CompetitionRegistrations from "./pages/coordinator/CompetitionRegistrations";
 const App = () => {
   return (
     <BrowserRouter>
@@ -119,6 +120,12 @@ const App = () => {
  path="competitions/details/:id"
  element={<CompetitionDetails />}
 />
+
+<Route
+ path="competitions/:competitionId/registrations"
+ element={<CompetitionRegistrations />}
+/>
+
 
 <Route
  path="competitions/:competitionId/assign-teachers"

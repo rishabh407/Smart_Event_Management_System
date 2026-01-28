@@ -22,6 +22,7 @@ import {
  getCompetitionById,
  getCompetitionDetails,
  getCompetitionsByEvent,
+ getPublicCompetitionsByEvent,
  publishCompetition,
  unpublishCompetition,
  updateCompetition
@@ -36,9 +37,9 @@ router.post("/", protect, createCompetition);
 router.get(
  "/:id",
  protect,
- coordinatorOnly,
  getCompetitionById
 );
+
 
 // UPDATE competition
 router.put(
@@ -52,7 +53,6 @@ router.put(
 router.get(
  "/event/:eventId",
  protect,
- coordinatorOnly,
  getCompetitionsByEvent
 );
 
@@ -76,5 +76,7 @@ router.get(
  coordinatorOnly,
  getCompetitionDetails
 );
+
+router.get("/events/:eventId",protect,getPublicCompetitionsByEvent);
 
 export default router;

@@ -126,7 +126,6 @@ const CompetitionDetails = () => {
         {item.role}
        </span>
       </p>
-
      </div>
 
     ))}
@@ -154,6 +153,16 @@ const CompetitionDetails = () => {
     >
      Assign Teachers
     </button>
+       <button
+ onClick={() =>
+  navigate(
+   `/coordinator/competitions/${competition._id}/registrations`
+  )
+ }
+ className="bg-purple-600 text-white px-4 py-2 rounded"
+>
+ View Registrations
+</button>
 
    </div>
 

@@ -4,6 +4,7 @@ import {
   cancelRegistration,
   deleteRegistration,
   getMyRegistrations,
+  getRegistrationsByCompetition,
   registerIndividual,
   registerTeam,
 } from "../controllers/registration.controller.js";
@@ -19,5 +20,11 @@ router.post("/team", protect, registerTeam);
 
 router.patch("/:id/cancel", protect, cancelRegistration);
 router.delete("/:id/delete",protect,deleteRegistration);
+router.get(
+ "/competition/:competitionId",
+ protect,
+ getRegistrationsByCompetition
+);
+
 export default router;
 

@@ -217,6 +217,26 @@ export const getCompetitionsByEvent = async (req, res) => {
  }
 };
 
+export const getPublicCompetitionsByEvent = async (req, res) => {
+
+ try {
+
+  const { eventId } = req.params;
+
+  const competitions = await Competition.find({
+   eventId,
+   isDeleted: false,
+   isPublished: true
+  }).sort({ startTime: 1 });
+
+  res.status(200).json(competitions);
+
+ } catch (error) {
+
+  res.status(500).json({ message: "Server error" });
+
+ }
+};
 
 
 /* =====================================================

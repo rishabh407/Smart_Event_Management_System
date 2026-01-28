@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCompetitionsByEvent } from "../../api/competition.api";
+import { getEventPublicCompetitions } from "../../api/competition.api";
 
 const Competitions = () => {
 
@@ -15,7 +15,8 @@ const Competitions = () => {
 
   const fetchCompetitions = async () => {
     try {
-      const res = await getCompetitionsByEvent(eventId);
+      const res = await getEventPublicCompetitions(eventId);
+      console.log(res.data);
       setCompetitions(res.data);
     } catch (error) {
       console.error(error);

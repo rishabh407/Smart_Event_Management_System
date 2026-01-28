@@ -15,7 +15,8 @@ const CompetitionRegistration = () => {
     const fetchCompetition = async () => {
       try {
         const res = await getCompetitionById(competitionId);
-        setCompetition(res.data.data);
+        console.log(res.data);
+        setCompetition(res.data);
       } catch (error) {
         console.error(error);
       } finally {

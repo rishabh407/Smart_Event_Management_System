@@ -1,8 +1,8 @@
 import api from "./axios";
 
-export const getCompetitionsByEvent = (eventId) => {
-  return api.get(`/competitions/event/${eventId}`);
-};
+// export const getCompetitionsByEvent = (eventId) => {
+//   return api.get(`/competitions/event/${eventId}`);
+// };
 
 export const getCompetitionById=(competitionId)=>{
   return api.get(`/competitions/${competitionId}`);
@@ -12,6 +12,10 @@ export const getCompetitionById=(competitionId)=>{
 export const getEventCompetitions = (eventId) => {
  return api.get(`/competitions/event/${eventId}`);
 };
+
+export const getEventPublicCompetitions=(eventId)=>{
+  return api.get(`/competitions/events/${eventId}`);
+}
 
 // Publish competition
 export const publishCompetition = (id) => {

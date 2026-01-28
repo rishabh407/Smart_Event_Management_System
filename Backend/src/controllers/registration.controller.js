@@ -440,3 +440,62 @@ export const deleteRegistration = async (req, res) => {
   }
 
 };
+
+export const getRegistrationsByCompetition = async (req, res) => {
+
+ try {
+
+  const { competitionId } = req.params;
+
+  // Role check
+  if (req.user.role !== "COORDINATOR") {
+   return res.status(403).json({
+    message: "Only coordinator allowed"
+   });
+  }
+
+  // Competition check
+  const competition = await Competition.findById(competitionId)
+   .populate("eventId");
+
+  if (!competition) {
+   return res.status(404).json({
+    message: "Competition not found"
+   });
+  }
+
+  // Ownership check
+  if (
+   competition.eventId.coordinator.toString() !==
+   req.user._id.toString()
+  ) {
+   return res.status(403).json({
+    message: "Access denied"
+   });
+  }
+
+  // Fetch registrations
+  const registrations = await Registration.find({
+   competition: competitionId
+  })
+   .populate("student", "fullName email rollNo")
+   .populate("team", "teamName leader members")
+   .populate("registeredBy", "fullName email")
+   .sort({ createdAt: -1 });
+
+  res.status(200).json({
+   success: true,
+   data: registrations
+  });
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   success: false,
+   message: "Server error"
+  });
+
+ }
+};

@@ -19,3 +19,7 @@ export const registerTeam = (data) => {
 export const deleteRegistration = (id) => {
   return api.delete(`/registrations/${id}/delete`);
 };
+
+export const getRegistrationsByCompetition = (competitionId) => {
+ return api.get(`/registrations/competition/${competitionId}`);
+};
