@@ -32,3 +32,13 @@ export const createCompetition = (data) => {
 export const updateCompetition = (id, data) => {
  return api.put(`/competitions/${id}`, data);
 };
+
+// Assign teacher to competition
+export const assignTeacher = (data) => {
+ return api.post("/assignments/assign", data);
+};
+
+// Remove teacher from competition
+export const removeTeacher = (data) => {
+ return api.post("/assignments/remove", data);
+};

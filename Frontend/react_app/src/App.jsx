@@ -23,6 +23,7 @@ import CoordinatorDashboard from "./pages/coordinator/CoordinatorDashboard";
 import ManageCompetitions from "./pages/coordinator/ManageCompetitions";
 import CreateCompetitions from "./pages/coordinator/CreateCompetitions";
 import EditCompetition from "./pages/coordinator/EditCompetition";
+import AssignTeachers from "./pages/coordinator/AssignTeachers";
 const App = () => {
   return (
     <BrowserRouter>
@@ -109,11 +110,15 @@ const App = () => {
  path="competitions/edit/:id"
  element={<EditCompetition/>}
 />
-
+<Route
+ path="competitions/:competitionId/assign-teachers"
+ element={<AssignTeachers />}
+/>
 </Route>
 
 
 {/*=============================== HOD PANEL ======================*/}
+
         <Route
           path="/hod"
           element={
