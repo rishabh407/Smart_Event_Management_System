@@ -54,3 +54,7 @@ export const getCompetitionDetails = (id) => {
 export const getCoordinatorDashboardStats = () => {
  return api.get("/competitions/coordinator/dashboard-stats");
 };
+
+export const toggleCompetitionRegistration = (id) => {
+ return api.patch(`/competitions/${id}/toggle-registration`);
+};

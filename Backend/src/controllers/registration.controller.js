@@ -27,6 +27,11 @@ export const registerIndividual = async (req, res) => {
 
     // ✅ Competition check
     const competition = await Competition.findById(competitionId);
+if (!competition.registrationOpen) {
+ return res.status(403).json({
+  message: "Registrations are closed for this competition"
+ });
+}
 
     if (!competition) {
       return res.status(404).json({
@@ -181,6 +186,11 @@ if (cancelCount >= 2) {
 }
 
     const competition = await Competition.findById(competitionId);
+if (!competition.registrationOpen) {
+ return res.status(403).json({
+  message: "Registrations are closed for this competition"
+ });
+}
 
     // Prevent redeclaration
 if (competition.resultsDeclared === true) {

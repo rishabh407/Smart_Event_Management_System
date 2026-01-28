@@ -44,6 +44,10 @@ const competitionSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
+registrationOpen: {
+ type: Boolean,
+ default: true
+},
 
     registrationDeadline: {
       type: Date,

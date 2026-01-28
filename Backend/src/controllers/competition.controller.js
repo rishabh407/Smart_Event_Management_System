@@ -475,3 +475,38 @@ export const getCoordinatorDashboardStats = async (req, res) => {
 
  }
 };
+
+export const toggleRegistrationStatus = async (req, res) => {
+
+ try {
+
+  const { id } = req.params;
+
+  const competition = await Competition.findById(id);
+
+  if (!competition) {
+   return res.status(404).json({
+    message: "Competition not found"
+   });
+  }
+
+  // Toggle
+  competition.registrationOpen = !competition.registrationOpen;
+
+  await competition.save();
+
+  res.status(200).json({
+   message: "Registration status updated",
+   registrationOpen: competition.registrationOpen
+  });
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   message: "Server error"
+  });
+
+ }
+};

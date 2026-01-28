@@ -25,6 +25,7 @@ import {
  getCoordinatorDashboardStats,
  getPublicCompetitionsByEvent,
  publishCompetition,
+ toggleRegistrationStatus,
  unpublishCompetition,
  updateCompetition
 } from "../controllers/competition.controller.js";
@@ -87,5 +88,11 @@ router.get(
 
 
 router.get("/events/:eventId",protect,getPublicCompetitionsByEvent);
+router.patch(
+ "/:id/toggle-registration",
+ protect,
+ coordinatorOnly,
+ toggleRegistrationStatus
+);
 
 export default router;
