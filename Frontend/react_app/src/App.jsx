@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import Login from "./pages/Login";
-import TeacherDashboard from "./pages/TeacherDashboard";
 import ChangePassword from "./pages/ChangePassword";
 import StudentLayout from "./layouts/StudentLayout";
 import Dashboard from "./pages/student/Dashboard";
@@ -27,6 +26,12 @@ import AssignTeachers from "./pages/coordinator/AssignTeachers";
 import MyEvents from "./pages/coordinator/MyEvents";
 import CompetitionDetails from "./pages/coordinator/CompetitionDetails";
 import CompetitionRegistrations from "./pages/coordinator/CompetitionRegistrations";
+import TeacherLayout from "./layouts/TeacherLayout";
+import AssignedCompetitons from "./pages/teacher/AssignedCompetitons";
+import Attendance from "./pages/teacher/Attendance";
+import Results from "./pages/teacher/Results";
+import TeacherDashboard from "./pages/teacher/TeacherDashboard";
+import GenerateCertificates from "./pages/teacher/GenerateCertificates";
 const App = () => {
   return (
     <BrowserRouter>
@@ -42,7 +47,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        {/* Student Dashboard */}
+{/*===================== Student Dashboard ==============*/}
         <Route
           path="/student"
           element={
@@ -80,7 +85,28 @@ const App = () => {
           }
         />
 
-{/* COORDINATE PANEL*/}
+
+
+{/* ================= Teacher PANEL ================= */}
+
+<Route
+  path="/teacher"
+  element={
+    <ProtectedRoute>
+      <TeacherLayout />
+    </ProtectedRoute>
+  }
+>
+ <Route index element={<Navigate to="dashboard" />} />
+  <Route path="dashboard" element={<TeacherDashboard
+   />} />
+  <Route path="competitions" element={<AssignedCompetitons />} />
+  <Route path="attendance" element={<Attendance />} />
+  <Route path="results" element={<Results />} />
+  <Route path="certificates" element={<GenerateCertificates />} />
+
+</Route>
+
 
 {/* ================= COORDINATOR PANEL ================= */}
 
@@ -120,12 +146,6 @@ const App = () => {
  element={<CompetitionDetails />}
 />
 
-{/* <Route
- path="competitions/:competitionId/registrations"
- element={<CompetitionRegistrations />}
-/> */}
-
-
 <Route
  path="competitions/:competitionId/assign-teachers"
  element={<AssignTeachers />}
@@ -134,11 +154,6 @@ const App = () => {
  path="competitions/:id/registrations"
  element={<CompetitionRegistrations />}
 />
-
-{/* <Route
- path="competitions/:id/monitor"
- element={<CompetitionMonitor />}
-/> */}
 
 </Route>
 

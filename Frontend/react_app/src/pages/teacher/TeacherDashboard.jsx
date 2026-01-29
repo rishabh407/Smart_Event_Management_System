@@ -3,7 +3,7 @@ import React from 'react'
 const TeacherDashboard = () => {
   return (
     <div>
-      I am teacher
+       I am teacher
     </div>
   )
 }
