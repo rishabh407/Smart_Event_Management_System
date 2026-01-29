@@ -3,11 +3,13 @@ import { protect } from "../middlewares/auth.middleware.js";
 import {
   cancelRegistration,
   deleteRegistration,
+  getCompetitionRegistrationStats,
   getMyRegistrations,
   getRegistrationsByCompetition,
   registerIndividual,
   registerTeam,
 } from "../controllers/registration.controller.js";
+import { coordinatorOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
@@ -25,6 +27,14 @@ router.get(
  protect,
  getRegistrationsByCompetition
 );
+
+router.get(
+ "/competition/:id/stats",
+ protect,
+ coordinatorOnly,
+ getCompetitionRegistrationStats
+);
+
 
 export default router;
 

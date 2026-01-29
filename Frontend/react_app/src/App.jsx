@@ -71,7 +71,6 @@ const App = () => {
           <Route path="certificates" element={<Certificates />} />
           <Route path="/student/team" element={<Team />} />
         </Route>
-
         <Route
           path="/teacher"
           element={
@@ -131,6 +130,12 @@ const App = () => {
  path="competitions/:competitionId/assign-teachers"
  element={<AssignTeachers />}
 />
+
+{/* <Route
+ path="competitions/:id/monitor"
+ element={<CompetitionMonitor />}
+/> */}
+
 </Route>
 
 
