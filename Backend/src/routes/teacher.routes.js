@@ -1,7 +1,7 @@
 import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
-import { coordinatorOnly } from "../middlewares/role.middleware.js";
-import { getDepartmentTeachers } from "../controllers/teacher.controller.js";
+import { coordinatorOnly, teacherOnly } from "../middlewares/role.middleware.js";
+import { getassigncompetition, getDepartmentTeachers } from "../controllers/teacher.controller.js";
 
 const router = express.Router();
 
@@ -12,4 +12,5 @@ router.get(
  getDepartmentTeachers
 );
 
+router.get("/teacher/assigned",protect,teacherOnly,getassigncompetition);
 export default router;

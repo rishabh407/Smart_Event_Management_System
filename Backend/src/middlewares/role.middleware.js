@@ -1,7 +1,5 @@
 export const teacherOnly = (req, res, next) => {
-
   const role = req.user.role.toUpperCase();
-
   if (role !== "TEACHER" && role !== "COORDINATOR") {
     return res.status(403).json({
       message: "Teachers only"
