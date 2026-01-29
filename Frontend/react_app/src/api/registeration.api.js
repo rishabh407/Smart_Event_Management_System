@@ -31,3 +31,10 @@ export const getCompetitionRegistrationStats = (id) => {
 export const getCompetitionRegistrations = (id) => {
  return api.get(`/registrations/competition/${id}`);
 };
+
+
+export const markAttendance = (registrationId) => {
+ return api.post("/registrations/attendance", {
+  registrationId
+ });
+};

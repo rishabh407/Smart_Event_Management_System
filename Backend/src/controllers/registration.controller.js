@@ -1075,3 +1075,52 @@ export const getCompetitionRegistrations = async (req, res) => {
  }
 
 };
+
+export const markAttendance = async (req, res) => {
+
+ try {
+
+  const { registrationId } = req.body;
+
+  if (!registrationId) {
+   return res.status(400).json({
+    message: "registrationId required"
+   });
+  }
+
+  const registration =
+   await Registration.findById(registrationId)
+    .populate("competition");
+
+  if (!registration) {
+   return res.status(404).json({
+    message: "Registration not found"
+   });
+  }
+
+  // Prevent double marking
+  if (registration.status === "attended") {
+   return res.status(400).json({
+    message: "Already marked present"
+   });
+  }
+
+  // Mark attendance
+  registration.status = "attended";
+  await registration.save();
+
+  res.status(200).json({
+   message: "Attendance marked successfully"
+  });
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   message: "Attendance update failed"
+  });
+
+ }
+
+};

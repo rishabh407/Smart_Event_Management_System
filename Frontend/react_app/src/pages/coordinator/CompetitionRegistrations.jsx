@@ -226,14 +226,28 @@ const CompetitionRegistrations = () => {
           {reg.status}
          </td>
 
-         <td className="p-2 border">
+         {/* <td className="p-2 border">
           {reg.status === "attended"
            ? "Present"
            : "Pending"}
-         </td>
+         </td> */}
 
-        </tr>
+<td className="p-2 border">
+ {reg.status === "attended"
+  ? (
+   <span className="text-green-600 font-semibold">
+    Present
+   </span>
+  )
+  : (
+   <span className="text-orange-500">
+    Pending
+   </span>
+  )
+ }
 
+</td>
+      </tr>
        ))}
 
       </tbody>
