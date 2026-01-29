@@ -214,14 +214,3 @@ const fetchCompetition = async () => {
 
 export default EditCompetition;
 
-// import React from 'react'
-
-// const EditCompetition = () => {
-//   return (
-//     <div>
-//       Hello You Can Edit Competition Here
-//     </div>
-//   )
-// }
-
-// export default EditCompetition
