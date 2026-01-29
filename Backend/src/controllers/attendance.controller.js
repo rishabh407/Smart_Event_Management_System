@@ -237,3 +237,37 @@ export const markAttendance = async (req, res) => {
 
   }
 };
+
+export const getCompetitionAttendance = async (req, res) => {
+  try {
+
+    // Only teacher can view attendance
+    if (req.user.role !== "TEACHER") {
+      return res.status(403).json({
+        message: "Only teachers can view attendance"
+      });
+    }
+
+    const { competitionId } = req.params;
+
+    const attendanceList = await Attendance.find({
+      competition: competitionId
+    })
+      .populate("student", "fullName rollNumber course year section")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      totalPresent: attendanceList.length,
+      attendanceList
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+};

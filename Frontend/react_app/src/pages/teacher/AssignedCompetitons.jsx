@@ -163,21 +163,24 @@ const AssignedCompetitons = () => {
             {/* ACTION BUTTONS (NEXT STEPS) */}
             <div className="flex gap-3 mt-4">
 
-<button
-  onClick={() => navigate(`/teacher/attendance/${data._id}`)}
-  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm"
->
-  Take Attendance
-</button>
+  {/* TAKE ATTENDANCE BUTTON */}
+  <button
+    onClick={() => navigate(`/teacher/attendance/${data._id}`)}
+    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm"
+  >
+    Take Attendance
+  </button>
 
+  {/* VIEW ATTENDANCE BUTTON */}
+  <button
+    onClick={() => navigate(`/teacher/attendance/view/${data._id}`)}
+    className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-sm"
+  >
+    View Attendance
+  </button>
 
-              <button
-                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-sm"
-              >
-                View Details
-              </button>
+</div>
 
-            </div>
 
           </div>
 
