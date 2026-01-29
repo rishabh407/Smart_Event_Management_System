@@ -32,6 +32,8 @@ import Attendance from "./pages/teacher/Attendance";
 import Results from "./pages/teacher/Results";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import GenerateCertificates from "./pages/teacher/GenerateCertificates";
+import AttendancePage from "./pages/teacher/AttendancePage";
+import ScanAttendance from "./pages/student/ScanAttendance";
 const App = () => {
   return (
     <BrowserRouter>
@@ -73,9 +75,16 @@ const App = () => {
             element={<TeamRegisteration />}
           />
           <Route path="/student/registrations" element={<MyRegistrations />} />
+        
           <Route path="certificates" element={<Certificates />} />
+        
           <Route path="/student/team" element={<Team />} />
+        
+        <Route path="/student/scan/:id" element={<ScanAttendance />} />
+
         </Route>
+
+
         <Route
           path="/teacher"
           element={
@@ -102,6 +111,8 @@ const App = () => {
    />} />
   <Route path="competitions" element={<AssignedCompetitons />} />
   <Route path="attendance" element={<Attendance />} />
+  <Route path="attendance/:id" element={<AttendancePage />} />
+
   <Route path="results" element={<Results />} />
   <Route path="certificates" element={<GenerateCertificates />} />
 

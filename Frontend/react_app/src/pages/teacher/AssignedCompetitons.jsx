@@ -50,12 +50,13 @@
 
 import React, { useEffect, useState } from "react";
 import { getinchargeteacherscompetitions } from "../../api/teacher.api";
+import { useNavigate } from "react-router-dom";
 
 const AssignedCompetitons = () => {
 
   const [inchargecompetitons, setinchargecompetitons] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const navigate=useNavigate();
   const fetchassgined = async () => {
     try {
       const res = await getinchargeteacherscompetitions();
@@ -162,11 +163,13 @@ const AssignedCompetitons = () => {
             {/* ACTION BUTTONS (NEXT STEPS) */}
             <div className="flex gap-3 mt-4">
 
-              <button
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm"
-              >
-                Take Attendance
-              </button>
+<button
+  onClick={() => navigate(`/teacher/attendance/${data._id}`)}
+  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm"
+>
+  Take Attendance
+</button>
+
 
               <button
                 className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-sm"

@@ -29,7 +29,9 @@ const Sidebar = () => {
         <NavLink to="/student/team" className="block p-2 rounded hover:bg-gray-200">
           Team
         </NavLink>
-
+        <NavLink to="/student/scan/:id" className="block p-2 rounded hover:bg-gray-200">
+          Scan attendance
+        </NavLink>
       </nav>
 
     </div>
