@@ -27,3 +27,7 @@ export const getRegistrationsByCompetition = (competitionId) => {
 export const getCompetitionRegistrationStats = (id) => {
  return api.get(`/registrations/competition/${id}/stats`);
 };
+
+export const getCompetitionRegistrations = (id) => {
+ return api.get(`/registrations/competition/${id}`);
+};

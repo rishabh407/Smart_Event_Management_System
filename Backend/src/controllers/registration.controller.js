@@ -1048,3 +1048,30 @@ export const getCompetitionRegistrationStats = async (req, res) => {
  }
 
 };
+
+export const getCompetitionRegistrations = async (req, res) => {
+
+ try {
+
+  const { id } = req.params;
+
+  const registrations = await Registration.find({
+   competition: id
+  })
+   .populate("student", "fullName email")
+   .populate("team", "teamName")
+   .sort({ createdAt: -1 });
+
+  res.status(200).json(registrations);
+
+ } catch (error) {
+
+  console.error(error);
+
+  res.status(500).json({
+   message: "Failed to fetch registrations"
+  });
+
+ }
+
+};

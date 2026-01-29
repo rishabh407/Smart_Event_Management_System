@@ -3,6 +3,7 @@ import { protect } from "../middlewares/auth.middleware.js";
 import {
   cancelRegistration,
   deleteRegistration,
+  getCompetitionRegistrations,
   getCompetitionRegistrationStats,
   getMyRegistrations,
   getRegistrationsByCompetition,
@@ -33,6 +34,13 @@ router.get(
  protect,
  coordinatorOnly,
  getCompetitionRegistrationStats
+);
+
+router.get(
+ "/competition/:id",
+ protect,
+ coordinatorOnly,
+ getCompetitionRegistrations
 );
 
 

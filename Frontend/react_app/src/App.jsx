@@ -120,15 +120,19 @@ const App = () => {
  element={<CompetitionDetails />}
 />
 
-<Route
+{/* <Route
  path="competitions/:competitionId/registrations"
  element={<CompetitionRegistrations />}
-/>
+/> */}
 
 
 <Route
  path="competitions/:competitionId/assign-teachers"
  element={<AssignTeachers />}
+/>
+<Route
+ path="competitions/:id/registrations"
+ element={<CompetitionRegistrations />}
 />
 
 {/* <Route
