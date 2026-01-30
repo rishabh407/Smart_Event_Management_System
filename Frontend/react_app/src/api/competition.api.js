@@ -58,3 +58,7 @@ export const getCoordinatorDashboardStats = () => {
 export const toggleCompetitionRegistration = (id) => {
  return api.patch(`/competitions/${id}/toggle-registration`);
 };
+
+// export const removeTeacher = (data) => {
+//   return api.post("/competitions/remove-teacher", data);
+// };

@@ -86,8 +86,8 @@ router.get(
  getCoordinatorDashboardStats
 );
 
-
 router.get("/events/:eventId",protect,getPublicCompetitionsByEvent);
+
 router.patch(
  "/:id/toggle-registration",
  protect,

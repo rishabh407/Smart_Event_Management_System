@@ -128,6 +128,7 @@ Insert this document:
   "updatedAt": new Date()
 }
 ```
+$2b$10$eepF1ZHN7UPGkuTNGWAdmOs32lqz6fRd.x2ZLbSONFJ/tM21Bfhv6
 
 **Note:** Copy the `_id` of this department - you'll need it for HOD user.
 
@@ -216,13 +217,13 @@ Insert Teacher:
   "userId": "teacher-001",
   "fullName": "Prof. Robert Johnson",
   "email": "teacher@college.edu",
-  "password": "$2b$10$tE8K8K8K8K8K8K8K8K8K8uK8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K",
+  "password": "$2b$10$VVkVsFX/BaEKcnVHycdSlumB/Mjwx6OCRZFTpI/0sSq5T9ec6Lc3e",
   "role": "TEACHER",
-  "departmentId": "DEPARTMENT_ID_HERE",
+  "departmentId": "697ca5908eac62d11b5062f0",
   "isActive": true,
   "isFirstLogin": false,
-  "createdAt": new Date(),
-  "updatedAt": new Date()
+  "createdAt": 2026-01-30T10:30:00.000+00:00,
+  "updatedAt": 2026-01-30T10:30:00.000+00:00
 }
 ```
 

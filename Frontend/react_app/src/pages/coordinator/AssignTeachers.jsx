@@ -77,28 +77,59 @@ const AssignTeachers = () => {
     }
   };
 
-  const handleRemove = async (teacher) => {
-    if (!window.confirm(`Remove ${teacher.fullName} from this competition?`)) {
-      return;
-    }
+  // const handleRemove = async (teacher) => {
+  //   if (!window.confirm(`Remove ${teacher.fullName} from this competition?`)) {
+  //     return;
+  //   }
 
-    setRemovingId(teacher._id);
-    try {
-      await toast.promise(
-        removeTeacher({ competitionId, teacherId: teacher._id }),
-        {
-          loading: 'Removing teacher...',
-          success: 'Teacher removed successfully ✅',
-          error: (err) => err.response?.data?.message || 'Removal failed',
-        }
-      );
-      fetchData();
-    } catch (error) {
-      // Error handled by toast
-    } finally {
-      setRemovingId(null);
-    }
-  };
+  //   setRemovingId(teacher._id);
+  //   try {
+  //     await toast.promise(
+  //       removeTeacher({ competitionId, teacherId: teacher._id }),
+  //       {
+  //         loading: 'Removing teacher...',
+  //         success: 'Teacher removed successfully ✅',
+  //         error: (err) => err.response?.data?.message || 'Removal failed',
+  //       }
+  //     );
+  //     fetchData();
+  //   } catch (error) {
+  //     // Error handled by toast
+  //   } finally {
+  //     setRemovingId(null);
+  //   }
+  // };
+
+const handleRemove = async (teacher) => {
+
+  if (!window.confirm(`Remove ${teacher.fullName}?`)) return;
+
+  setRemovingId(teacher._id);
+
+  try {
+
+    await toast.promise(
+      removeTeacher({
+        competitionId,
+        teacherId: teacher._id
+      }),
+      {
+        loading: "Removing teacher...",
+        success: "Teacher removed successfully ✅",
+        error: "Removal failed"
+      }
+    );
+
+    fetchData();
+
+  } finally {
+
+    setRemovingId(null);
+
+  }
+
+};
+
 
   if (loading) {
     return (

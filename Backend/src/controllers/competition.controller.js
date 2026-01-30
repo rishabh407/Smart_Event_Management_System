@@ -329,31 +329,53 @@ export const unpublishCompetition = async (req, res) => {
 };
 
 
+// export const getCompetitionById = async (req, res) => {
+
+//  try {
+
+//   const { id } = req.params;
+
+//   const competition = await Competition.findById(id);
+
+//   if (!competition) {
+//    return res.status(404).json({
+//     message: "Competition not found"
+//    });
+//   }
+
+//   res.status(200).json(competition);
+
+//  } catch (error) {
+
+//   console.error(error);
+
+//   res.status(500).json({
+//    message: "Server error"
+//   });
+
+//  }
+// };
+
 export const getCompetitionById = async (req, res) => {
 
- try {
+  try {
 
-  const { id } = req.params;
+    const competition = await Competition.findById(req.params.id)
+      .populate("assignedTeachers.teacher", "fullName email");
 
-  const competition = await Competition.findById(id);
+    if (!competition) {
+      return res.status(404).json({ message: "Competition not found" });
+    }
 
-  if (!competition) {
-   return res.status(404).json({
-    message: "Competition not found"
-   });
+    res.status(200).json(competition);
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+
   }
 
-  res.status(200).json(competition);
-
- } catch (error) {
-
-  console.error(error);
-
-  res.status(500).json({
-   message: "Server error"
-  });
-
- }
 };
 
 
