@@ -29,3 +29,14 @@ export const coordinatorOnly = (req, res, next) => {
 
  next();
 };
+
+export const studentOnly = (req, res, next) => {
+
+  if (req.user.role !== "STUDENT") {
+   return res.status(403).json({
+    message: "Student access only"
+   });
+  }
+ 
+  next();
+ };

@@ -117,7 +117,7 @@ app.use("/api/assignments", assignmentRoutes);
 app.use("/certificates", express.static("certificates"));
 import bcrypt from "bcrypt";
 
-const hash = await bcrypt.hash("hod1", 10);
+const hash = await bcrypt.hash("coordinator1", 10);
 console.log(hash);
 
 
@@ -128,7 +128,6 @@ const startServer = async () => {
     console.log(`🚀 Server running on port ${process.env.PORT}`)
   );
 };
-
 
 startServer();
 app.get("/", (req, res) => {

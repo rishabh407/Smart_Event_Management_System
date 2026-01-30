@@ -300,6 +300,72 @@ export const registerTeam = async (req, res) => {
 };
 
 
+export const getStudentDashboardStats = async (req, res) => {
+  try {
+    if (req.user.role !== "STUDENT") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const studentId = req.user._id;
+
+    // Get student's teams
+    const teams = await Team.find({
+      members: studentId
+    }).select("_id");
+
+    const teamIds = teams.map(t => t._id);
+
+    // Total registrations (individual + team where student is member)
+    const totalRegistrations = await Registration.countDocuments({
+      $or: [
+        { student: studentId, status: { $ne: "cancelled" } },
+        { team: { $in: teamIds }, status: { $ne: "cancelled" } }
+      ]
+    });
+
+    // Active registrations
+    const activeRegistrations = await Registration.countDocuments({
+      $or: [
+        { student: studentId, status: "registered" },
+        { team: { $in: teamIds }, status: "registered" }
+      ]
+    });
+
+    // Attended registrations
+    const attendedRegistrations = await Registration.countDocuments({
+      $or: [
+        { student: studentId, status: "attended" },
+        { team: { $in: teamIds }, status: "attended" }
+      ]
+    });
+
+    // Cancelled registrations
+    const cancelledRegistrations = await Registration.countDocuments({
+      $or: [
+        { student: studentId, status: "cancelled" },
+        { team: { $in: teamIds }, status: "cancelled" }
+      ]
+    });
+
+    // Certificates count
+    const Certificate = (await import("../models/Certificate.js")).default;
+    const certificatesCount = await Certificate.countDocuments({
+      user: studentId
+    });
+
+    res.status(200).json({
+      totalRegistrations,
+      activeRegistrations,
+      attendedRegistrations,
+      cancelledRegistrations,
+      certificatesCount
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const getMyRegistrations = async (req, res) => {
 
   try {
@@ -749,17 +815,21 @@ export const getCompetitionRegistrations = async (req, res) => {
   const registrations = await Registration.find({
    competition: id
   })
-   .populate("student", "fullName email")
-   .populate("team", "teamName")
+   .populate("student", "fullName email rollNumber")
+   .populate("team", "teamName members")
    .sort({ createdAt: -1 });
 
-  res.status(200).json(registrations);
+  res.status(200).json({
+   success: true,
+   data: registrations
+  });
 
  } catch (error) {
 
   console.error(error);
 
   res.status(500).json({
+   success: false,
    message: "Failed to fetch registrations"
   });
 

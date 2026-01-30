@@ -103,17 +103,17 @@ export const declareResults = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Result declaration error:", error);
 
-  // Duplicate position or duplicate winner error
-  if (error.code === 11000) {
-    return res.status(400).json({
-      message: "Result already declared for this position or participant"
+    // Duplicate position or duplicate winner error
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Result already declared for this position or participant"
+      });
+    }
+
+    res.status(500).json({
+      message: "Server error while declaring result"
     });
   }
-
-  res.status(500).json({
-    message: "Server error while declaring result"
-  });
-}
-
 };

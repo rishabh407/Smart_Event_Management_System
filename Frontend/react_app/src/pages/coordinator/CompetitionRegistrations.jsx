@@ -136,12 +136,14 @@
 
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getCompetitionRegistrations } from "../../api/registeration.api";
+import toast from "react-hot-toast";
 
 const CompetitionRegistrations = () => {
 
  const { id } = useParams();
+ const navigate = useNavigate();
 
  const [registrations, setRegistrations] = useState([]);
  const [loading, setLoading] = useState(true);
@@ -151,13 +153,14 @@ const CompetitionRegistrations = () => {
   try {
 
    const res = await getCompetitionRegistrations(id);
-   console.log(res.data);
-   setRegistrations(res.data.data);
+   // Backend returns array directly or wrapped in data
+   setRegistrations(res.data.data || res.data || []);
    setLoading(false);
 
   } catch (error) {
 
    console.error(error);
+   toast.error("Failed to load registrations");
    setLoading(false);
 
   }
@@ -171,95 +174,102 @@ const CompetitionRegistrations = () => {
  if (loading) return <p>Loading registrations...</p>;
 
  return (
-
-  <div className="bg-white p-6 rounded shadow">
-
-   <h1 className="text-xl font-bold mb-4">
-    Competition Registrations
-   </h1>
+  <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg shadow-xl">
+   <div className="mb-6">
+     <button
+       onClick={() => navigate(-1)}
+       className="text-blue-600 hover:text-blue-800 mb-4 flex items-center gap-2"
+     >
+       ← Back
+     </button>
+     <h1 className="text-3xl font-bold text-gray-800 mb-2">
+       Competition Registrations
+     </h1>
+     <p className="text-gray-600">
+       Total Registrations: <span className="font-semibold">{registrations.length}</span>
+     </p>
+   </div>
 
    {registrations.length === 0 ? (
-
-    <p className="text-gray-500">
-     No registrations found
-    </p>
-
+     <div className="bg-gray-50 p-8 rounded-lg text-center">
+       <p className="text-gray-500 text-lg">No registrations found for this competition</p>
+     </div>
    ) : (
-
-    <div className="overflow-x-auto">
-
-     <table className="w-full border">
-
-      <thead className="bg-gray-100">
-
-       <tr>
-        <th className="p-2 border">Participant</th>
-        <th className="p-2 border">Type</th>
-        <th className="p-2 border">Team</th>
-        <th className="p-2 border">Status</th>
-        <th className="p-2 border">Attendance</th>
-       </tr>
-
-      </thead>
-
-      <tbody>
-
-       {registrations.map(reg => (
-
-        <tr key={reg._id} className="text-center">
-
-         <td className="p-2 border">
-          {reg.student
-           ? reg.student.fullName
-           : reg.team?.teamName}
-         </td>
-
-         <td className="p-2 border">
-          {reg.student ? "Individual" : "Team"}
-         </td>
-
-         <td className="p-2 border">
-          {reg.team?.teamName || "-"}
-         </td>
-
-         <td className="p-2 border">
-          {reg.status}
-         </td>
-
-         {/* <td className="p-2 border">
-          {reg.status === "attended"
-           ? "Present"
-           : "Pending"}
-         </td> */}
-
-<td className="p-2 border">
- {reg.status === "attended"
-  ? (
-   <span className="text-green-600 font-semibold">
-    Present
-   </span>
-  )
-  : (
-   <span className="text-orange-500">
-    Pending
-   </span>
-  )
- }
-
-</td>
-      </tr>
-       ))}
-
-      </tbody>
-
-     </table>
-
-    </div>
-
+     <div className="overflow-x-auto">
+       <table className="w-full border-collapse">
+         <thead>
+           <tr className="bg-gray-100">
+             <th className="p-3 border border-gray-300 text-left font-semibold text-gray-700">#</th>
+             <th className="p-3 border border-gray-300 text-left font-semibold text-gray-700">Participant</th>
+             <th className="p-3 border border-gray-300 text-left font-semibold text-gray-700">Type</th>
+             <th className="p-3 border border-gray-300 text-left font-semibold text-gray-700">Team</th>
+             <th className="p-3 border border-gray-300 text-left font-semibold text-gray-700">Status</th>
+             <th className="p-3 border border-gray-300 text-left font-semibold text-gray-700">Attendance</th>
+             <th className="p-3 border border-gray-300 text-left font-semibold text-gray-700">Registered At</th>
+           </tr>
+         </thead>
+         <tbody>
+           {registrations.map((reg, index) => (
+             <tr key={reg._id} className="hover:bg-gray-50 transition-colors">
+               <td className="p-3 border border-gray-300 text-gray-700">{index + 1}</td>
+               <td className="p-3 border border-gray-300">
+                 <div>
+                   <p className="font-semibold text-gray-800">
+                     {reg.student
+                       ? reg.student.fullName
+                       : reg.team?.teamName}
+                   </p>
+                   {reg.student && (
+                     <p className="text-sm text-gray-500">
+                       {reg.student.rollNumber || reg.student.email}
+                     </p>
+                   )}
+                 </div>
+               </td>
+               <td className="p-3 border border-gray-300">
+                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                   reg.student
+                     ? "bg-blue-100 text-blue-700"
+                     : "bg-purple-100 text-purple-700"
+                 }`}>
+                   {reg.student ? "Individual" : "Team"}
+                 </span>
+               </td>
+               <td className="p-3 border border-gray-300 text-gray-700">
+                 {reg.team?.teamName || "-"}
+               </td>
+               <td className="p-3 border border-gray-300">
+                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                   reg.status === "registered"
+                     ? "bg-green-100 text-green-700"
+                     : reg.status === "attended"
+                     ? "bg-blue-100 text-blue-700"
+                     : "bg-red-100 text-red-700"
+                 }`}>
+                   {reg.status.toUpperCase()}
+                 </span>
+               </td>
+               <td className="p-3 border border-gray-300">
+                 {reg.status === "attended" ? (
+                   <span className="text-green-600 font-semibold flex items-center gap-1">
+                     ✅ Present
+                   </span>
+                 ) : (
+                   <span className="text-orange-500 flex items-center gap-1">
+                     ⏳ Pending
+                   </span>
+                 )}
+               </td>
+               <td className="p-3 border border-gray-300 text-sm text-gray-600">
+                 {new Date(reg.createdAt).toLocaleString()}
+               </td>
+             </tr>
+           ))}
+         </tbody>
+       </table>
+     </div>
    )}
-
   </div>
-
  );
 
 };

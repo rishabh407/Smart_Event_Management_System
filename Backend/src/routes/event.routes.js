@@ -24,7 +24,8 @@ import {
   getEventById,
   getHodDashboardStats,
   getEventPerformanceRanking,
-  getCoordinatorEvents
+  getCoordinatorEvents,
+  getDepartmentCoordinators
 } from "../controllers/event.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
@@ -83,6 +84,14 @@ router.get(
  protect,
  coordinatorOnly,
  getCoordinatorEvents
+);
+
+// GET DEPARTMENT COORDINATORS (HOD only)
+router.get(
+  "/hod/coordinators",
+  protect,
+  hodOnly,
+  getDepartmentCoordinators
 );
 
 export default router;

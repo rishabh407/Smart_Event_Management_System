@@ -1,216 +1,382 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
 import {
- getCompetitionById,
- updateCompetition
+  getCompetitionById,
+  updateCompetition
 } from "../../api/competition.api";
+import toast from "react-hot-toast";
 
 const EditCompetition = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
- const { id } = useParams();
- const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
- const [loading, setLoading] = useState(true);
-
- const [formData, setFormData] = useState({
-  name: "",
-  shortDescription: "",
-  venue: "",
-  type: "",
-  minTeamSize: "",
-  maxTeamSize: "",
-  maxParticipants: "",
-  registrationDeadline: "",
-  startTime: "",
-  endTime: ""
- });
-
- // Load competition data
-
-const fetchCompetition = async () => {
-   try {
-    const res = await getCompetitionById(id);
-    const data = res.data;
-    console.log(data);
-    setFormData({
-     name: data.name,
-     shortDescription: data.shortDescription,
-     venue: data.venue,
-     type: data.type,
-     minTeamSize: data.minTeamSize || "",
-     maxTeamSize: data.maxTeamSize || "",
-     maxParticipants: data.maxParticipants || "",
-     registrationDeadline: data.registrationDeadline.slice(0, 16),
-     startTime: data.startTime.slice(0, 16),
-     endTime: data.endTime.slice(0, 16)
-    });
-
-    setLoading(false);
-
-   } catch (error) {
-
-    alert("Failed to load competition");
-    navigate(-1);
-
-   }
-
-  };
-
- useEffect(() => {
-  fetchCompetition();
- }, [id]);
-
- const handleChange = (e) => {
-
-  setFormData({
-   ...formData,
-   [e.target.name]: e.target.value
+  const [formData, setFormData] = useState({
+    name: "",
+    shortDescription: "",
+    venue: "",
+    type: "",
+    minTeamSize: "",
+    maxTeamSize: "",
+    maxParticipants: "",
+    registrationDeadline: "",
+    startTime: "",
+    endTime: ""
   });
 
- };
+  const [errors, setErrors] = useState({});
 
- const handleSubmit = async (e) => {
+  // Load competition data
+  const fetchCompetition = async () => {
+    try {
+      setLoading(true);
+      const res = await getCompetitionById(id);
+      const data = res.data;
+      
+      setFormData({
+        name: data.name || "",
+        shortDescription: data.shortDescription || "",
+        venue: data.venue || "",
+        type: data.type || "individual",
+        minTeamSize: data.minTeamSize || "",
+        maxTeamSize: data.maxTeamSize || "",
+        maxParticipants: data.maxParticipants || "",
+        registrationDeadline: data.registrationDeadline ? data.registrationDeadline.slice(0, 16) : "",
+        startTime: data.startTime ? data.startTime.slice(0, 16) : "",
+        endTime: data.endTime ? data.endTime.slice(0, 16) : ""
+      });
 
-  e.preventDefault();
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching competition:", error);
+      toast.error("Failed to load competition");
+      navigate(-1);
+    }
+  };
 
-  try {
+  useEffect(() => {
+    fetchCompetition();
+  }, [id]);
 
-   await updateCompetition(id, formData);
+  const validateForm = () => {
+    const newErrors = {};
 
-   alert("Competition Updated Successfully");
+    if (!formData.name.trim()) {
+      newErrors.name = "Competition name is required";
+    }
 
-   navigate(-1);
+    if (!formData.shortDescription.trim()) {
+      newErrors.shortDescription = "Short description is required";
+    }
 
-  } catch (error) {
+    if (!formData.venue.trim()) {
+      newErrors.venue = "Venue is required";
+    }
 
-   alert(error.response?.data?.message || "Update failed");
+    if (formData.type === "team") {
+      if (!formData.minTeamSize || !formData.maxTeamSize) {
+        newErrors.teamSize = "Team size is required for team competitions";
+      } else if (parseInt(formData.minTeamSize) > parseInt(formData.maxTeamSize)) {
+        newErrors.teamSize = "Min team size cannot be greater than max team size";
+      }
+    }
 
+    if (formData.registrationDeadline && formData.startTime) {
+      if (new Date(formData.registrationDeadline) >= new Date(formData.startTime)) {
+        newErrors.registrationDeadline = "Registration deadline must be before start time";
+      }
+    }
+
+    if (formData.startTime && formData.endTime) {
+      if (new Date(formData.startTime) >= new Date(formData.endTime)) {
+        newErrors.endTime = "End time must be after start time";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: ""
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      await updateCompetition(id, formData);
+      toast.success("Competition updated successfully!");
+      navigate(-1);
+    } catch (error) {
+      console.error("Error updating competition:", error);
+      toast.error(error.response?.data?.message || "Failed to update competition");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading competition...</p>
+        </div>
+      </div>
+    );
   }
 
- };
+  return (
+    <div className="max-w-3xl mx-auto p-6">
+      {/* ================= HEADER ================= */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">Edit Competition</h1>
+        <p className="text-gray-600 mt-1">Update competition details</p>
+      </div>
 
- if (loading) {
-  return <p>Loading competition...</p>;
- }
+      {/* ================= FORM ================= */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Competition Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Competition Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              }`}
+              placeholder="Enter competition name"
+            />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+            )}
+          </div>
 
- return (
+          {/* Short Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Short Description <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              name="shortDescription"
+              value={formData.shortDescription}
+              onChange={handleChange}
+              required
+              rows="3"
+              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                errors.shortDescription ? "border-red-500" : "border-gray-300"
+              }`}
+              placeholder="Enter short description"
+            />
+            {errors.shortDescription && (
+              <p className="mt-1 text-sm text-red-600">{errors.shortDescription}</p>
+            )}
+          </div>
 
-  <div className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+          {/* Venue */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Venue <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="venue"
+              value={formData.venue}
+              onChange={handleChange}
+              required
+              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                errors.venue ? "border-red-500" : "border-gray-300"
+              }`}
+              placeholder="Enter venue"
+            />
+            {errors.venue && (
+              <p className="mt-1 text-sm text-red-600">{errors.venue}</p>
+            )}
+          </div>
 
-   <h1 className="text-xl font-bold mb-4">
-    Edit Competition
-   </h1>
+          {/* Competition Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Competition Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            >
+              <option value="individual">Individual</option>
+              <option value="team">Team</option>
+            </select>
+          </div>
 
-   <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Team Size Fields */}
+          {formData.type === "team" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Team Size <span className="text-red-500">*</span>
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <input
+                    type="number"
+                    name="minTeamSize"
+                    value={formData.minTeamSize}
+                    onChange={handleChange}
+                    min="1"
+                    className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                      errors.teamSize ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Min Team Size"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    name="maxTeamSize"
+                    value={formData.maxTeamSize}
+                    onChange={handleChange}
+                    min="1"
+                    className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                      errors.teamSize ? "border-red-500" : "border-gray-300"
+                    }`}
+                    placeholder="Max Team Size"
+                  />
+                </div>
+              </div>
+              {errors.teamSize && (
+                <p className="mt-1 text-sm text-red-600">{errors.teamSize}</p>
+              )}
+            </div>
+          )}
 
-    <input
-     type="text"
-     name="name"
-     value={formData.name}
-     required
-     className="w-full border p-2"
-     onChange={handleChange}
-    />
+          {/* Max Participants */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Max Participants
+            </label>
+            <input
+              type="number"
+              name="maxParticipants"
+              value={formData.maxParticipants}
+              onChange={handleChange}
+              min="1"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              placeholder="Maximum number of participants"
+            />
+          </div>
 
-    <textarea
-     name="shortDescription"
-     value={formData.shortDescription}
-     required
-     className="w-full border p-2"
-     onChange={handleChange}
-    />
+          {/* Registration Deadline */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Registration Deadline <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="datetime-local"
+              name="registrationDeadline"
+              value={formData.registrationDeadline}
+              onChange={handleChange}
+              required
+              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                errors.registrationDeadline ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.registrationDeadline && (
+              <p className="mt-1 text-sm text-red-600">{errors.registrationDeadline}</p>
+            )}
+          </div>
 
-    <input
-     type="text"
-     name="venue"
-     value={formData.venue}
-     required
-     className="w-full border p-2"
-     onChange={handleChange}
-    />
+          {/* Start Time */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Start Time <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="datetime-local"
+              name="startTime"
+              value={formData.startTime}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            />
+          </div>
 
-    {formData.type === "team" && (
+          {/* End Time */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              End Time <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="datetime-local"
+              name="endTime"
+              value={formData.endTime}
+              onChange={handleChange}
+              required
+              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                errors.endTime ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.endTime && (
+              <p className="mt-1 text-sm text-red-600">{errors.endTime}</p>
+            )}
+          </div>
 
-     <div className="flex gap-3">
-
-      <input
-       type="number"
-       name="minTeamSize"
-       value={formData.minTeamSize}
-       placeholder="Min Team Size"
-       className="border p-2 w-full"
-       onChange={handleChange}
-      />
-
-      <input
-       type="number"
-       name="maxTeamSize"
-       value={formData.maxTeamSize}
-       placeholder="Max Team Size"
-       className="border p-2 w-full"
-       onChange={handleChange}
-      />
-
-     </div>
-
-    )}
-
-    <input
-     type="number"
-     name="maxParticipants"
-     value={formData.maxParticipants}
-     placeholder="Max Participants"
-     className="w-full border p-2"
-     onChange={handleChange}
-    />
-
-    <label>Registration Deadline</label>
-
-    <input
-     type="datetime-local"
-     name="registrationDeadline"
-     value={formData.registrationDeadline}
-     required
-     className="w-full border p-2"
-     onChange={handleChange}
-    />
-
-    <label>Start Time</label>
-
-    <input
-     type="datetime-local"
-     name="startTime"
-     value={formData.startTime}
-     required
-     className="w-full border p-2"
-     onChange={handleChange}
-    />
-
-    <label>End Time</label>
-
-    <input
-     type="datetime-local"
-     name="endTime"
-     value={formData.endTime}
-     required
-     className="w-full border p-2"
-     onChange={handleChange}
-    />
-
-    <button
-     type="submit"
-     className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700"
-    >
-     Update Competition
-    </button>
-
-   </form>
-
-  </div>
-
- );
+          {/* Buttons */}
+          <div className="flex gap-4 pt-4">
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition shadow-md hover:shadow-lg ${
+                submitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {submitting ? (
+                <span className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Updating...
+                </span>
+              ) : (
+                "Update Competition"
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default EditCompetition;
-

@@ -46,13 +46,18 @@ export const getEventPerformanceRanking = () => {
 };
 
 export const publishEvent = (id) => {
-  api.patch(`/events/${id}/publish`);
+  return api.patch(`/events/${id}/publish`);
 };
 
 export const unpublishEvent = (id) => {
-  api.patch(`/events/${id}/unpublish`);
+  return api.patch(`/events/${id}/unpublish`);
 };
 
 export const getCoordinatorEvents = () => {
  return api.get("/events/coordinator/my");
+};
+
+// GET DEPARTMENT COORDINATORS (HOD only)
+export const getDepartmentCoordinators = () => {
+ return api.get("/events/hod/coordinators");
 };

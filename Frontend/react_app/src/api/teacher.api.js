@@ -8,3 +8,7 @@ export const getDepartmentTeachers = () => {
 export const getinchargeteacherscompetitions=()=>{
     return api.get("/teachers/teacher/assigned");
 };
+
+export const getTeacherDashboardStats = () => {
+ return api.get("/teachers/teacher/dashboard-stats");
+};

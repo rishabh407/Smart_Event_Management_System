@@ -38,3 +38,7 @@ export const markAttendance = (registrationId) => {
   registrationId
  });
 };
+
+export const getStudentDashboardStats = () => {
+ return api.get("/registrations/student/dashboard-stats");
+};

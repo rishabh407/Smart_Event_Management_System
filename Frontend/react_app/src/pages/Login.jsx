@@ -1,85 +1,141 @@
-import { useState, useContext } from "react";
-import { loginUser } from "../api/auth.api.js";
+import { useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import toast from "react-hot-toast";
 
-const Login=()=> {
-
+const Login = () => {
   const [form, setForm] = useState({
     identifier: "",
     password: ""
   });
 
-  const { setUser } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const { login, user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // Navigate after user is loaded
+  useEffect(() => {
+    if (user && !loading) {
+      const role = user.role;
+      const firstLogin = user.isFirstLogin;
+
+      if (role === "STUDENT" && firstLogin === true) {
+        navigate("/change-password");
+      } else if (role === "STUDENT" && firstLogin === false) {
+        navigate("/student");
+      } else if (role === "TEACHER") {
+        navigate("/teacher");
+      } else if (role === "COORDINATOR") {
+        navigate("/coordinator");
+      } else if (role === "HOD") {
+        navigate("/hod");
+      }
+    }
+  }, [user, loading, navigate]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    if (!form.identifier || !form.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
     try {
-
-      const res = await loginUser(form);
-     console.log(res);
-      setUser(res.data.user);
-      const role = res.data?.user?.role;
-      console.log("The role is ",role);
-
-      const firstlogin=res.data?.user?.isFirstLogin;
-
-      if (role === "STUDENT" && firstlogin===true) navigate("/change-password");
-      else if(role==="STUDENT" && firstlogin===false)
-      navigate("/student");
-      else if (role === "TEACHER") navigate("/teacher");
-      else if(role==="COORDINATOR") navigate("/coordinator");
-      else navigate("/hod");
-
-    }catch (err) {
-
- console.log("FULL ERROR OBJECT:", err);
-
- console.log("ERROR RESPONSE:", err.response);
-
- console.log("ERROR MESSAGE:", err.message);
-
- alert(err.response?.data?.message || err.message || "Login failed");
-
-}
-
+      setLoading(true);
+      await login(form);
+      // Navigation will be handled by useEffect when user is loaded
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error(err.response?.data?.message || err.message || "Login failed");
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="h-screen flex justify-center items-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="w-full max-w-md">
+        {/* Login Card */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full mb-4">
+              <span className="text-3xl text-white">🎓</span>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Smart Event Management
+            </h1>
+            <p className="text-gray-600">
+              Sign in to your account
+            </p>
+          </div>
 
-      <form
-        onSubmit={submitHandler}
-        className="bg-white p-8 rounded shadow w-80"
-      >
-        <h2 className="text-xl font-bold mb-4">Login</h2>
+          {/* Form */}
+          <form onSubmit={submitHandler} className="space-y-6">
+            {/* Email/Roll Number */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email / Roll Number
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your email or roll number"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                value={form.identifier}
+                onChange={(e) =>
+                  setForm({ ...form, identifier: e.target.value })
+                }
+                required
+              />
+            </div>
 
-        <input
-          placeholder="Email / Roll"
-          className="border p-2 w-full mb-3"
-          onChange={(e) =>
-            setForm({ ...form, identifier: e.target.value })
-          }
-        />
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                value={form.password}
+                onChange={(e) =>
+                  setForm({ ...form, password: e.target.value })
+                }
+                required
+              />
+            </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="border p-2 w-full mb-3"
-          onChange={(e) =>
-            setForm({ ...form, password: e.target.value })
-          }
-        />
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-medium transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Signing in...
+                </span>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+          </form>
 
-        <button className="bg-blue-600 text-white w-full p-2 rounded">
-          Login
-        </button>
-
-      </form>
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-500">
+              Smart Event Management System
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default Login;

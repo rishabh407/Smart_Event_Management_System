@@ -418,48 +418,45 @@ const CompetitionDetails = () => {
  // UI
  // ==========================
 
- return (
+  return (
 
-  <div className="max-w-5xl mx-auto bg-white p-6 rounded shadow">
+  <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-xl">
 
    {/* HEADER */}
-
-   <div className="flex justify-between items-center mb-5">
-
-    <h1 className="text-2xl font-bold">
-     {competition.name}
-    </h1>
-
-    <div className="flex gap-3">
-
-     {/* Publish Status */}
-
-     <span
-      className={`px-3 py-1 rounded text-sm ${
-       competition.isPublished
-        ? "bg-green-100 text-green-700"
-        : "bg-red-100 text-red-700"
-      }`}
+   <div className="mb-6">
+     <button
+       onClick={() => navigate(-1)}
+       className="text-blue-600 hover:text-blue-800 mb-4 flex items-center gap-2"
      >
-      {competition.isPublished ? "Published" : "Draft"}
-     </span>
-
-     {/* Registration Status */}
-
-     <span
-      className={`px-3 py-1 rounded text-sm ${
-       competition.registrationOpen
-        ? "bg-blue-100 text-blue-700"
-        : "bg-gray-200 text-gray-700"
-      }`}
-     >
-      {competition.registrationOpen
-       ? "Registration Open"
-       : "Registration Closed"}
-     </span>
-
-    </div>
-
+       ← Back
+     </button>
+     <div className="flex justify-between items-center">
+       <h1 className="text-3xl font-bold text-gray-800">
+         {competition.name}
+       </h1>
+       <div className="flex gap-3">
+         <span
+           className={`px-4 py-2 rounded-full text-sm font-semibold ${
+             competition.isPublished
+               ? "bg-green-100 text-green-700"
+               : "bg-red-100 text-red-700"
+           }`}
+         >
+           {competition.isPublished ? "Published" : "Draft"}
+         </span>
+         <span
+           className={`px-4 py-2 rounded-full text-sm font-semibold ${
+             competition.registrationOpen
+               ? "bg-blue-100 text-blue-700"
+               : "bg-gray-200 text-gray-700"
+           }`}
+         >
+           {competition.registrationOpen
+             ? "Registration Open"
+             : "Registration Closed"}
+         </span>
+       </div>
+     </div>
    </div>
 
    {/* REGISTRATION STATS */}
@@ -596,56 +593,48 @@ const CompetitionDetails = () => {
    </div>
 
    {/* ACTION BUTTONS */}
-
-   <div className="flex flex-wrap gap-3 mt-5">
-
-    <button
-     onClick={() =>
-      navigate(`/coordinator/competitions/edit/${competition._id}`)
-     }
-     className="bg-yellow-500 text-white px-4 py-2 rounded"
-    >
-     Edit
-    </button>
-
-    <button
-     onClick={() =>
-      navigate(`/coordinator/competitions/${competition._id}/assign-teachers`)
-     }
-     className="bg-blue-600 text-white px-4 py-2 rounded"
-    >
-     Assign Teachers
-    </button>
-
-    <button
-     onClick={() =>
-      navigate(`/coordinator/competitions/${competition._id}/registrations`)
-     }
-     className="bg-purple-600 text-white px-4 py-2 rounded"
-    >
-     View Registrations
-    </button>
-
-    {/* TOGGLE REGISTRATION */}
-
-    <button
-     disabled={stats?.isFull}
-     onClick={handleToggleRegistration}
-     className={`px-4 py-2 rounded text-white ${
-      stats?.isFull
-       ? "bg-gray-400 cursor-not-allowed"
-       : competition.registrationOpen
-        ? "bg-red-600"
-        : "bg-green-600"
-     }`}
-    >
-     {stats?.isFull
-      ? "Registration Full"
-      : competition.registrationOpen
-       ? "Close Registration"
-       : "Open Registration"}
-    </button>
-
+   <div className="flex flex-wrap gap-3 mt-6">
+     <button
+       onClick={() =>
+         navigate(`/coordinator/competitions/edit/${competition._id}`)
+       }
+       className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-200 shadow-md"
+     >
+       ✏️ Edit Competition
+     </button>
+     <button
+       onClick={() =>
+         navigate(`/coordinator/competitions/${competition._id}/assign-teachers`)
+       }
+       className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-200 shadow-md"
+     >
+       👥 Assign Teachers
+     </button>
+     <button
+       onClick={() =>
+         navigate(`/coordinator/competitions/${competition._id}/registrations`)
+       }
+       className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-md font-semibold transition-colors duration-200 shadow-md"
+     >
+       📋 View Registrations
+     </button>
+     <button
+       disabled={stats?.isFull}
+       onClick={handleToggleRegistration}
+       className={`px-5 py-2 rounded-md text-white font-semibold transition-colors duration-200 shadow-md ${
+         stats?.isFull
+           ? "bg-gray-400 cursor-not-allowed"
+           : competition.registrationOpen
+             ? "bg-red-600 hover:bg-red-700"
+             : "bg-green-600 hover:bg-green-700"
+       }`}
+     >
+       {stats?.isFull
+         ? "Registration Full"
+         : competition.registrationOpen
+           ? "🔒 Close Registration"
+           : "🔓 Open Registration"}
+     </button>
    </div>
 
   </div>

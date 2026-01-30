@@ -4,78 +4,55 @@ import { useAuth } from "../context/AuthContext";
 const CoordinatorLayout = () => {
   const { user, logout } = useAuth();
 
- const linkStyle = ({ isActive }) =>
-  `block px-4 py-2 rounded transition ${
-   isActive
-    ? "bg-green-600 text-white"
-    : "hover:bg-gray-800"
-  }`;
+  const linkStyle = ({ isActive }) =>
+    `block px-4 py-2 rounded transition ${
+      isActive
+        ? "bg-green-600 text-white font-medium"
+        : "hover:bg-gray-800 text-gray-200"
+    }`;
 
- return (
+  return (
+    <div className="flex min-h-screen">
+      {/* SIDEBAR */}
+      <aside className="w-64 bg-gray-900 text-white p-5 flex flex-col justify-between">
+        <div>
+          <h2 className="text-xl font-bold mb-6 text-white">
+            🎯 Coordinator Panel
+          </h2>
 
-  <div className="flex min-h-screen">
+          {user && (
+            <div className="mb-6 pb-4 border-b border-gray-800">
+              <p className="text-sm text-gray-400">Welcome,</p>
+              <p className="font-medium text-white">{user.fullName}</p>
+            </div>
+          )}
 
-   {/* SIDEBAR */}
-   <aside className="w-64 bg-gray-900 text-white p-5">
+          <nav className="space-y-2">
+            <NavLink to="/coordinator/dashboard" className={linkStyle}>
+              📊 Dashboard
+            </NavLink>
 
-    <h2 className="text-xl font-bold mb-6">
-     Coordinator Panel
-    </h2>
+            <NavLink to="/coordinator/events" className={linkStyle}>
+              📅 My Events
+            </NavLink>
+          </nav>
+        </div>
 
-    {/* <nav className="space-y-3">
+        {/* LOGOUT BUTTON */}
+        <button
+          onClick={logout}
+          className="w-full mt-6 bg-red-600 hover:bg-red-700 py-2 rounded text-white font-medium transition"
+        >
+          🚪 Logout
+        </button>
+      </aside>
 
-     <NavLink
-      to="/coordinator/dashboard"
-      className={linkStyle}
-     >
-      Dashboard
-     </NavLink>
-<NavLink
- to="/coordinator/events"
- end
- className={linkStyle}
->
-
- My Events
-</NavLink>
-     <button
-      onClick={logout}
-      className="w-full mt-6 bg-red-600 hover:bg-red-700 py-2 rounded"
-     >
-      Logout
-     </button>
-
-    </nav> */}
-
-<nav className="space-y-3">
-
- <NavLink to="/coordinator/dashboard" className={linkStyle}>
-  Dashboard
- </NavLink>
-
- <NavLink to="/coordinator/events" className={linkStyle}>
-  My Events
- </NavLink>
-
- <button
-  onClick={logout}
-  className="w-full mt-6 bg-red-600 hover:bg-red-700 py-2 rounded"
- >
-  Logout
- </button>
-
-</nav>
-
-   </aside>
-
-   {/* CONTENT */}
-   <main className="flex-1 p-6 bg-gray-100">
-    <Outlet />
-   </main>
-
-  </div>
-
- );
+      {/* CONTENT */}
+      <main className="flex-1 p-6 bg-gray-50 min-h-screen">
+        <Outlet />
+      </main>
+    </div>
+  );
 };
 
 export default CoordinatorLayout;

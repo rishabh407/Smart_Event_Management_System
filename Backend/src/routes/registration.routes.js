@@ -9,8 +9,9 @@ import {
   getRegistrationsByCompetition,
   registerIndividual,
   registerTeam,
+  getStudentDashboardStats,
 } from "../controllers/registration.controller.js";
-import { coordinatorOnly } from "../middlewares/role.middleware.js";
+import { coordinatorOnly, studentOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ const router = express.Router();
 router.post("/individual", protect, registerIndividual);
 
 router.get("/my",protect,getMyRegistrations);
+router.get("/student/dashboard-stats", protect, studentOnly, getStudentDashboardStats);
 // Team leader registers team
 router.post("/team", protect, registerTeam);
 

@@ -1,5 +1,9 @@
 import Competition from "../models/Competition.js";
 import User from "../models/User.js";
+import Registration from "../models/Registration.js";
+import Attendance from "../models/Attendance.js";
+import Result from "../models/Result.js";
+import Certificate from "../models/Certificate.js";
 
 export const getDepartmentTeachers = async (req, res) => {
 
@@ -43,25 +47,88 @@ res.status(200).json(competitions);
     }
 }
 
-export const getCoordinatorEvents = async (req, res) => {
+export const getTeacherDashboardStats = async (req, res) => {
+  try {
+    if (req.user.role !== "TEACHER") {
+      return res.status(403).json({ message: "Access denied" });
+    }
 
- try {
+    // Get competitions assigned to this teacher
+    const competitions = await Competition.find({
+      "assignedTeachers.teacher": req.user._id,
+      isDeleted: false,
+      isPublished: true
+    }).select("_id");
 
-  const events = await Event.find({
-   coordinator: req.user._id,
-   isDeleted: false,
-   isPublished: true
-  }).sort({ startDate: 1 });
+    const competitionIds = competitions.map(c => c._id);
 
-  res.status(200).json(events);
+    // Total registrations
+    const totalRegistrations = await Registration.countDocuments({
+      competition: { $in: competitionIds }
+    });
 
- } catch (error) {
+    // Attended registrations
+    const attendedRegistrations = await Registration.countDocuments({
+      competition: { $in: competitionIds },
+      status: "attended"
+    });
 
-  console.error(error);
+    // Total attendance marked
+    const totalAttendance = await Attendance.countDocuments({
+      competition: { $in: competitionIds },
+      teacher: req.user._id
+    });
 
-  res.status(500).json({
-   message: "Server error"
-  });
+    // Results declared
+    const resultsDeclared = await Result.countDocuments({
+      competition: { $in: competitionIds }
+    });
 
- }
+    // Certificates generated
+    const certificatesGenerated = await Certificate.countDocuments({
+      competition: { $in: competitionIds }
+    });
+
+    // Upcoming competitions
+    const now = new Date();
+    const upcomingCompetitions = await Competition.countDocuments({
+      "assignedTeachers.teacher": req.user._id,
+      isDeleted: false,
+      isPublished: true,
+      startTime: { $gt: now }
+    });
+
+    // Ongoing competitions
+    const ongoingCompetitions = await Competition.countDocuments({
+      "assignedTeachers.teacher": req.user._id,
+      isDeleted: false,
+      isPublished: true,
+      startTime: { $lte: now },
+      endTime: { $gte: now }
+    });
+
+    // Completed competitions
+    const completedCompetitions = await Competition.countDocuments({
+      "assignedTeachers.teacher": req.user._id,
+      isDeleted: false,
+      isPublished: true,
+      endTime: { $lt: now }
+    });
+
+    res.status(200).json({
+      totalCompetitions: competitions.length,
+      upcomingCompetitions,
+      ongoingCompetitions,
+      completedCompetitions,
+      totalRegistrations,
+      attendedRegistrations,
+      totalAttendance,
+      resultsDeclared,
+      certificatesGenerated
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
