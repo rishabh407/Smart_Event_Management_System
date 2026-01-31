@@ -496,14 +496,15 @@ export const getEventById = async (req, res) => {
     }
 
     // Only HOD who created it OR same department HOD
-    if (
-      req.user.role !== "HOD" ||
-      event.departmentId.toString() !== req.user.departmentId.toString()
-    ) {
-      return res.status(403).json({
-        message: "Access denied"
-      });
-    }
+// Allow only HOD & COORDINATOR of same department
+if (
+  !["HOD", "COORDINATOR"].includes(req.user.role) ||
+  event.departmentId.toString() !== req.user.departmentId.toString()
+) {
+  return res.status(403).json({
+    message: "Access denied"
+  });
+}
 
     res.status(200).json(event);
 

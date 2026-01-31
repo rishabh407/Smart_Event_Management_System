@@ -62,3 +62,7 @@ export const toggleCompetitionRegistration = (id) => {
 // export const removeTeacher = (data) => {
 //   return api.post("/competitions/remove-teacher", data);
 // };
+
+export const deleteCompetition = (id) => {
+  return api.delete(`/competitions/delete/${id}`);
+};

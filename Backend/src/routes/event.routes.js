@@ -70,7 +70,7 @@ router.patch("/:id/unpublish", protect, hodOnly, unpublishEvent);
 // DELETE / RESTORE
 router.patch("/:id/delete", protect, hodOnly, deleteEvent);
 router.patch("/:id/restore", protect, hodOnly, restoreEvent);
-router.get("/:id", protect, hodOnly, getEventById);
+router.get("/:id", protect, getEventById);
 router.get("/hod/dashboard-stats",protect,hodOnly,getHodDashboardStats);
 router.get(
   "/hod/performance-ranking",
@@ -87,6 +87,7 @@ router.get(
 );
 
 // GET DEPARTMENT COORDINATORS (HOD only)
+
 router.get(
   "/hod/coordinators",
   protect,

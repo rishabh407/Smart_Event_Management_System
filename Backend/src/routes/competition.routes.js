@@ -19,6 +19,7 @@ import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
 import {
     createCompetition,
+ deleteCompetition,
  getCompetitionById,
  getCompetitionDetails,
  getCompetitionsByEvent,
@@ -94,5 +95,7 @@ router.patch(
  coordinatorOnly,
  toggleRegistrationStatus
 );
+
+router.delete("/delete/:id", deleteCompetition);
 
 export default router;

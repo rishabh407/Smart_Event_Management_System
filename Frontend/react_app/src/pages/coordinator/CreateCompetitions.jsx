@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { createCompetition } from "../../api/competition.api";
 import toast from "react-hot-toast";
+import { getEventById } from "../../api/event.api";
 
 const CreateCompetitions = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
-
+  const [eventTime, setEventTime] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     shortDescription: "",
@@ -22,6 +23,25 @@ const CreateCompetitions = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // ================= FETCH EVENT TIME =================
+
+  useEffect(() => {
+
+    const fetchEventTime = async () => {
+      try {
+        const res = await getEventById(eventId);
+        // console.log(res.data);
+        setEventTime(res.data);
+      } catch (err) {
+        toast.error("Failed to load event timing");
+        console.error(err.message);
+      }
+    };
+
+    fetchEventTime();
+
+  }, [eventId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,6 +90,21 @@ const CreateCompetitions = () => {
       if (new Date(formData.startTime) >= new Date(formData.endTime)) {
         newErrors.endTime = "End time must be after start time";
       }
+    }
+
+    if (eventTime) {
+
+      const eventStart = new Date(eventTime.startDate);
+      const eventEnd = new Date(eventTime.endDate);
+
+      if (
+        new Date(formData.startTime) < eventStart ||
+        new Date(formData.endTime) > eventEnd
+      ) {
+        newErrors.timeRange =
+          "Competition time must be inside event duration";
+      }
+
     }
 
     setErrors(newErrors);
@@ -258,6 +293,8 @@ const CreateCompetitions = () => {
               name="registrationDeadline"
               required
               value={formData.registrationDeadline}
+            min={eventTime?.startDate}
+            max={eventTime?.endDate}
               onChange={handleChange}
               className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                 errors.registrationDeadline ? "border-red-500" : "border-gray-300"
@@ -278,6 +315,8 @@ const CreateCompetitions = () => {
               name="startTime"
               required
               value={formData.startTime}
+            min={eventTime?.startDate}
+            max={eventTime?.endDate}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
@@ -293,6 +332,8 @@ const CreateCompetitions = () => {
               name="endTime"
               required
               value={formData.endTime}
+                          min={eventTime?.startDate}
+            max={eventTime?.endDate}
               onChange={handleChange}
               className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                 errors.endTime ? "border-red-500" : "border-gray-300"
@@ -336,3 +377,4 @@ const CreateCompetitions = () => {
 };
 
 export default CreateCompetitions;
+
