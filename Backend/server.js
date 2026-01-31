@@ -117,7 +117,7 @@ app.use("/api/assignments", assignmentRoutes);
 app.use("/certificates", express.static("certificates"));
 import bcrypt from "bcrypt";
 
-const hash = await bcrypt.hash("23401089", 10);
+const hash = await bcrypt.hash("234011115", 10);
 console.log(hash);
 
 const startServer = async () => {

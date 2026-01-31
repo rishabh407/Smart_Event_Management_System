@@ -241,10 +241,10 @@ $2b$10$sT8K8K8K8K8K8K8K8K8K8uK8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K
 Insert Student:
 ```json
 {
-  "userId": "stu-001",
-  "fullName": "Rohit",
-  "rollNumber": "STU001",
-  "password": "$2b$10$oFQ8wTKlV.eJdliEupMA1ek4.8OisDqUBB7OB2auAD5YMq7cetNFC",
+  "userId": "stu-002",
+  "fullName": "Sorav",
+  "rollNumber": "23401115",
+  "password": "$2b$10$hzdncpbyPfoZ4bmMduvytObzgrmfz.49kYt5Yk8plAaqIlONI.ZYG",
   "role": "STUDENT",
   "departmentId": "697bb999b9ac7c857c6c8f3c",
   "course": "B.Tech",
