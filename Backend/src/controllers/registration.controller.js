@@ -681,14 +681,15 @@ export const getCompetitionRegistrations = async (req, res) => {
  try {
 
   const { id } = req.params;
-  console.log(id);
+
   const registrations = await Registration.find({
-   competition: id
+   competition: id,
+   status: { $ne: "cancelled" }   // IMPORTANT FIX
   })
    .populate("student", "fullName email rollNumber")
    .populate("team", "teamName members")
    .sort({ createdAt: -1 });
-  console.log(registrations);
+
   res.status(200).json({
    success: true,
    data: registrations

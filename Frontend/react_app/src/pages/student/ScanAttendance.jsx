@@ -54,3 +54,64 @@ const ScanAttendance = () => {
 };
 
 export default ScanAttendance;
+
+// import { useState } from "react";
+// import { QrReader } from "react-qr-reader";
+// import toast from "react-hot-toast";
+// import { markAttendance } from "../../api/registeration.api";
+
+// const ScanAttendance = () => {
+
+//   const [scanning, setScanning] = useState(true);
+
+//   const handleResult = async (result, error) => {
+
+//     if (!!result) {
+
+//       setScanning(false);
+
+//       try {
+
+//         const qrData = result?.text;
+
+//         await markAttendance(qrData);
+
+//         toast.success("Attendance marked successfully ✅");
+
+//       } catch (error) {
+
+//         toast.error(
+//           error.response?.data?.message ||
+//           "Attendance failed"
+//         );
+
+//       }
+
+//     }
+
+//   };
+
+//   return (
+//     <div className="p-6">
+
+//       <h1 className="text-xl font-bold mb-4">
+//         Scan Attendance QR
+//       </h1>
+
+//       <div className="max-w-md mx-auto bg-white p-4 rounded shadow">
+
+//         {scanning && (
+//           <QrReader
+//             constraints={{ facingMode: "environment" }}
+//             onResult={handleResult}
+//             style={{ width: "100%" }}
+//           />
+//         )}
+
+//       </div>
+
+//     </div>
+//   );
+// };
+
+// export default ScanAttendance;
