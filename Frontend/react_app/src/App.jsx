@@ -82,6 +82,9 @@ const App = () => {
         
           <Route path="/student/team" element={<Team />} />
         
+        <Route path="/student/scan/:competitionId" element={<ScanAttendance />} />
+
+
         {/* <Route path="/attendance/scan" element={<ScanAttendance />} /> */}
 
         </Route>

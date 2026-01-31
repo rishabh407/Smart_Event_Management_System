@@ -42,3 +42,9 @@ export const markAttendance = (registrationId) => {
 export const getStudentDashboardStats = () => {
  return api.get("/registrations/student/dashboard-stats");
 };
+
+export const markAttendanceByQR = (competitionId) => {
+ return api.post("/registrations/attendance/qr", {
+  competitionId
+ });
+};
