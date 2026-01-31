@@ -242,11 +242,11 @@ Insert Student:
 ```json
 {
   "userId": "stu-001",
-  "fullName": "Alice Williams",
+  "fullName": "Rohit",
   "rollNumber": "STU001",
-  "password": "$2b$10$sT8K8K8K8K8K8K8K8K8uK8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K8K",
+  "password": "$2b$10$oFQ8wTKlV.eJdliEupMA1ek4.8OisDqUBB7OB2auAD5YMq7cetNFC",
   "role": "STUDENT",
-  "departmentId": "DEPARTMENT_ID_HERE",
+  "departmentId": "697bb999b9ac7c857c6c8f3c",
   "course": "B.Tech",
   "year": 3,
   "section": "A",

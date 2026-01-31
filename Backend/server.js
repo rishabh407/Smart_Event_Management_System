@@ -117,9 +117,8 @@ app.use("/api/assignments", assignmentRoutes);
 app.use("/certificates", express.static("certificates"));
 import bcrypt from "bcrypt";
 
-const hash = await bcrypt.hash("teacher2", 10);
+const hash = await bcrypt.hash("23401089", 10);
 console.log(hash);
-
 
 const startServer = async () => {
   await connectDB();
@@ -137,3 +136,4 @@ app.get("/", (req, res) => {
 export default app;
 
 // Student First Password aaaaaa.
+// password of Rohit is rohit07.

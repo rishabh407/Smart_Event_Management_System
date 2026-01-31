@@ -66,7 +66,7 @@ const TeacherLayout = () => {
             >
               🎓 Certificates
             </NavLink>
-
+            
           </nav>
         </div>
 

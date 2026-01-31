@@ -542,18 +542,43 @@ export const logout = (req, res) => {
   res.json({ message: "Logged out successfully" });
 };
 
+// export const getMe = async (req, res) => {
+//   try {
+
+//     // protect middleware already attached user
+//     const userdata = req.user;
+//   //  console.log(user._id);
+//     res.json({
+//       user: {
+//         id: userdata._id,
+//         fullName: userdata.fullName,
+//         role: userdata.role,
+//         email: userdata.email
+//       }
+//     });
+
+//   } catch (error) {
+
+//     res.status(500).json({
+//       message: "Failed to fetch user"
+//     });
+
+//   }
+// };
+
 export const getMe = async (req, res) => {
   try {
 
     // protect middleware already attached user
     const userdata = req.user;
-  //  console.log(user._id);
+
     res.json({
       user: {
         id: userdata._id,
         fullName: userdata.fullName,
         role: userdata.role,
-        email: userdata.email
+        email: userdata.email,
+        isFirstLogin: userdata.isFirstLogin // ✅ ADD THIS LINE
       }
     });
 
@@ -565,3 +590,4 @@ export const getMe = async (req, res) => {
 
   }
 };
+
