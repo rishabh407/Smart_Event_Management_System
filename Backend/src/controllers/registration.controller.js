@@ -709,23 +709,71 @@ export const getCompetitionRegistrations = async (req, res) => {
 };
 
 
+// export const markAttendanceByQR = async (req, res) => {
+
+//  try {
+
+//   const studentId = req.user._id;
+//   const { competitionId } = req.body;
+
+//   // Find registration
+//   const registration = await Registration.findOne({
+//    competition: competitionId,
+//    registeredBy: studentId,
+//    status: "registered"
+//   });
+
+//   if (!registration) {
+//    return res.status(400).json({
+//     message: "You are not registered or already attended"
+//    });
+//   }
+
+//   // Mark attendance
+//   registration.status = "attended";
+//   await registration.save();
+
+//   res.status(200).json({
+//    success: true,
+//    message: "Attendance marked successfully"
+//   });
+
+//  } catch (error) {
+
+//   console.error(error);
+
+//   res.status(500).json({
+//    message: "Attendance failed"
+//   });
+
+//  }
+
+// };
+
 export const markAttendanceByQR = async (req, res) => {
 
  try {
 
-  const studentId = req.user._id;
   const { competitionId } = req.body;
+  const studentId = req.user._id;
 
-  // Find registration
+  // Find valid registration
   const registration = await Registration.findOne({
    competition: competitionId,
-   registeredBy: studentId,
+   student: studentId,
    status: "registered"
   });
 
   if (!registration) {
    return res.status(400).json({
-    message: "You are not registered or already attended"
+    message: "No valid registration found"
+   });
+  }
+
+  // Prevent double attendance
+  if (registration.status === "attended") {
+   return res.status(400).json({
+    message: "Attendance already marked"
    });
   }
 
@@ -733,7 +781,7 @@ export const markAttendanceByQR = async (req, res) => {
   registration.status = "attended";
   await registration.save();
 
-  res.status(200).json({
+  res.json({
    success: true,
    message: "Attendance marked successfully"
   });
@@ -749,4 +797,3 @@ export const markAttendanceByQR = async (req, res) => {
  }
 
 };
-
