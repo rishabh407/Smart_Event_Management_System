@@ -80,23 +80,6 @@ export const createCompetition = async (req, res) => {
 
     // ---------------- CREATE ----------------
 
-    // const competition = await Competition.create({
-    //   eventId,
-    //   name,
-    //   shortDescription,
-    //   rules,
-    //   type,
-    //   minTeamSize,
-    //   maxTeamSize,
-    //   maxParticipants,
-    //   registrationDeadline,
-    //   venue,
-    //   startTime,
-    //   endTime,
-    //   assignedTeachers,
-    //   resultsDeclared: false
-    // });
-
 const competition = await Competition.create({
  eventId,
  name,
@@ -329,32 +312,6 @@ export const unpublishCompetition = async (req, res) => {
 };
 
 
-// export const getCompetitionById = async (req, res) => {
-
-//  try {
-
-//   const { id } = req.params;
-
-//   const competition = await Competition.findById(id);
-
-//   if (!competition) {
-//    return res.status(404).json({
-//     message: "Competition not found"
-//    });
-//   }
-
-//   res.status(200).json(competition);
-
-//  } catch (error) {
-
-//   console.error(error);
-
-//   res.status(500).json({
-//    message: "Server error"
-//   });
-
-//  }
-// };
 
 export const getCompetitionById = async (req, res) => {
 

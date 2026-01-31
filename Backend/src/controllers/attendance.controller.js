@@ -99,69 +99,6 @@ export const scanAttendance = async (req, res) => {
   }
 };
 
-// import Attendance from "../models/Attendance.js";
-// import Competition from "../models/Competition.js";
-
-// export const markAttendance = async (req, res) => {
-
-//   try {
-
-//     const { competitionId, method } = req.body;
-
-//     // Student must be logged in
-//     const studentId = req.user._id;
-
-//     // Validate competition
-//     const competition = await Competition.findById(competitionId);
-
-//     if (!competition) {
-//       return res.status(404).json({
-//         message: "Competition not found"
-//       });
-//     }
-
-//     // Check if attendance already marked
-//     const existing = await Attendance.findOne({
-//       competition: competitionId,
-//       student: studentId
-//     });
-
-//     if (existing) {
-//       return res.status(400).json({
-//         message: "Attendance already marked"
-//       });
-//     }
-
-//     // Find teacher incharge
-//     const teacher = competition.assignedTeachers[0]?.teacher;
-
-//     // Save attendance
-//     const attendance = await Attendance.create({
-
-//       competition: competitionId,
-//       student: studentId,
-//       teacher: teacher,
-//       method: method || "QR"
-
-//     });
-
-//     res.status(201).json({
-//       message: "Attendance marked successfully",
-//       attendance
-//     });
-
-//   } catch (error) {
-
-//     console.error(error);
-
-//     res.status(500).json({
-//       message: "Server error"
-//     });
-
-//   }
-// };
-
-
 export const markAttendance = async (req, res) => {
   try {
 

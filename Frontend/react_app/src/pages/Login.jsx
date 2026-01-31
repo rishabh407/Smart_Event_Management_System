@@ -166,7 +166,7 @@ const Login = () => {
 
       const role = user.role;
       const firstLogin = user.isFirstLogin;
-     console.log(firstLogin);
+    //  console.log(firstLogin);
       if (role === "STUDENT" && firstLogin === true) {
         navigate("/change-password");
       }

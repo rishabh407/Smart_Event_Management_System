@@ -117,34 +117,6 @@ export const createEvent = async (req, res) => {
 
 };
 
-// ============================
-// GET ALL PUBLISHED EVENTS
-// ============================
-
-// export const getAllEvents = async (req, res) => {
-
-//   try {
-
-//     const events = await Event.find({
-//       isPublished: true,
-//       isDeleted: false
-//     })
-//       .select("-__v")
-//       .populate("coordinator", "fullName")
-//       .sort({ startDate: 1 });
-
-//     res.status(200).json(events);
-
-//   } catch (error) {
-
-//     console.error(error);
-
-//     res.status(500).json({
-//       message: "Server error"
-//     });
-//   }
-// };
-
 export const getAllEvents = async (req, res) => {
 
   try {
@@ -209,27 +181,6 @@ export const getStudentEvents = async (req, res) => {
   }
 };
 
-// export const getMyEvents = async (req, res) => {
-
-//   try {
-
-//     const events = await Event.find({
-//       createdBy: req.user._id,
-//       isDeleted: false
-//     })
-//     .sort({ createdAt: -1 });
-
-//     res.status(200).json(events);
-
-//   } catch (error) {
-
-//     res.status(500).json({
-//       message: "Server error"
-//     });
-
-//   }
-
-// };
 
 export const getMyEvents = async (req, res) => {
 
@@ -611,75 +562,6 @@ export const getHodDashboardStats = async (req, res) => {
 
 };
 
-// export const getEventPerformanceRanking = async (req, res) => {
-
-//   try {
-
-//     const hodDepartment = new mongoose.Types.ObjectId(req.user.departmentId);
-
-//     const ranking = await Registration.aggregate([
-
-//       // Step 1: Join Competition
-//       {
-//         $lookup: {
-//           from: "competitions",
-//           localField: "competition",
-//           foreignField: "_id",
-//           as: "competitionData"
-//         }
-//       },
-
-//       { $unwind: "$competitionData" },
-
-//       // Step 2: Join Event from Competition
-//       {
-//         $lookup: {
-//           from: "events",
-//           localField: "competitionData.event",
-//           foreignField: "_id",
-//           as: "eventData"
-//         }
-//       },
-
-//       { $unwind: "$eventData" },
-
-//       // Step 3: Filter by HOD department
-//       {
-//         $match: {
-//           "eventData.departmentId": hodDepartment
-//         }
-//       },
-
-//       // Step 4: Group registrations per event
-//       {
-//         $group: {
-//           _id: "$eventData._id",
-//           title: { $first: "$eventData.title" },
-//           banner: { $first: "$eventData.bannerImage" },
-//           registrations: { $sum: 1 }
-//         }
-//       },
-
-//       // Step 5: Sort & Limit
-//       { $sort: { registrations: -1 } },
-
-//       { $limit: 10 }
-
-//     ]);
-
-//     res.status(200).json(ranking);
-
-//   } catch (error) {
-
-//     console.error("Ranking Error:", error);
-
-//     res.status(500).json({
-//       message: "Performance ranking fetch failed"
-//     });
-
-//   }
-
-// };
 
 export const getEventPerformanceRanking = async (req, res) => {
 
@@ -790,21 +672,3 @@ export const getDepartmentCoordinators = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-// export const getDepartmentCoordinators = async (req, res) => {
-//   try {
-
-//     console.log(req.user);
-
-//     const coordinators = await User.find({
-//       role: "COORDINATOR",
-//       departmentId: new mongoose.Types.ObjectId(req.user.departmentId)
-//     }).select("fullName email userId");
-
-//     res.status(200).json(coordinators);
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };

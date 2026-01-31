@@ -607,137 +607,6 @@ export const getRegistrationsByCompetition = async (req, res) => {
  }
 };
 
-// export const getCompetitionRegistrationStats = async (req, res) => {
-
-//  try {
-
-//   const { competitionId } = req.params;
-
-//   const stats = await Registration.aggregate([
-
-//    {
-//     $match: {
-//      competition: new mongoose.Types.ObjectId(competitionId)
-//     }
-//    },
-
-//    {
-//     $group: {
-
-//      _id: "$status",
-
-//      count: { $sum: 1 }
-//     }
-//    }
-
-//   ]);
-
-//   // Format result
-//   let total = 0;
-//   let active = 0;
-//   let cancelled = 0;
-
-//   stats.forEach(item => {
-
-//    total += item.count;
-
-//    if (item._id === "registered") active = item.count;
-//    if (item._id === "cancelled") cancelled = item.count;
-
-//   });
-
-//   res.status(200).json({
-//    total,
-//    active,
-//    cancelled
-//   });
-
-//  } catch (error) {
-
-//   console.error(error);
-
-//   res.status(500).json({
-//    message: "Server error"
-//   });
-
-//  }
-// };
-
-// export const getCompetitionRegistrationStats = async (req, res) => {
-
-//  try {
-
-//   const { competitionId } = req.params;
-
-//   // Get competition capacity
-//   const competition = await Competition.findById(competitionId);
-
-//   if (!competition) {
-//    return res.status(404).json({
-//     message: "Competition not found"
-//    });
-//   }
-
-//   // Aggregate registrations
-//   const stats = await Registration.aggregate([
-
-//    {
-//     $match: {
-//      competition: new mongoose.Types.ObjectId(competitionId)
-//     }
-//    },
-
-//    {
-//     $group: {
-//      _id: "$status",
-//      count: { $sum: 1 }
-//     }
-//    }
-
-//   ]);
-
-//   let total = 0;
-//   let active = 0;
-//   let cancelled = 0;
-
-//   stats.forEach(item => {
-
-//    total += item.count;
-
-//    if (item._id === "registered") active = item.count;
-//    if (item._id === "cancelled") cancelled = item.count;
-
-//   });
-
-//   const max = competition.maxParticipants || null;
-
-//   const slotsLeft = max ? Math.max(max - active, 0) : null;
-
-//   const isFull = max ? active >= max : false;
-
-//   res.status(200).json({
-//    total,
-//    active,
-//    cancelled,
-//    maxParticipants: max,
-//    slotsLeft,
-//    isFull
-//   });
-
-//  } catch (error) {
-
-//   console.error(error);
-
-//   res.status(500).json({
-//    message: "Server error"
-//   });
-
-//  }
-
-// };
-
-// import Registration from "../models/Registration.js";
-// import Competition from "../models/Competition.js";
 
 export const getCompetitionRegistrationStats = async (req, res) => {
 
@@ -806,19 +675,20 @@ export const getCompetitionRegistrationStats = async (req, res) => {
 
 };
 
+
 export const getCompetitionRegistrations = async (req, res) => {
 
  try {
 
   const { id } = req.params;
-
+  console.log(id);
   const registrations = await Registration.find({
    competition: id
   })
    .populate("student", "fullName email rollNumber")
    .populate("team", "teamName members")
    .sort({ createdAt: -1 });
-
+  console.log(registrations);
   res.status(200).json({
    success: true,
    data: registrations
@@ -836,52 +706,3 @@ export const getCompetitionRegistrations = async (req, res) => {
  }
 
 };
-
-// export const markAttendance = async (req, res) => {
-
-//  try {
-
-//   const { registrationId } = req.body;
-
-//   if (!registrationId) {
-//    return res.status(400).json({
-//     message: "registrationId required"
-//    });
-//   }
-
-//   const registration =
-//    await Registration.findById(registrationId)
-//     .populate("competition");
-
-//   if (!registration) {
-//    return res.status(404).json({
-//     message: "Registration not found"
-//    });
-//   }
-
-//   // Prevent double marking
-//   if (registration.status === "attended") {
-//    return res.status(400).json({
-//     message: "Already marked present"
-//    });
-//   }
-
-//   // Mark attendance
-//   registration.status = "attended";
-//   await registration.save();
-
-//   res.status(200).json({
-//    message: "Attendance marked successfully"
-//   });
-
-//  } catch (error) {
-
-//   console.error(error);
-
-//   res.status(500).json({
-//    message: "Attendance update failed"
-//   });
-
-//  }
-
-// };

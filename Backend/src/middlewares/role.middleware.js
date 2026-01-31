@@ -40,3 +40,22 @@ export const studentOnly = (req, res, next) => {
  
   next();
  };
+
+export const allowRoles = (...roles) => {
+
+  return (req, res, next) => {
+
+    const userRole = req.user.role.toUpperCase();
+    console.log(userRole);
+    if (!roles.includes(userRole)) {
+      return res.status(403).json({
+        message: "Access denied"
+      });
+    }
+
+    next();
+  };
+
+};
+
+
