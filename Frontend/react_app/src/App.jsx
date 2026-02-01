@@ -34,8 +34,8 @@ import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import GenerateCertificates from "./pages/teacher/GenerateCertificates";
 import AttendancePage from "./pages/teacher/AttendancePage";
 import ScanAttendance from "./pages/student/ScanAttendance";
-import ViewAttendance from "./pages/coordinator/ViewAttendance";
 import ViewRegistrations from "./pages/teacher/ViewRegisterations";
+import ViewAttendance from "./pages/teacher/ViewAttendance";
 const App = () => {
   return (
     <BrowserRouter>
@@ -122,7 +122,6 @@ const App = () => {
   <Route path="certificates" element={<GenerateCertificates />} />
 <Route path="attendance/view/:id" element={<ViewAttendance />} />
 <Route path="registrations/:id" element={<ViewRegistrations />} />
-
 </Route>
 
 

@@ -868,3 +868,36 @@ export const markAttendanceByQR = async (req, res) => {
   }
 
 };
+
+
+export const getAttendanceStats = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const registrations = await Registration.find({
+      competition: id,
+      status: { $ne: "cancelled" }
+    });
+
+    const total = registrations.length;
+    const attended = registrations.filter(r => r.status === "attended").length;
+    const pending = total - attended;
+
+    res.json({
+      success: true,
+      total,
+      attended,
+      pending
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load attendance stats"
+    });
+
+  }
+};

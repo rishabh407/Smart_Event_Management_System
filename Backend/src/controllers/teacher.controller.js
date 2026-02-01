@@ -47,88 +47,174 @@ res.status(200).json(competitions);
     }
 }
 
+// export const getTeacherDashboardStats = async (req, res) => {
+//   try {
+//     if (req.user.role !== "TEACHER") {
+//       return res.status(403).json({ message: "Access denied" });
+//     }
+
+//     // Get competitions assigned to this teacher
+//     const competitions = await Competition.find({
+//       "assignedTeachers.teacher": req.user._id,
+//       isDeleted: false,
+//       isPublished: true
+//     }).select("_id");
+
+//     const competitionIds = competitions.map(c => c._id);
+
+//     // Total registrations
+//     const totalRegistrations = await Registration.countDocuments({
+//       competition: { $in: competitionIds }
+//     });
+
+//     // Attended registrations
+//     const attendedRegistrations = await Registration.countDocuments({
+//       competition: { $in: competitionIds },
+//       status: "attended"
+//     });
+
+//     // Total attendance marked
+//     const totalAttendance = await Attendance.countDocuments({
+//       competition: { $in: competitionIds },
+//       teacher: req.user._id
+//     });
+
+//     // Results declared
+//     const resultsDeclared = await Result.countDocuments({
+//       competition: { $in: competitionIds }
+//     });
+
+//     // Certificates generated
+//     const certificatesGenerated = await Certificate.countDocuments({
+//       competition: { $in: competitionIds }
+//     });
+
+//     // Upcoming competitions
+//     const now = new Date();
+//     const upcomingCompetitions = await Competition.countDocuments({
+//       "assignedTeachers.teacher": req.user._id,
+//       isDeleted: false,
+//       isPublished: true,
+//       startTime: { $gt: now }
+//     });
+
+//     // Ongoing competitions
+//     const ongoingCompetitions = await Competition.countDocuments({
+//       "assignedTeachers.teacher": req.user._id,
+//       isDeleted: false,
+//       isPublished: true,
+//       startTime: { $lte: now },
+//       endTime: { $gte: now }
+//     });
+
+//     // Completed competitions
+//     const completedCompetitions = await Competition.countDocuments({
+//       "assignedTeachers.teacher": req.user._id,
+//       isDeleted: false,
+//       isPublished: true,
+//       endTime: { $lt: now }
+//     });
+
+//     res.status(200).json({
+//       totalCompetitions: competitions.length,
+//       upcomingCompetitions,
+//       ongoingCompetitions,
+//       completedCompetitions,
+//       totalRegistrations,
+//       attendedRegistrations,
+//       totalAttendance,
+//       resultsDeclared,
+//       certificatesGenerated
+//     });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
 export const getTeacherDashboardStats = async (req, res) => {
   try {
+
     if (req.user.role !== "TEACHER") {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    // Get competitions assigned to this teacher
+    // ================= FETCH ASSIGNED COMPETITIONS =================
+
     const competitions = await Competition.find({
       "assignedTeachers.teacher": req.user._id,
       isDeleted: false,
       isPublished: true
-    }).select("_id");
+    }).select("_id startTime endTime");
 
     const competitionIds = competitions.map(c => c._id);
 
-    // Total registrations
+    const now = new Date();
+
+    // ================= REGISTRATION COUNTS =================
+
     const totalRegistrations = await Registration.countDocuments({
       competition: { $in: competitionIds }
     });
 
-    // Attended registrations
     const attendedRegistrations = await Registration.countDocuments({
       competition: { $in: competitionIds },
       status: "attended"
     });
 
-    // Total attendance marked
-    const totalAttendance = await Attendance.countDocuments({
-      competition: { $in: competitionIds },
-      teacher: req.user._id
-    });
+    // Attendance is SAME as attended registrations
+    const totalAttendance = attendedRegistrations;
 
-    // Results declared
+    // ================= RESULT & CERTIFICATE =================
+
     const resultsDeclared = await Result.countDocuments({
       competition: { $in: competitionIds }
     });
 
-    // Certificates generated
     const certificatesGenerated = await Certificate.countDocuments({
       competition: { $in: competitionIds }
     });
 
-    // Upcoming competitions
-    const now = new Date();
-    const upcomingCompetitions = await Competition.countDocuments({
-      "assignedTeachers.teacher": req.user._id,
-      isDeleted: false,
-      isPublished: true,
-      startTime: { $gt: now }
-    });
+    // ================= COMPETITION STATUS =================
 
-    // Ongoing competitions
-    const ongoingCompetitions = await Competition.countDocuments({
-      "assignedTeachers.teacher": req.user._id,
-      isDeleted: false,
-      isPublished: true,
-      startTime: { $lte: now },
-      endTime: { $gte: now }
-    });
+    const upcomingCompetitions = competitions.filter(
+      c => new Date(c.startTime) > now
+    ).length;
 
-    // Completed competitions
-    const completedCompetitions = await Competition.countDocuments({
-      "assignedTeachers.teacher": req.user._id,
-      isDeleted: false,
-      isPublished: true,
-      endTime: { $lt: now }
-    });
+    const ongoingCompetitions = competitions.filter(
+      c =>
+        new Date(c.startTime) <= now &&
+        new Date(c.endTime) >= now
+    ).length;
+
+    const completedCompetitions = competitions.filter(
+      c => new Date(c.endTime) < now
+    ).length;
+
+    // ================= RESPONSE =================
 
     res.status(200).json({
       totalCompetitions: competitions.length,
       upcomingCompetitions,
       ongoingCompetitions,
       completedCompetitions,
+
       totalRegistrations,
       attendedRegistrations,
       totalAttendance,
+
       resultsDeclared,
       certificatesGenerated
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+
+    console.error("Dashboard error:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
   }
 };

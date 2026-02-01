@@ -250,14 +250,31 @@ const AssignedCompetitons = () => {
                   Take Attendance
                 </button>
 
-                <button
+                {/* <button
                   onClick={() =>
                     navigate(`/teacher/attendance/view/${data._id}`)
                   }
                   className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-sm"
                 >
                   View Attendance
-                </button>
+                </button> */}
+
+<button
+  disabled={status === "UPCOMING"}
+  onClick={() =>
+    navigate(`/teacher/attendance/view/${data._id}`)
+  }
+  className={`px-4 py-2 rounded text-sm
+    ${
+      status === "UPCOMING"
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "bg-gray-200 hover:bg-gray-300"
+    }
+  `}
+>
+  View Attendance
+</button>
+
 
                 <button
                   onClick={() =>

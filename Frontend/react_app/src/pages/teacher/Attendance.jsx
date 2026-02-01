@@ -1,127 +1,196 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getinchargeteacherscompetitions } from "../../api/teacher.api";
+import { getCompetitionRegistrationStats } from "../../api/registeration.api";
 
 const Attendance = () => {
+
   const navigate = useNavigate();
+
   const [competitions, setCompetitions] = useState([]);
+  const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
+
+  // ================= FETCH COMPETITIONS =================
 
   const fetchCompetitions = async () => {
     try {
-      setLoading(true);
+
       const res = await getinchargeteacherscompetitions();
       setCompetitions(res.data);
+
     } catch (error) {
-      console.error("Error fetching competitions:", error);
+
+      console.error(error);
+
     } finally {
+
       setLoading(false);
+
+    }
+  };
+
+  // ================= FETCH TOTAL REGISTRATIONS =================
+
+  const fetchStats = async (id) => {
+    try {
+
+      const res = await getCompetitionRegistrationStats(id);
+
+      setStats(prev => ({
+        ...prev,
+        [id]: res.data
+      }));
+
+    } catch (error) {
+
+      console.log(error);
+
     }
   };
 
   useEffect(() => {
+
     fetchCompetitions();
+
   }, []);
+
+  useEffect(() => {
+
+    competitions.forEach(c => fetchStats(c._id));
+
+  }, [competitions]);
+
+  // ================= LOADING =================
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading competitions...</p>
-        </div>
+      <div className="flex justify-center items-center min-h-[300px]">
+        Loading competitions...
       </div>
     );
   }
 
   return (
     <div className="p-6">
-      {/* ================= HEADER ================= */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Mark Attendance</h1>
-        <p className="text-gray-600 mt-1">Select a competition to mark attendance for students</p>
-      </div>
 
-      {/* ================= EMPTY STATE ================= */}
-      {competitions.length === 0 && (
-        <div className="bg-white rounded-lg shadow-md p-12 text-center">
-          <p className="text-gray-500 text-lg">No competitions assigned yet.</p>
-          <p className="text-gray-400 text-sm mt-2">
-            Competitions will appear here once a coordinator assigns you to them.
-          </p>
-        </div>
-      )}
+      <h1 className="text-3xl font-bold mb-6">
+        Attendance Management
+      </h1>
 
-      {/* ================= COMPETITION CARDS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
         {competitions.map((competition) => {
+
           const now = new Date();
           const startTime = new Date(competition.startTime);
           const endTime = new Date(competition.endTime);
+
           const isActive = now >= startTime && now <= endTime;
           const isUpcoming = now < startTime;
           const isCompleted = now > endTime;
 
+          const total = stats[competition._id]?.total || 0;
+
           return (
+
             <div
               key={competition._id}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-6 border border-gray-200"
+              className="bg-white rounded-lg shadow-md p-6 border"
             >
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-bold text-gray-900">{competition.name}</h3>
+
+              {/* HEADER */}
+
+              <div className="flex justify-between mb-3">
+
+                <h3 className="font-bold">
+                  {competition.name}
+                </h3>
+
                 <span
-                  className={`px-3 py-1 text-xs rounded-full font-medium ${
+                  className={`px-3 py-1 text-xs rounded-full ${
                     isActive
                       ? "bg-green-100 text-green-700"
                       : isUpcoming
                       ? "bg-yellow-100 text-yellow-700"
-                      : "bg-gray-100 text-gray-700"
+                      : "bg-gray-200 text-gray-700"
                   }`}
                 >
-                  {isActive ? "Active" : isUpcoming ? "Upcoming" : "Completed"}
+                  {isActive
+                    ? "LIVE"
+                    : isUpcoming
+                    ? "UPCOMING"
+                    : "COMPLETED"}
                 </span>
+
               </div>
 
-              <div className="text-sm text-gray-600 space-y-2 mb-4">
-                <p><strong>Type:</strong> {competition.type}</p>
-                <p><strong>Venue:</strong> {competition.venue}</p>
-                <p>
-                  <strong>Start:</strong> {startTime.toLocaleString()}
-                </p>
-                <p>
-                  <strong>End:</strong> {endTime.toLocaleString()}
-                </p>
-              </div>
+              {/* TOTAL REGISTRATION */}
 
-              <p className="text-sm text-gray-500 mb-4 line-clamp-2">
-                {competition.shortDescription}
+              <p className="text-sm mb-4">
+                👥 Total Registered:
+                <span className="font-bold ml-1">
+                  {total}
+                </span>
               </p>
 
+              {/* ACTION BUTTONS */}
+
               <div className="flex gap-3">
-                <button
-                  onClick={() => navigate(`/teacher/attendance/${competition._id}`)}
-                  disabled={!isActive && !isCompleted}
-                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-                    isActive || isCompleted
-                      ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
-                >
-                  {isActive ? "📱 Show QR Code" : isCompleted ? "View Attendance" : "Not Started"}
-                </button>
-                {isCompleted && (
+
+                {/* SHOW QR */}
+
+                {isActive && (
+
                   <button
-                    onClick={() => navigate(`/teacher/attendance/view/${competition._id}`)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition"
+                    onClick={() =>
+                      navigate(`/teacher/attendance/${competition._id}`)
+                    }
+                    className="flex-1 py-2 rounded bg-indigo-600 hover:bg-indigo-700 text-white"
                   >
-                    View
+                    📱 Show QR
                   </button>
+
                 )}
+
+                {/* VIEW ATTENDANCE */}
+
+                {(isActive || isCompleted) && (
+
+                  <button
+                    onClick={() =>
+                      navigate(`/teacher/attendance/view/${competition._id}`)
+                    }
+                    className="flex-1 py-2 rounded bg-gray-800 hover:bg-black text-white"
+                  >
+                    📊 View Attendance
+                  </button>
+
+                )}
+
+                {/* UPCOMING */}
+
+                {isUpcoming && (
+
+                  <button
+                    disabled
+                    className="flex-1 py-2 rounded bg-gray-300 text-gray-500"
+                  >
+                    ⏳ Not Started
+                  </button>
+
+                )}
+
               </div>
+
             </div>
+
           );
+
         })}
+
       </div>
+
     </div>
   );
 };
