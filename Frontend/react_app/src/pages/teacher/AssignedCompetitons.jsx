@@ -299,3 +299,183 @@ const AssignedCompetitons = () => {
 };
 
 export default AssignedCompetitons;
+
+// import React, { useEffect, useState, useCallback } from "react";
+// import { getinchargeteacherscompetitions } from "../../api/teacher.api";
+// import { useNavigate, useParams } from "react-router-dom";
+
+// const AssignedCompetitions = () => {
+
+//   const { eventId } = useParams();
+
+//   const [competitions, setCompetitions] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [currentTime, setCurrentTime] = useState(new Date());
+
+//   const navigate = useNavigate();
+
+//   // FETCH COMPETITIONS (BY EVENT)
+
+//   const fetchAssigned = useCallback(async () => {
+
+//     try {
+//       const res = await getinchargeteacherscompetitions(eventId);
+//       setCompetitions(res.data || []);
+//     } catch (error) {
+//       console.error(error);
+//     } finally {
+//       setLoading(false);
+//     }
+
+//   }, [eventId]);
+
+//   useEffect(() => {
+//     fetchAssigned();
+//   }, [fetchAssigned]);
+
+//   // LIVE CLOCK
+
+//   useEffect(() => {
+
+//     const timer = setInterval(() => {
+//       setCurrentTime(new Date());
+//     }, 1000);
+
+//     return () => clearInterval(timer);
+
+//   }, []);
+
+//   // STATUS LOGIC
+
+//   const getStatus = (start, end) => {
+
+//     const now = currentTime;
+
+//     if (now < new Date(start)) return "UPCOMING";
+//     if (now <= new Date(end)) return "ONGOING";
+
+//     return "COMPLETED";
+//   };
+
+//   // COUNTDOWN
+
+//   const getCountdown = (start, end) => {
+
+//     const now = currentTime;
+
+//     let diff;
+
+//     if (now < new Date(start)) diff = new Date(start) - now;
+//     else if (now <= new Date(end)) diff = new Date(end) - now;
+//     else return "Finished";
+
+//     const h = Math.floor(diff / 3600000);
+//     const m = Math.floor((diff / 60000) % 60);
+
+//     return `${h}h ${m}m`;
+//   };
+
+//   return (
+//     <div className="p-6">
+
+//       <h1 className="text-xl font-bold mb-6">
+//         Assigned Competitions
+//       </h1>
+
+//       {loading && <p>Loading...</p>}
+
+//       {!loading && competitions.length === 0 && (
+//         <p>No competitions assigned</p>
+//       )}
+
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+//         {competitions.map(comp => {
+
+//           const status = getStatus(
+//             comp.startTime,
+//             comp.endTime
+//           );
+
+//           return (
+
+//             <div
+//               key={comp._id}
+//               className={`bg-white p-5 rounded shadow border
+//               ${status === "ONGOING" && "border-green-500"}`}
+//             >
+
+//               <div className="flex justify-between mb-3">
+
+//                 <h2 className="font-bold">
+//                   {comp.name}
+//                 </h2>
+
+//                 <span className={`px-3 py-1 rounded-full text-sm
+//                 ${
+//                   status === "ONGOING"
+//                     ? "bg-green-100 text-green-700"
+//                     : status === "UPCOMING"
+//                     ? "bg-blue-100 text-blue-700"
+//                     : "bg-gray-200"
+//                 }`}>
+
+//                   {status}
+
+//                 </span>
+
+//               </div>
+
+//               <p className="text-indigo-600 text-sm font-semibold">
+
+//                 {status === "UPCOMING" && `Starts in ${getCountdown(comp.startTime, comp.endTime)}`}
+//                 {status === "ONGOING" && `Ends in ${getCountdown(comp.startTime, comp.endTime)}`}
+//                 {status === "COMPLETED" && "Finished"}
+
+//               </p>
+
+//               <p className="text-sm mt-2">
+//                 <b>Venue:</b> {comp.venue}
+//               </p>
+
+//               <div className="flex gap-3 mt-4">
+
+//                 <button
+//                   disabled={status !== "ONGOING"}
+//                   onClick={() =>
+//                     navigate(`/teacher/attendance/${comp._id}`)
+//                   }
+//                   className={`px-4 py-2 rounded text-white text-sm
+//                   ${
+//                     status === "ONGOING"
+//                       ? "bg-indigo-600"
+//                       : "bg-gray-400 cursor-not-allowed"
+//                   }`}
+//                 >
+//                   Attendance
+//                 </button>
+
+//                 <button
+//                   onClick={() =>
+//                     navigate(`/teacher/registrations/${comp._id}`)
+//                   }
+//                   className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
+//                 >
+//                   Registrations
+//                 </button>
+
+//               </div>
+
+//             </div>
+
+//           );
+
+//         })}
+
+//       </div>
+
+//     </div>
+//   );
+// };
+
+// export default AssignedCompetitions;
