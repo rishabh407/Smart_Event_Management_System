@@ -750,50 +750,121 @@ export const getCompetitionRegistrations = async (req, res) => {
 
 // };
 
+// export const markAttendanceByQR = async (req, res) => {
+
+//  try {
+
+//   const { competitionId } = req.body;
+//   const studentId = req.user._id;
+
+//   // Find valid registration
+//   const registration = await Registration.findOne({
+//    competition: competitionId,
+//    student: studentId,
+//    status: "registered"
+//   });
+
+//   if (!registration) {
+//    return res.status(400).json({
+//     message: "No valid registration found"
+//    });
+//   }
+
+//   // Prevent double attendance
+//   if (registration.status === "attended") {
+//    return res.status(400).json({
+//     message: "Attendance already marked"
+//    });
+//   }
+
+//   // Mark attendance
+//   registration.status = "attended";
+//   await registration.save();
+
+//   res.json({
+//    success: true,
+//    message: "Attendance marked successfully"
+//   });
+
+//  } catch (error) {
+
+//   console.error(error);
+
+//   res.status(500).json({
+//    message: "Attendance failed"
+//   });
+
+//  }
+
+// };
+
+
 export const markAttendanceByQR = async (req, res) => {
 
- try {
+  try {
 
-  const { competitionId } = req.body;
-  const studentId = req.user._id;
+    const { competitionId } = req.body;
+    const studentId = req.user._id;
 
-  // Find valid registration
-  const registration = await Registration.findOne({
-   competition: competitionId,
-   student: studentId,
-   status: "registered"
-  });
+    // 1️⃣ Check competition exists
+    const competition = await Competition.findById(competitionId);
 
-  if (!registration) {
-   return res.status(400).json({
-    message: "No valid registration found"
-   });
+    if (!competition) {
+      return res.status(404).json({
+        message: "Competition not found"
+      });
+    }
+
+    const now = new Date();
+
+    // 2️⃣ Check competition timing
+    if (now < competition.startTime || now > competition.endTime) {
+      return res.status(400).json({
+        message: "Attendance allowed only during competition time"
+      });
+    }
+
+    // 3️⃣ Check student registration
+    const registration = await Registration.findOne({
+      competition: competitionId,
+      student: studentId,
+      status: "registered"
+    });
+
+    if (!registration) {
+      return res.status(403).json({
+        message: "You are not registered for this competition"
+      });
+    }
+
+    // 4️⃣ Prevent double attendance
+    if (registration.attended === true) {
+      return res.status(409).json({
+        message: "Attendance already marked"
+      });
+    }
+
+    // 5️⃣ Mark attendance
+    registration.attended = true;
+    registration.status = "attended";
+    registration.attendedAt = new Date();
+
+    await registration.save();
+
+    // 6️⃣ Success response
+    res.status(200).json({
+      success: true,
+      message: "Attendance marked successfully"
+    });
+
+  } catch (error) {
+
+    console.error("ATTENDANCE ERROR:", error);
+
+    res.status(500).json({
+      message: "Attendance failed"
+    });
+
   }
-
-  // Prevent double attendance
-  if (registration.status === "attended") {
-   return res.status(400).json({
-    message: "Attendance already marked"
-   });
-  }
-
-  // Mark attendance
-  registration.status = "attended";
-  await registration.save();
-
-  res.json({
-   success: true,
-   message: "Attendance marked successfully"
-  });
-
- } catch (error) {
-
-  console.error(error);
-
-  res.status(500).json({
-   message: "Attendance failed"
-  });
-
- }
 
 };

@@ -44,5 +44,5 @@ export const getStudentDashboardStats = () => {
 };
 
 export const markAttendanceByQR = (data) => {
- return api.post("/registrations/attendance", data);
+ return api.post("/registrations/attendance/mark", data);
 };

@@ -48,7 +48,7 @@ router.get(
 );
 
 router.post(
- "/attendance",
+ "/attendance/mark",
  protect,
  studentOnly,
  markAttendanceByQR
