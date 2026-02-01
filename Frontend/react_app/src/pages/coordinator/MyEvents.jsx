@@ -1,132 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { getCoordinatorEvents } from "../../api/event.api";
-// import toast from "react-hot-toast";
-
-// const MyEvents = () => {
-//   const [events, setEvents] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const navigate = useNavigate();
-
-//   const fetchEvents = async () => {
-//     try {
-//       setLoading(true);
-//       const res = await getCoordinatorEvents();
-//       setEvents(res.data);
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Failed to load events");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchEvents();
-//   }, []);
-
-//   if (loading) {
-//     return (
-//       <div className="flex items-center justify-center min-h-[400px]">
-//         <div className="text-center">
-//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-//           <p className="mt-4 text-gray-600">Loading your events...</p>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="p-6">
-//       {/* ================= HEADER ================= */}
-//       <div className="mb-6">
-//         <h1 className="text-3xl font-bold text-gray-900">My Assigned Events</h1>
-//         <p className="text-gray-600 mt-1">Manage competitions for your assigned events</p>
-//       </div>
-
-//       {/* ================= EMPTY STATE ================= */}
-//       {events.length === 0 && (
-//         <div className="bg-white rounded-lg shadow-md p-12 text-center">
-//           <div className="text-6xl mb-4">📅</div>
-//           <p className="text-gray-500 text-lg mb-2">No events assigned yet</p>
-//           <p className="text-gray-400 text-sm">
-//             Events will appear here once HOD assigns them to you.
-//           </p>
-//         </div>
-//       )}
-
-//       {/* ================= EVENTS GRID ================= */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//         {events.map(event => (
-//           <div
-//             key={event._id}
-//             className="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200"
-//           >
-//             {/* Banner */}
-//             <div className="h-40 bg-gradient-to-br from-green-400 to-emerald-600">
-//               {event.bannerImage ? (
-//                 <img
-//                   src={`http://localhost:5000${event.bannerImage}`}
-//                   alt="event banner"
-//                   className="w-full h-full object-cover"
-//                 />
-//               ) : (
-//                 <div className="w-full h-full flex items-center justify-center text-white text-4xl">
-//                   🎯
-//                 </div>
-//               )}
-//             </div>
-
-//             <div className="p-5">
-//               {/* Title + Status */}
-//               <div className="flex justify-between items-start mb-3">
-//                 <h2 className="text-lg font-semibold text-gray-900 line-clamp-2">
-//                   {event.title}
-//                 </h2>
-//                 <span
-//                   className={`px-3 py-1 text-xs rounded-full font-medium ${
-//                     event.liveStatus === "upcoming"
-//                       ? "bg-yellow-100 text-yellow-700"
-//                       : event.liveStatus === "ongoing"
-//                       ? "bg-green-100 text-green-700"
-//                       : "bg-gray-200 text-gray-700"
-//                   }`}
-//                 >
-//                   {event.liveStatus}
-//                 </span>
-//               </div>
-
-//               {/* Description */}
-//               <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-//                 {event.shortDescription}
-//               </p>
-
-//               {/* Details */}
-//               <div className="text-sm text-gray-500 space-y-1 mb-4">
-//                 <p>📍 {event.venueOverview}</p>
-//                 <p>📅 Start: {new Date(event.startDate).toLocaleDateString()}</p>
-//                 <p>⏳ End: {new Date(event.endDate).toLocaleDateString()}</p>
-//               </div>
-
-//               {/* Action Button */}
-//               <button
-//                 onClick={() =>
-//                   navigate(`/coordinator/events/${event._id}/competitions`)
-//                 }
-//                 className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium transition shadow-md hover:shadow-lg"
-//               >
-//                 📋 Manage Competitions
-//               </button>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default MyEvents;
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCoordinatorEvents } from "../../api/event.api";
@@ -136,6 +7,7 @@ const MyEvents = () => {
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("ALL"); // NEW
 
   const navigate = useNavigate();
 
@@ -145,7 +17,6 @@ const MyEvents = () => {
     try {
 
       setLoading(true);
-
       const res = await getCoordinatorEvents();
       setEvents(res.data || []);
 
@@ -179,14 +50,25 @@ const MyEvents = () => {
     return "COMPLETED";
   };
 
-  // ================= LOADING UI =================
+  // ================= FILTER LOGIC =================
+
+  const filteredEvents = events.filter((event) => {
+
+    if (filter === "ALL") return true;
+
+    const status = getEventStatus(event.startDate, event.endDate);
+    return status === filter;
+
+  });
+
+  // ================= LOADING =================
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-[300px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-3 text-gray-600 text-sm">
             Loading your events...
           </p>
         </div>
@@ -195,33 +77,52 @@ const MyEvents = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="space-y-6">
 
       {/* ================= HEADER ================= */}
 
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           My Assigned Events
         </h1>
-        <p className="text-gray-600 mt-1">
+
+        <p className="text-gray-600 text-sm md:text-base mt-1">
           Manage competitions for your assigned events
         </p>
       </div>
 
-      {/* ================= EMPTY STATE ================= */}
+      {/* ================= FILTER BAR ================= */}
 
-      {events.length === 0 && (
+      <div className="flex flex-wrap gap-2">
 
-        <div className="bg-white rounded-lg shadow-md p-12 text-center">
+        {["ALL", "UPCOMING", "ONGOING", "COMPLETED"].map((item) => (
 
-          <div className="text-6xl mb-4">📅</div>
+          <button
+            key={item}
+            onClick={() => setFilter(item)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition
+              ${filter === item
+                ? "bg-green-600 text-white"
+                : "bg-white border text-gray-600 hover:bg-gray-100"
+              }`}
+          >
+            {item}
+          </button>
+
+        ))}
+
+      </div>
+
+      {/* ================= EMPTY ================= */}
+
+      {filteredEvents.length === 0 && (
+
+        <div className="bg-white rounded-lg shadow-md p-10 text-center">
+
+          <div className="text-5xl mb-4">📅</div>
 
           <p className="text-gray-500 text-lg mb-2">
-            No events assigned yet
-          </p>
-
-          <p className="text-gray-400 text-sm">
-            Events will appear here once HOD assigns them to you.
+            No {filter.toLowerCase()} events found
           </p>
 
         </div>
@@ -230,9 +131,9 @@ const MyEvents = () => {
 
       {/* ================= EVENTS GRID ================= */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-        {events.map((event) => {
+        {filteredEvents.map((event) => {
 
           const status = getEventStatus(
             event.startDate,
@@ -243,12 +144,12 @@ const MyEvents = () => {
 
             <div
               key={event._id}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200"
+              className="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 flex flex-col"
             >
 
-              {/* ================= BANNER ================= */}
+              {/* BANNER */}
 
-              <div className="h-40 bg-gradient-to-br from-green-400 to-emerald-600">
+              <div className="h-36 md:h-40 bg-gradient-to-br from-green-400 to-emerald-600">
 
                 {event.bannerImage ? (
 
@@ -268,20 +169,20 @@ const MyEvents = () => {
 
               </div>
 
-              {/* ================= CONTENT ================= */}
+              {/* CONTENT */}
 
-              <div className="p-5">
+              <div className="p-4 md:p-5 flex flex-col flex-1">
 
                 {/* TITLE + STATUS */}
 
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex justify-between items-start gap-2 mb-2">
 
-                  <h2 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                  <h2 className="text-base md:text-lg font-semibold text-gray-900 line-clamp-2">
                     {event.title}
                   </h2>
 
                   <span
-                    className={`px-3 py-1 text-xs rounded-full font-medium ${
+                    className={`px-2 py-1 text-xs rounded-full font-medium whitespace-nowrap ${
                       status === "UPCOMING"
                         ? "bg-yellow-100 text-yellow-700"
                         : status === "ONGOING"
@@ -318,14 +219,14 @@ const MyEvents = () => {
 
                 </div>
 
-                {/* ACTION BUTTON */}
+                {/* BUTTON */}
 
                 <button
                   disabled={status === "COMPLETED"}
                   onClick={() =>
                     navigate(`/coordinator/events/${event._id}/competitions`)
                   }
-                  className={`w-full px-4 py-3 rounded-lg font-medium transition shadow-md ${
+                  className={`mt-auto w-full px-4 py-3 rounded-lg text-sm md:text-base font-medium transition shadow ${
                     status === "COMPLETED"
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-green-600 hover:bg-green-700 text-white"

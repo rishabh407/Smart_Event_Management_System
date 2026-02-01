@@ -608,70 +608,140 @@ export const getRegistrationsByCompetition = async (req, res) => {
 };
 
 
+
+// export const getCompetitionRegistrationStats = async (req, res) => {
+
+//  try {
+
+//   const { id } = req.params;
+
+//   // Check competition exists
+//   const competition = await Competition.findById(id);
+
+//   if (!competition) {
+//    return res.status(404).json({
+//     message: "Competition not found"
+//    });
+//   }
+
+//   // Total registrations
+//   const total = await Registration.countDocuments({
+//    competition: id
+//   });
+
+//   // Active registrations
+//   const active = await Registration.countDocuments({
+//    competition: id,
+//    status: "registered"
+//   });
+
+//   // Cancelled
+//   const cancelled = await Registration.countDocuments({
+//    competition: id,
+//    status: "cancelled"
+//   });
+
+//   let slotsLeft = null;
+//   let isFull = false;
+
+//   if (competition.maxParticipants) {
+
+//    slotsLeft =
+//     competition.maxParticipants - active;
+
+//    if (slotsLeft <= 0) {
+//     isFull = true;
+//    }
+
+//   }
+
+//   res.status(200).json({
+//    total,
+//    active,
+//    cancelled,
+//    maxParticipants: competition.maxParticipants || null,
+//    slotsLeft,
+//    isFull
+//   });
+
+//  } catch (error) {
+
+//   console.error("STATS ERROR:", error);
+
+//   res.status(500).json({
+//    message: "Failed to fetch registration stats"
+//   });
+
+//  }
+
+// };
+
+
 export const getCompetitionRegistrationStats = async (req, res) => {
 
- try {
+  try {
 
-  const { id } = req.params;
+    const { id } = req.params;
 
-  // Check competition exists
-  const competition = await Competition.findById(id);
+    // Check competition exists
+    const competition = await Competition.findById(id);
 
-  if (!competition) {
-   return res.status(404).json({
-    message: "Competition not found"
-   });
+    if (!competition) {
+      return res.status(404).json({
+        message: "Competition not found"
+      });
+    }
+
+    // TOTAL REGISTERED (registered + attended)
+    const totalRegistered = await Registration.countDocuments({
+      competition: id,
+      status: { $in: ["registered", "attended"] }
+    });
+
+    // PRESENT (attended)
+    const present = await Registration.countDocuments({
+      competition: id,
+      status: "attended"
+    });
+
+    // CANCELLED
+    const cancelled = await Registration.countDocuments({
+      competition: id,
+      status: "cancelled"
+    });
+
+    let slotsLeft = null;
+    let isFull = false;
+
+    if (competition.maxParticipants) {
+
+      slotsLeft =
+        competition.maxParticipants - totalRegistered;
+
+      if (slotsLeft <= 0) {
+        isFull = true;
+      }
+
+    }
+
+    res.status(200).json({
+      totalRegistered,
+      present,
+      cancelled,
+      maxParticipants: competition.maxParticipants || null,
+      slotsLeft,
+      isFull
+    });
+
+  } catch (error) {
+
+    console.error("STATS ERROR:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch registration stats"
+    });
+
   }
-
-  // Total registrations
-  const total = await Registration.countDocuments({
-   competition: id
-  });
-
-  // Active registrations
-  const active = await Registration.countDocuments({
-   competition: id,
-   status: "registered"
-  });
-
-  // Cancelled
-  const cancelled = await Registration.countDocuments({
-   competition: id,
-   status: "cancelled"
-  });
-
-  let slotsLeft = null;
-  let isFull = false;
-
-  if (competition.maxParticipants) {
-
-   slotsLeft =
-    competition.maxParticipants - active;
-
-   if (slotsLeft <= 0) {
-    isFull = true;
-   }
-
-  }
-
-  res.status(200).json({
-   total,
-   active,
-   cancelled,
-   maxParticipants: competition.maxParticipants || null,
-   slotsLeft,
-   isFull
-  });
-
- } catch (error) {
-
-  console.error("STATS ERROR:", error);
-
-  res.status(500).json({
-   message: "Failed to fetch registration stats"
-  });
-
- }
 
 };
 
