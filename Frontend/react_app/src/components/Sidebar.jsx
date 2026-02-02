@@ -1,9 +1,9 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const Sidebar = () => {
+const Sidebar = ({ open, setOpen }) => {
+
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   const linkStyle = ({ isActive }) =>
     `block px-4 py-3 rounded-lg transition ${
@@ -13,48 +13,67 @@ const Sidebar = () => {
     }`;
 
   return (
-    <div className="w-64 bg-white shadow-lg flex flex-col h-screen">
-      {/* Header */}
-      <div className="p-5 border-b">
-        <h2 className="text-xl font-bold text-gray-900">🎓 Student Panel</h2>
-        {user && (
-          <p className="text-sm text-gray-600 mt-1">{user.fullName}</p>
-        )}
-      </div>
+    <>
+      {/* BACKDROP FOR MOBILE */}
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
+        />
+      )}
 
-      {/* Navigation */}
-      <nav className="p-4 space-y-2 flex-1">
-        <NavLink to="/student" className={linkStyle}>
-          📊 Dashboard
-        </NavLink>
+      <aside
+        className={`fixed top-0 left-0 h-screen w-64 bg-white shadow-lg z-50
+        transform transition-transform duration-300
+        ${open ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 md:static md:shadow-none`}
+      >
 
-        <NavLink to="/student/events" className={linkStyle}>
-          📅 Events
-        </NavLink>
+        {/* HEADER */}
+        <div className="p-5 border-b sticky top-0 bg-white z-10">
+          <h2 className="text-xl font-bold">🎓 Student Panel</h2>
+          <p className="text-sm text-gray-500 truncate">
+            {user?.fullName}
+          </p>
+        </div>
 
-        <NavLink to="/student/registrations" className={linkStyle}>
-          📋 My Registrations
-        </NavLink>
+        {/* MENU */}
+        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-160px)]">
 
-        <NavLink to="/student/certificates" className={linkStyle}>
-          🎓 Certificates
-        </NavLink>
+          <NavLink to="/student" onClick={() => setOpen(false)} className={linkStyle}>
+            📊 Dashboard
+          </NavLink>
 
-        <NavLink to="/student/team" className={linkStyle}>
-          👥 Teams
-        </NavLink>
-      </nav>
+          <NavLink to="/student/events" onClick={() => setOpen(false)} className={linkStyle}>
+            📅 Events
+          </NavLink>
 
-      {/* Logout */}
-      <div className="p-4 border-t">
-        <button
-          onClick={logout}
-          className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition"
-        >
-          🚪 Logout
-        </button>
-      </div>
-    </div>
+          <NavLink to="/student/registrations" onClick={() => setOpen(false)} className={linkStyle}>
+            📋 My Registrations
+          </NavLink>
+
+          <NavLink to="/student/certificates" onClick={() => setOpen(false)} className={linkStyle}>
+            🎓 Certificates
+          </NavLink>
+
+          <NavLink to="/student/team" onClick={() => setOpen(false)} className={linkStyle}>
+            👥 Teams
+          </NavLink>
+
+        </nav>
+
+        {/* LOGOUT FIXED BOTTOM */}
+        <div className="absolute bottom-0 w-full p-4 border-t bg-white">
+          <button
+            onClick={logout}
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition"
+          >
+            🚪 Logout
+          </button>
+        </div>
+
+      </aside>
+    </>
   );
 };
 

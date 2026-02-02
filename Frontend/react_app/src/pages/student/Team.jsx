@@ -1,283 +1,4 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   getMyTeamsByUserId,
-//   leaveTeam,
-//   deleteTeam
-// } from "../../api/team.api";
-// import { getMe } from "../../api/auth.api";
-// import { registerTeam } from "../../api/registeration.api";
-// import { useNavigate } from "react-router-dom";
-
-// const Team = () => {
-//   const [userTeams, setUserTeams] = useState([]);
-//   const navigate = useNavigate();
-//   const [loading, setLoading] = useState(true);
-//   const [actionLoading, setActionLoading] = useState(null);
-//   // const [competitionId, setcompetitionId] = useState(null);
-//   const [userId, setUserId] = useState(null);
-//   useEffect(() => {
-    
-//     fetchUser();
-//     fetchMyTeams();
-//   }, []);
-//   // ---------------- GET LOGGED USER ----------------
-// console.log(userTeams);
-//   const fetchUser = async () => {
-//     try {
-//       const res = await getMe();
-//       setUserId(res.data.user.id);
-//     } catch (error) {
-//       console.error("User fetch failed");
-//     }
-//   };
-
-//   // ---------------- GET TEAMS ----------------
-//   const fetchMyTeams = async () => {
-
-//     try {
-
-//       const res = await getMyTeamsByUserId();
-//       setUserTeams(res.data.datateams);
-//       // setcompetitionId(res.data.datateams.competitionId);
-//     } catch (error) {
-//       console.error(error);
-//     } finally {
-//       setLoading(false);
-//     }
-
-//   };
-
-//   // ---------------- LEAVE TEAM ----------------
-
-//   const handleLeave = async (teamId) => {
-
-//     const confirmLeave = window.confirm(
-//       "Are you sure you want to leave this team?"
-//     );
-
-//     if (!confirmLeave) return;
-
-//     try {
-
-//       setActionLoading(teamId);
-//       await leaveTeam({ teamId });
-//       fetchMyTeams();
-
-//     } catch (error) {
-
-//       alert(error.response?.data?.message);
-
-//     } finally {
-
-//       setActionLoading(null);
-
-//     }
-
-//   };
-
-//   // ---------------- DELETE TEAM ----------------
-
-//   const handleDelete = async (teamId) => {
-//     const confirmDelete = window.confirm(
-//       "This will delete your team permanently. Continue?"
-//     );
-
-//     if (!confirmDelete) return;
-
-//     try {
-
-//       setActionLoading(teamId);
-
-//       await deleteTeam(teamId);
-
-//       fetchMyTeams();
-
-//     } catch (error) {
-
-//       alert(error.response?.data?.message);
-
-//     } finally {
-
-//       setActionLoading(null);
-
-//     }
-
-//   };
-//     // ---------------- SUBMIT TEAM ----------------
-  
-//     // const handleSubmitTeam = async (teamId,competitionId) => {
-//     //   // console.log(competitionId);
-//     //   try {
-//     //     setActionLoading(teamId);
-//     //     await registerTeam({
-//     //       competitionId,
-//     //       teamId
-//     //     });
-//     //     navigate("/student/registrations");
-//     //   } catch (error) {
-//     //     alert(error.response?.data?.message);
-//     //   }
-//     // };
-
-//     const handleSubmitTeam = async (teamId, competitionId) => {
-
-//   try {
-
-//     setActionLoading(teamId);
-
-//     await registerTeam({
-//       competitionId,
-//       teamId
-//     });
-
-//     // Update UI instantly
-//     setUserTeams(prev =>
-//       prev.map(team =>
-//         team._id === teamId
-//           ? { ...team, isSubmitted: true }
-//           : team
-//       )
-//     );
-//  navigate("/student/registrations");
-//   } catch (error) {
-
-//     alert(error.response?.data?.message);
-
-//   } finally {
-
-//     setActionLoading(null);
-
-//   }
-
-// };
-
-
-//   // ---------------- UI ----------------
-
-//   if (loading) {
-//     return <p className="text-center mt-10">Loading teams...</p>;
-//   }
-
-//   return (
-//     <div>
-
-//       <h1 className="text-2xl font-bold mb-6">
-//         My Teams
-//       </h1>
-
-//       {userTeams.length === 0 && (
-//         <p className="text-gray-500">
-//           You have not joined any teams
-//         </p>
-//       )}
-
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-//         {userTeams.map((team) => {
-
-//           const isLeader = team.leader?._id === userId;
-//           const isLocked = team?.isSubmitted;
-//           {/* console.log(isLeader); */}
-//           {/* console.log(userId); */}
-//           {/* console.log(team.leader?._id); */}
-//           return (
-
-//             <div
-//               key={team._id}
-//               className="border p-4 rounded bg-white shadow-sm"
-//             >
-
-//               <h2 className="font-semibold text-lg">
-//                 {team.teamName}
-//               </h2>
-
-//               <p className="text-sm text-gray-600">
-//                 Competition: {team.competitionId?.name}
-//               </p>
-
-//               <p className="text-sm mt-1">
-//                 Members: {team.members.length}
-//               </p>
-
-//               <p className="text-sm mt-1">
-//                 Status:
-//                 <span
-//                   className={`ml-1 font-medium ${
-//                     isLocked
-//                       ? "text-red-600"
-//                       : "text-green-600"
-//                   }`}
-//                 >
-//                   {isLocked ? "Submitted" : "Not Submitted"}
-//                 </span>
-//               </p>
-
-//               {!isLocked && (
-
-//                 <div className="mt-3 flex gap-2">
-//                     <p>{team._id}</p>
-//                   {isLeader && (
-//                    <div className="flex gap-5">
-//                     <button
-//                       onClick={() => handleDelete(team._id)}
-//                       disabled={actionLoading === team._id}
-//                       className="bg-red-500 text-white px-3 py-1 rounded text-sm"
-//                     >
-//                       {actionLoading === team._id
-//                         ? "Deleting..."
-//                         : "Delete Team"}
-//                     </button>
-//                     <button
-//                       onClick={() => handleSubmitTeam(team._id,team.competitionId._id)}
-//                       className="bg-purple-600 text-white px-3 py-1 rounded text-sm"
-//                     >
-//                         Submit Team
-//                     </button>
-//                       </div>
-//                   )}
-
-//                   {!isLeader && (
-
-//                     <button
-//                       onClick={() => handleLeave(team._id)}
-//                       disabled={actionLoading === team._id}
-//                       className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
-//                     >
-//                       {actionLoading === team._id
-//                         ? "Leaving..."
-//                         : "Leave Team"}
-//                     </button>
-
-//                   )}
-
-//                 </div>
-
-//               )}
-
-//               {isLocked && (
-
-//                 <p className="text-xs text-gray-500 mt-2">
-//                   Team locked after registration submission
-//                 </p>
-
-//               )}
-
-//             </div>
-
-//           );
-
-//         })}
-
-//       </div>
-
-//     </div>
-//   );
-// };
-
-// export default Team;
-
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getMyTeamsByUserId,
   leaveTeam,
@@ -286,6 +7,7 @@ import {
 import { getMe } from "../../api/auth.api";
 import { registerTeam } from "../../api/registeration.api";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Team = () => {
 
@@ -301,31 +23,31 @@ const Team = () => {
     fetchMyTeams();
   }, []);
 
-  // ---------------- GET USER ----------------
+  // ================= FETCH USER =================
 
   const fetchUser = async () => {
     try {
       const res = await getMe();
-      setUserId(res.data.user.id);
-    } catch (error) {
-      console.error("User fetch failed");
+      setUserId(res.data?.user?.id);
+    } catch {
+      toast.error("Failed to load user");
     }
   };
 
-  // ---------------- GET TEAMS ----------------
+  // ================= FETCH TEAMS =================
 
   const fetchMyTeams = async () => {
     try {
       const res = await getMyTeamsByUserId();
-      setUserTeams(res.data.datateams);
-    } catch (error) {
-      console.error(error);
+      setUserTeams(res.data?.datateams || []);
+    } catch {
+      toast.error("Failed to load teams");
     } finally {
       setLoading(false);
     }
   };
 
-  // ---------------- LEAVE TEAM ----------------
+  // ================= LEAVE TEAM =================
 
   const handleLeave = async (teamId) => {
 
@@ -337,21 +59,22 @@ const Team = () => {
 
       await leaveTeam({ teamId });
 
+      toast.success("Left team successfully");
+
       fetchMyTeams();
 
     } catch (error) {
 
-      alert(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Leave failed");
 
     } finally {
 
       setActionLoading(null);
 
     }
-
   };
 
-  // ---------------- DELETE TEAM ----------------
+  // ================= DELETE TEAM =================
 
   const handleDelete = async (teamId) => {
 
@@ -363,21 +86,22 @@ const Team = () => {
 
       await deleteTeam(teamId);
 
+      toast.success("Team deleted");
+
       fetchMyTeams();
 
     } catch (error) {
 
-      alert(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Delete failed");
 
     } finally {
 
       setActionLoading(null);
 
     }
-
   };
 
-  // ---------------- SUBMIT TEAM ----------------
+  // ================= SUBMIT TEAM =================
 
   const handleSubmitTeam = async (teamId, competitionId) => {
 
@@ -390,7 +114,8 @@ const Team = () => {
         teamId
       });
 
-      // Optimistic UI update
+      toast.success("Team submitted successfully");
+
       setUserTeams(prev =>
         prev.map(team =>
           team._id === teamId
@@ -405,36 +130,56 @@ const Team = () => {
 
     } catch (error) {
 
-      alert(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Submit failed");
 
     } finally {
 
       setActionLoading(null);
 
     }
-
   };
 
-  // ---------------- UI ----------------
+  // ================= LOADING =================
 
   if (loading) {
-    return <p className="text-center mt-10">Loading teams...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-3 text-gray-600">Loading teams...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 space-y-6">
 
-      <h1 className="text-2xl font-bold mb-6">
+      {/* HEADER */}
+
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
         My Teams
       </h1>
 
+      {/* EMPTY */}
+
       {userTeams.length === 0 && (
-        <p className="text-gray-500">
-          You have not joined any teams
-        </p>
+
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+
+          <div className="text-5xl mb-3">👥</div>
+
+          <p className="text-gray-500">
+            You have not joined any teams
+          </p>
+
+        </div>
+
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* GRID */}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
         {userTeams.map((team) => {
 
@@ -445,66 +190,76 @@ const Team = () => {
 
             <div
               key={team._id}
-              className="border p-4 rounded bg-white shadow-sm"
+              className="bg-white border rounded-lg shadow-sm hover:shadow-md transition p-4 flex flex-col"
             >
 
-              <h2 className="font-semibold text-lg">
+              {/* TITLE */}
+
+              <h2 className="font-semibold text-lg mb-1">
                 {team.teamName}
               </h2>
 
+              {/* INFO */}
+
               <p className="text-sm text-gray-600">
-                Competition: {team.competitionId?.name}
+                Competition: {team.competitionId?.name || "Competition"}
               </p>
 
-              <p className="text-sm">
-                Members: {team.members.length}
+              <p className="text-sm text-gray-600">
+                Members: {team.members?.length || 0}
               </p>
 
-              <p className="text-sm">
+              <p className="text-sm mt-1">
                 Status:
-                <span className={`ml-1 font-medium ${
-                  isLocked ? "text-red-600" : "text-green-600"
-                }`}>
+                <span
+                  className={`ml-1 font-medium ${
+                    isLocked ? "text-red-600" : "text-green-600"
+                  }`}
+                >
                   {isLocked ? "Submitted" : "Not Submitted"}
                 </span>
               </p>
 
+              {/* ACTIONS */}
+
               {!isLocked && (
 
-                <div className="mt-3 flex gap-2">
+                <div className="mt-4 flex flex-wrap gap-2">
 
-                  {isLeader && (
+                  {isLeader ? (
 
                     <>
                       <button
                         onClick={() => handleDelete(team._id)}
                         disabled={actionLoading === team._id}
-                        className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition"
                       >
                         Delete Team
                       </button>
 
                       <button
-                        onClick={() => handleSubmitTeam(team._id, team.competitionId._id)}
+                        onClick={() =>
+                          handleSubmitTeam(team._id, team.competitionId?._id)
+                        }
                         disabled={actionLoading === team._id}
-                        className={`px-3 py-1 rounded text-sm text-white ${
+                        className={`px-3 py-1 rounded text-sm text-white transition ${
                           actionLoading === team._id
-                            ? "bg-gray-400"
-                            : "bg-purple-600"
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-purple-600 hover:bg-purple-700"
                         }`}
                       >
-                        {actionLoading === team._id ? "Submitting..." : "Submit Team"}
+                        {actionLoading === team._id
+                          ? "Submitting..."
+                          : "Submit Team"}
                       </button>
                     </>
 
-                  )}
-
-                  {!isLeader && (
+                  ) : (
 
                     <button
                       onClick={() => handleLeave(team._id)}
                       disabled={actionLoading === team._id}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm transition"
                     >
                       Leave Team
                     </button>
@@ -517,7 +272,7 @@ const Team = () => {
 
               {isLocked && (
 
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 mt-3">
                   Team locked after submission
                 </p>
 
