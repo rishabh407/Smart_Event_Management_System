@@ -609,73 +609,6 @@ export const getRegistrationsByCompetition = async (req, res) => {
 
 
 
-// export const getCompetitionRegistrationStats = async (req, res) => {
-
-//  try {
-
-//   const { id } = req.params;
-
-//   // Check competition exists
-//   const competition = await Competition.findById(id);
-
-//   if (!competition) {
-//    return res.status(404).json({
-//     message: "Competition not found"
-//    });
-//   }
-
-//   // Total registrations
-//   const total = await Registration.countDocuments({
-//    competition: id
-//   });
-
-//   // Active registrations
-//   const active = await Registration.countDocuments({
-//    competition: id,
-//    status: "registered"
-//   });
-
-//   // Cancelled
-//   const cancelled = await Registration.countDocuments({
-//    competition: id,
-//    status: "cancelled"
-//   });
-
-//   let slotsLeft = null;
-//   let isFull = false;
-
-//   if (competition.maxParticipants) {
-
-//    slotsLeft =
-//     competition.maxParticipants - active;
-
-//    if (slotsLeft <= 0) {
-//     isFull = true;
-//    }
-
-//   }
-
-//   res.status(200).json({
-//    total,
-//    active,
-//    cancelled,
-//    maxParticipants: competition.maxParticipants || null,
-//    slotsLeft,
-//    isFull
-//   });
-
-//  } catch (error) {
-
-//   console.error("STATS ERROR:", error);
-
-//   res.status(500).json({
-//    message: "Failed to fetch registration stats"
-//   });
-
-//  }
-
-// };
-
 
 export const getCompetitionRegistrationStats = async (req, res) => {
 
@@ -683,46 +616,31 @@ export const getCompetitionRegistrationStats = async (req, res) => {
 
     const { id } = req.params;
 
-    // Check competition exists
-    const competition = await Competition.findById(id);
+    const competition = await Competition.findById(id)
+      .select("maxParticipants");
 
     if (!competition) {
-      return res.status(404).json({
-        message: "Competition not found"
-      });
+      return res.status(404).json({ message: "Competition not found" });
     }
 
-    // TOTAL REGISTERED (registered + attended)
     const totalRegistered = await Registration.countDocuments({
       competition: id,
       status: { $in: ["registered", "attended"] }
     });
 
-    // PRESENT (attended)
     const present = await Registration.countDocuments({
       competition: id,
       status: "attended"
     });
 
-    // CANCELLED
     const cancelled = await Registration.countDocuments({
       competition: id,
       status: "cancelled"
     });
 
-    let slotsLeft = null;
-    let isFull = false;
-
-    if (competition.maxParticipants) {
-
-      slotsLeft =
-        competition.maxParticipants - totalRegistered;
-
-      if (slotsLeft <= 0) {
-        isFull = true;
-      }
-
-    }
+    const slotsLeft = competition.maxParticipants
+      ? competition.maxParticipants - totalRegistered
+      : null;
 
     res.status(200).json({
       totalRegistered,
@@ -730,7 +648,7 @@ export const getCompetitionRegistrationStats = async (req, res) => {
       cancelled,
       maxParticipants: competition.maxParticipants || null,
       slotsLeft,
-      isFull
+      isFull: slotsLeft !== null && slotsLeft <= 0
     });
 
   } catch (error) {
@@ -777,96 +695,6 @@ export const getCompetitionRegistrations = async (req, res) => {
  }
 
 };
-
-
-// export const markAttendanceByQR = async (req, res) => {
-
-//  try {
-
-//   const studentId = req.user._id;
-//   const { competitionId } = req.body;
-
-//   // Find registration
-//   const registration = await Registration.findOne({
-//    competition: competitionId,
-//    registeredBy: studentId,
-//    status: "registered"
-//   });
-
-//   if (!registration) {
-//    return res.status(400).json({
-//     message: "You are not registered or already attended"
-//    });
-//   }
-
-//   // Mark attendance
-//   registration.status = "attended";
-//   await registration.save();
-
-//   res.status(200).json({
-//    success: true,
-//    message: "Attendance marked successfully"
-//   });
-
-//  } catch (error) {
-
-//   console.error(error);
-
-//   res.status(500).json({
-//    message: "Attendance failed"
-//   });
-
-//  }
-
-// };
-
-// export const markAttendanceByQR = async (req, res) => {
-
-//  try {
-
-//   const { competitionId } = req.body;
-//   const studentId = req.user._id;
-
-//   // Find valid registration
-//   const registration = await Registration.findOne({
-//    competition: competitionId,
-//    student: studentId,
-//    status: "registered"
-//   });
-
-//   if (!registration) {
-//    return res.status(400).json({
-//     message: "No valid registration found"
-//    });
-//   }
-
-//   // Prevent double attendance
-//   if (registration.status === "attended") {
-//    return res.status(400).json({
-//     message: "Attendance already marked"
-//    });
-//   }
-
-//   // Mark attendance
-//   registration.status = "attended";
-//   await registration.save();
-
-//   res.json({
-//    success: true,
-//    message: "Attendance marked successfully"
-//   });
-
-//  } catch (error) {
-
-//   console.error(error);
-
-//   res.status(500).json({
-//    message: "Attendance failed"
-//   });
-
-//  }
-
-// };
 
 
 export const markAttendanceByQR = async (req, res) => {

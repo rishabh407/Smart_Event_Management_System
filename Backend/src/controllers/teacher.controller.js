@@ -28,6 +28,35 @@ export const getDepartmentTeachers = async (req, res) => {
  }
 };
 
+export const getAllAssignedCompetitions = async (req, res) => {
+
+  try {
+
+    const competitions = await Competition.find({
+
+      "assignedTeachers.teacher": req.user._id,
+      isDeleted: false,
+      isPublished: true
+
+    })
+    .sort({ startTime: 1 })
+    .lean();
+
+    res.status(200).json(competitions);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
+
 // export const getassigncompetition=async(req,res)=>{
 //     try{
 //         const competitions = await Competition.find({
@@ -48,6 +77,39 @@ export const getDepartmentTeachers = async (req, res) => {
 //     }
 // }
 
+// export const getassigncompetition = async (req, res) => {
+
+//   try {
+
+//     const { id } = req.params; // eventId
+
+//     const competitions = await Competition.find({
+
+//       eventId: new mongoose.Types.ObjectId(id), // ✅ EVENT FILTER
+
+//       "assignedTeachers.teacher": new mongoose.Types.ObjectId(req.user._id),
+
+//       isDeleted: false,
+//       isPublished: true
+
+//     })
+//     .populate("assignedTeachers.teacher", "name email")
+//     .sort({ startTime: 1 });
+
+//     res.status(200).json(competitions);
+
+//   } catch (error) {
+
+//     console.error(error);
+
+//     res.status(500).json({
+//       message: "Server error"
+//     });
+
+//   }
+
+// };
+
 export const getassigncompetition = async (req, res) => {
 
   try {
@@ -56,22 +118,36 @@ export const getassigncompetition = async (req, res) => {
 
     const competitions = await Competition.find({
 
-      eventId: new mongoose.Types.ObjectId(id), // ✅ EVENT FILTER
+      eventId: id,
 
-      "assignedTeachers.teacher": new mongoose.Types.ObjectId(req.user._id),
+      "assignedTeachers.teacher": req.user._id,
 
       isDeleted: false,
       isPublished: true
 
     })
-    .populate("assignedTeachers.teacher", "name email")
-    .sort({ startTime: 1 });
+    .populate("assignedTeachers.teacher", "fullName email")
+    .sort({ startTime: 1 })
+    .lean(); // ✅ IMPORTANT
+
+    // ================= ADD REGISTRATION COUNT =================
+
+    for (let comp of competitions) {
+
+      const total = await Registration.countDocuments({
+        competition: comp._id,
+        status: { $ne: "cancelled" }
+      });
+
+      comp.totalRegistrations = total;
+
+    }
 
     res.status(200).json(competitions);
 
   } catch (error) {
 
-    console.error(error);
+    console.error("Assigned Competition Error:", error);
 
     res.status(500).json({
       message: "Server error"

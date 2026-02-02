@@ -323,10 +323,11 @@ import {
   getCompetitionDetails,
   toggleCompetitionRegistration
 } from "../../api/competition.api";
+import { getCompetitionRegistrationStats } from "../../api/registeration.api";
 
-import {
-  getCompetitionRegistrationStats
-} from "../../api/registeration.api";
+// import {
+//   getCompetitionRegistrationStats
+// } from "../../api/registeration.api";
 
 const CompetitionDetails = () => {
 

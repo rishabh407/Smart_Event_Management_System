@@ -13,3 +13,6 @@ export const getTeacherDashboardStats = () => {
  return api.get("/teachers/teacher/dashboard-stats");
 };
 
+export const getAllAssignedCompetitions = () => {
+  return api.get("/teachers/teacher/assigned/all");
+};

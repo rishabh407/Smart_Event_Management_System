@@ -1,166 +1,94 @@
-// import React, { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import { getCompetitionRegistrations } from "../../api/registeration.api";
-
-// const ViewRegistrations = () => {
-
-//   const { id } = useParams();
-
-//   const [registrations, setRegistrations] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   const fetchRegistrations = async () => {
-//     try {
-
-//       const res = await getCompetitionRegistrations(id);
-//       console.log(res.data);
-//       // Backend sends: { success: true, data: [...] }
-//       setRegistrations(res.data.data);
-
-//     } catch (error) {
-//       console.error(error.message);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchRegistrations();
-//   }, []);
-
-//   return (
-//     <div className="p-6">
-
-//       <h1 className="text-2xl font-bold mb-5">
-//         Registered Students
-//       </h1>
-
-//       {/* LOADING */}
-//       {loading && <p>Loading registrations...</p>}
-
-//       {/* EMPTY */}
-//       {!loading && registrations.length === 0 && (
-//         <p className="text-gray-500">
-//           No students registered yet.
-//         </p>
-//       )}
-
-//       {/* TABLE */}
-//       {!loading && registrations.length > 0 && (
-
-//         <div className="overflow-x-auto bg-white rounded shadow">
-
-//           <table className="min-w-full border">
-
-//             <thead className="bg-gray-100">
-//               <tr>
-//                 <th className="p-3 border">#</th>
-//                 <th className="p-3 border">Name</th>
-//                 <th className="p-3 border">Roll No</th>
-//                 <th className="p-3 border">Email</th>
-//                 <th className="p-3 border">Registered At</th>
-//               </tr>
-//             </thead>
-
-//             <tbody>
-
-//               {registrations.map((reg, index) => (
-
-//                 <tr key={reg._id || index}>
-
-//                   <td className="p-2 border text-center">
-//                     {index + 1}
-//                   </td>
-
-//                   <td className="p-2 border">
-//                     {reg.student?.fullName}
-//                   </td>
-
-//                   <td className="p-2 border">
-//                     {reg.student?.rollNumber}
-//                   </td>
-
-//                   <td className="p-2 border">
-//                     {reg.student?.email || "N/A"}
-//                   </td>
-
-//                   <td className="p-2 border">
-//                     {new Date(reg.createdAt).toLocaleString()}
-//                   </td>
-
-//                 </tr>
-
-//               ))}
-
-//             </tbody>
-
-//           </table>
-
-//         </div>
-
-//       )}
-
-//     </div>
-//   );
-// };
-
-// export default ViewRegistrations;
-
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getCompetitionRegistrations } from "../../api/registeration.api";
 
 const ViewRegistrations = () => {
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRegistrations = async () => {
+
     try {
 
       const res = await getCompetitionRegistrations(id);
-
-      // Backend sends: { success: true, data: [...] }
-      setRegistrations(res.data.data);
+      setRegistrations(res.data.data || []);
 
     } catch (error) {
+
       console.error(error.message);
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
   useEffect(() => {
     fetchRegistrations();
   }, []);
 
-  return (
-    <div className="p-6">
+  // ================= LOADING =================
 
-      <h1 className="text-2xl font-bold mb-5">
-        Registered Participants
-      </h1>
-
-      {/* LOADING */}
-      {loading && <p>Loading registrations...</p>}
-
-      {/* EMPTY */}
-      {!loading && registrations.length === 0 && (
-        <p className="text-gray-500">
-          No registrations found.
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <p className="text-gray-500 animate-pulse">
+          Loading registrations...
         </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4 md:p-6">
+
+      {/* HEADER */}
+
+      <div className="flex justify-between items-center mb-4">
+
+        <h1 className="text-xl md:text-2xl font-bold">
+          Registered Participants
+        </h1>
+
+        <button
+          onClick={() => navigate(-1)}
+          className="bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm"
+        >
+          ⬅ Back
+        </button>
+
+      </div>
+
+      {/* EMPTY STATE */}
+
+      {registrations.length === 0 && (
+
+        <div className="bg-white p-6 rounded shadow text-center">
+
+          <p className="text-gray-500">
+            No registrations found.
+          </p>
+
+        </div>
+
       )}
 
       {/* TABLE */}
-      {!loading && registrations.length > 0 && (
+
+      {registrations.length > 0 && (
 
         <div className="overflow-x-auto bg-white rounded shadow">
 
-          <table className="min-w-full border">
+          <table className="min-w-full border text-sm">
 
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-100 sticky top-0 z-10">
+
               <tr>
                 <th className="p-3 border">#</th>
                 <th className="p-3 border">Name / Team</th>
@@ -169,6 +97,7 @@ const ViewRegistrations = () => {
                 <th className="p-3 border">Type</th>
                 <th className="p-3 border">Registered At</th>
               </tr>
+
             </thead>
 
             <tbody>
@@ -179,38 +108,43 @@ const ViewRegistrations = () => {
 
                 return (
 
-                  <tr key={reg._id || index}>
+                  <tr
+                    key={reg._id || index}
+                    className="hover:bg-gray-50 transition"
+                  >
 
                     <td className="p-2 border text-center">
                       {index + 1}
                     </td>
 
-                    {/* NAME OR TEAM NAME */}
+                    {/* NAME / TEAM */}
+
                     <td className="p-2 border font-medium">
                       {isTeam
                         ? reg.team?.teamName
-                        : reg.student?.fullName
-                      }
+                        : reg.student?.fullName}
                     </td>
 
-                    {/* ROLL NUMBER */}
+                    {/* ROLL NO */}
+
                     <td className="p-2 border">
                       {isTeam
                         ? "TEAM"
-                        : reg.student?.rollNumber
-                      }
+                        : reg.student?.rollNumber}
                     </td>
 
                     {/* EMAIL */}
+
                     <td className="p-2 border">
                       {isTeam
                         ? "—"
-                        : reg.student?.email || "N/A"
-                      }
+                        : reg.student?.email || "N/A"}
                     </td>
 
                     {/* TYPE */}
+
                     <td className="p-2 border text-center">
+
                       <span
                         className={`px-2 py-1 rounded text-xs font-semibold ${
                           isTeam
@@ -220,9 +154,11 @@ const ViewRegistrations = () => {
                       >
                         {isTeam ? "TEAM" : "INDIVIDUAL"}
                       </span>
+
                     </td>
 
                     {/* TIME */}
+
                     <td className="p-2 border">
                       {new Date(reg.createdAt).toLocaleString()}
                     </td>
@@ -243,6 +179,7 @@ const ViewRegistrations = () => {
 
     </div>
   );
+
 };
 
 export default ViewRegistrations;
