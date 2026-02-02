@@ -4,6 +4,7 @@ import Registration from "../models/Registration.js";
 import Attendance from "../models/Attendance.js";
 import Result from "../models/Result.js";
 import Certificate from "../models/Certificate.js";
+import mongoose from "mongoose";
 
 export const getDepartmentTeachers = async (req, res) => {
 
@@ -27,25 +28,59 @@ export const getDepartmentTeachers = async (req, res) => {
  }
 };
 
-export const getassigncompetition=async(req,res)=>{
-    try{
-        const competitions = await Competition.find({
-  "assignedTeachers.teacher": req.user._id,
-  isDeleted: false,
-  isPublished: true
-})
-.populate("assignedTeachers.teacher", "name email")
-.sort({ startDate: 1 }); 
-res.status(200).json(competitions);
-    }catch(error)
-    {
-  console.error(error);
+// export const getassigncompetition=async(req,res)=>{
+//     try{
+//         const competitions = await Competition.find({
+//   "assignedTeachers.teacher": req.user._id,
+//   isDeleted: false,
+//   isPublished: true
+// })
+// .populate("assignedTeachers.teacher", "name email")
+// .sort({ startDate: 1 }); 
+// res.status(200).json(competitions);
+//     }catch(error)
+//     {
+//   console.error(error);
 
-  res.status(500).json({
-   message: "Server error"
-  });
-    }
-}
+//   res.status(500).json({
+//    message: "Server error"
+//   });
+//     }
+// }
+
+export const getassigncompetition = async (req, res) => {
+
+  try {
+
+    const { id } = req.params; // eventId
+
+    const competitions = await Competition.find({
+
+      eventId: new mongoose.Types.ObjectId(id), // ✅ EVENT FILTER
+
+      "assignedTeachers.teacher": new mongoose.Types.ObjectId(req.user._id),
+
+      isDeleted: false,
+      isPublished: true
+
+    })
+    .populate("assignedTeachers.teacher", "name email")
+    .sort({ startTime: 1 });
+
+    res.status(200).json(competitions);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
+
+};
+
 
 // export const getTeacherDashboardStats = async (req, res) => {
 //   try {

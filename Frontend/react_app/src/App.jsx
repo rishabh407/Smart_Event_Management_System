@@ -36,6 +36,7 @@ import AttendancePage from "./pages/teacher/AttendancePage";
 import ScanAttendance from "./pages/student/ScanAttendance";
 import ViewRegistrations from "./pages/teacher/ViewRegisterations";
 import ViewAttendance from "./pages/teacher/ViewAttendance";
+import TeacherEvents from "./pages/teacher/TeacherEvents";
 const App = () => {
   return (
     <BrowserRouter>
@@ -114,7 +115,10 @@ const App = () => {
  <Route index element={<Navigate to="dashboard" />} />
   <Route path="dashboard" element={<TeacherDashboard
    />} />
-  <Route path="competitions" element={<AssignedCompetitons />} />
+  
+   <Route path="events" element={<TeacherEvents />} />
+  <Route path="events/:id" element={<AssignedCompetitons />} />
+
   <Route path="attendance" element={<Attendance />} />
   <Route path="attendance/:id" element={<AttendancePage />} />
 

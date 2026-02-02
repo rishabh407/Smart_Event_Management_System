@@ -12,7 +12,7 @@ router.get(
  getDepartmentTeachers
 );
 
-router.get("/teacher/assigned",protect,teacherOnly,getassigncompetition);
+router.get("/teacher/assigned/:id",protect,teacherOnly,getassigncompetition);
 
 router.get("/teacher/dashboard-stats", protect, teacherOnly, getTeacherDashboardStats);
 
