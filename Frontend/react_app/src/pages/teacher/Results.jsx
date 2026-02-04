@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAllAssignedCompetitions } from "../../api/teacher.api";
 import { getCompetitionById } from "../../api/competition.api";
 import { getCompetitionRegistrations } from "../../api/registeration.api";
@@ -7,8 +8,12 @@ import toast from "react-hot-toast";
 
 const Results = () => {
 
+  const navigate = useNavigate();
+
   const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [search, setSearch] = useState("");
 
   const [selectedCompetition, setSelectedCompetition] = useState(null);
   const [participants, setParticipants] = useState([]);
@@ -22,39 +27,42 @@ const Results = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  // ================= FETCH ALL ASSIGNED COMPETITIONS =================
+  // ================= FETCH ASSIGNED COMPETITIONS =================
 
   const fetchCompetitions = async () => {
-
     try {
-
       setLoading(true);
       const res = await getAllAssignedCompetitions();
-      setCompetitions(res.data || []);
+
+      // Filter only COMPLETED competitions immediately
+      const completed = (res.data || []).filter(
+        comp => new Date(comp.endTime) < new Date()
+      );
+
+      setCompetitions(completed);
 
     } catch (error) {
-
       console.error(error);
       toast.error("Failed to load competitions");
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   useEffect(() => {
     fetchCompetitions();
   }, []);
 
+  // ================= SEARCH FILTER =================
+
+  const filteredCompetitions = competitions.filter(comp =>
+    comp.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   // ================= SELECT COMPETITION =================
 
   const handleSelectCompetition = async (competitionId) => {
-
     try {
-
       setLoadingParticipants(true);
 
       const [compRes, regRes] = await Promise.all([
@@ -73,38 +81,29 @@ const Results = () => {
       setParticipants(attended);
 
     } catch (error) {
-
       console.error(error);
       toast.error("Failed to load competition details");
-
     } finally {
-
       setLoadingParticipants(false);
-
     }
-
   };
 
   // ================= WINNER CHANGE =================
 
   const handleWinnerChange = (index, participantId) => {
-
     const updated = [...winners];
     updated[index].participantId = participantId;
     setWinners(updated);
-
   };
 
   // ================= DUPLICATE CHECK =================
 
   const isAlreadySelected = (participantId, currentIndex) => {
-
     return winners.some(
       (w, index) =>
         index !== currentIndex &&
         w.participantId === participantId
     );
-
   };
 
   // ================= DECLARE RESULTS =================
@@ -120,12 +119,9 @@ const Results = () => {
       return;
     }
 
-    const selectedIds = validWinners.map(w => w.participantId);
+    const ids = validWinners.map(w => w.participantId);
 
-    const hasDuplicate =
-      new Set(selectedIds).size !== selectedIds.length;
-
-    if (hasDuplicate) {
+    if (new Set(ids).size !== ids.length) {
       toast.error("Same participant cannot win multiple positions");
       return;
     }
@@ -133,21 +129,23 @@ const Results = () => {
     setSubmitting(true);
 
     try {
-
       await toast.promise(
-
         declareResults(selectedCompetition._id, validWinners),
-
         {
           loading: "Declaring results...",
           success: "Results declared successfully 🏆",
-          error: (err) =>
-            err.response?.data?.message || "Failed to declare results"
+          error: "Failed to declare results"
         }
-
       );
 
-      // RESET STATE
+      // Update local state instead of refetching
+      setCompetitions(prev =>
+        prev.map(c =>
+          c._id === selectedCompetition._id
+            ? { ...c, resultsDeclared: true }
+            : c
+        )
+      );
 
       setSelectedCompetition(null);
       setParticipants([]);
@@ -158,18 +156,9 @@ const Results = () => {
         { position: 3, participantId: "" }
       ]);
 
-      fetchCompetitions();
-
-    } catch (error) {
-
-      // Toast handles error
-
     } finally {
-
       setSubmitting(false);
-
     }
-
   };
 
   // ================= LOADING UI =================
@@ -177,256 +166,201 @@ const Results = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[350px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-3 text-gray-600">Loading competitions...</p>
-        </div>
+        <p className="text-gray-600 animate-pulse">
+          Loading competitions...
+        </p>
       </div>
     );
   }
-
-  // ================= FILTER COMPLETED =================
-
-  const completedCompetitions = competitions.filter(
-    comp => new Date(comp.endTime) < new Date()
-  );
 
   return (
     <div className="p-4 md:p-6">
 
       {/* ================= HEADER ================= */}
 
-      <div className="mb-6">
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">
+        Declare Results
+      </h1>
 
-        <h1 className="text-2xl md:text-3xl font-bold">
-          Declare Results
-        </h1>
+      {/* ================= SEARCH ================= */}
 
-        <p className="text-gray-600 mt-1 text-sm md:text-base">
-          Select a completed competition and declare winners
-        </p>
-
-      </div>
+      {!selectedCompetition && (
+        <input
+          type="text"
+          placeholder="Search competition..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="mb-6 w-full md:w-1/2 px-4 py-2 border rounded"
+        />
+      )}
 
       {/* ================= COMPETITION LIST ================= */}
 
       {!selectedCompetition && (
 
-        <>
-          {completedCompetitions.length === 0 ? (
+        filteredCompetitions.length === 0 ? (
 
-            <div className="bg-white p-8 rounded shadow text-center">
+          <div className="bg-white p-6 rounded shadow text-center">
+            <p className="text-gray-500">
+              No competitions match your search
+            </p>
+          </div>
 
-              <p className="text-gray-500 text-lg">
-                No completed competitions found
-              </p>
+        ) : (
 
-              <p className="text-gray-400 text-sm mt-2">
-                Results can be declared only after competition ends
-              </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            </div>
+            {filteredCompetitions.map((competition) => (
 
-          ) : (
+              <div
+                key={competition._id}
+                className="bg-white rounded-lg shadow p-5 border"
+              >
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <h3 className="font-bold text-lg truncate mb-2">
+                  {competition.name}
+                </h3>
 
-              {completedCompetitions.map((competition) => (
+                <p className="text-sm text-gray-500 mb-4">
+                  Ended: {new Date(competition.endTime).toLocaleString()}
+                </p>
 
-                <div
-                  key={competition._id}
-                  className="bg-white rounded-lg shadow p-5 border hover:shadow-lg transition"
-                >
+                <div className="flex flex-col gap-2">
 
-                  <div className="flex justify-between items-start mb-3">
+                  <button
+                    disabled={competition.resultsDeclared}
+                    onClick={() => handleSelectCompetition(competition._id)}
+                    className={`py-2 rounded font-medium
+                    ${
+                      competition.resultsDeclared
+                        ? "bg-gray-400 text-white cursor-not-allowed"
+                        : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                    }`}
+                  >
+                    {competition.resultsDeclared
+                      ? "✓ Results Declared"
+                      : "🏆 Declare Results"}
+                  </button>
 
-                    <h3 className="font-bold text-lg truncate">
-                      {competition.name}
-                    </h3>
-
-                    <span className="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
-                      Completed
-                    </span>
-
-                  </div>
-
-                  <div className="text-sm text-gray-600 space-y-1 mb-3">
-
-                    <p><b>Type:</b> {competition.type}</p>
-                    <p><b>Venue:</b> {competition.venue}</p>
-
-                    <p>
-                      <b>Ended:</b>{" "}
-                      {new Date(competition.endTime).toLocaleString()}
-                    </p>
-
-                  </div>
-
-                  <p className="text-sm text-gray-500 mb-4 line-clamp-2">
-                    {competition.shortDescription}
-                  </p>
-
-                  <div className="flex flex-col gap-2">
-                    <button
-                      disabled={competition.resultsDeclared}
-                      onClick={() => handleSelectCompetition(competition._id)}
-                      className={`w-full py-2 rounded font-medium transition
-                      ${
-                        competition.resultsDeclared
-                          ? "bg-gray-400 text-white cursor-not-allowed"
-                          : "bg-indigo-600 hover:bg-indigo-700 text-white"
-                      }`}
-                    >
-                      {competition.resultsDeclared
-                        ? "✓ Results Declared"
-                        : "🏆 Declare Results"}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        window.location.assign(
-                          `/teacher/results/${competition._id}`
-                        )
-                      }
-                      disabled={!competition.resultsDeclared}
-                      className={`w-full py-2 rounded font-medium border transition
-                      ${
-                        !competition.resultsDeclared
-                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          : "bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50"
-                      }`}
-                    >
-                      👁 View Results
-                    </button>
-                  </div>
+                  <button
+                    disabled={!competition.resultsDeclared}
+                    onClick={() =>
+                      navigate(`/teacher/results/${competition._id}`)
+                    }
+                    className={`py-2 rounded font-medium border
+                    ${
+                      !competition.resultsDeclared
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50"
+                    }`}
+                  >
+                    👁 View Results
+                  </button>
 
                 </div>
 
-              ))}
+              </div>
 
-            </div>
+            ))}
 
-          )}
-        </>
+          </div>
+
+        )
       )}
 
       {/* ================= RESULT FORM ================= */}
 
       {selectedCompetition && (
 
-        <div className="max-w-3xl mx-auto bg-white p-6 md:p-8 rounded shadow">
+        <div className="max-w-3xl mx-auto bg-white p-6 rounded shadow">
 
           <button
             onClick={() => {
               setSelectedCompetition(null);
               setParticipants([]);
             }}
-            className="text-indigo-600 hover:text-indigo-800 mb-4 text-sm"
+            className="text-indigo-600 mb-4"
           >
             ← Back to Competitions
           </button>
 
-          <h2 className="text-xl md:text-2xl font-bold mb-2">
+          <h2 className="text-xl font-bold mb-4">
             {selectedCompetition.name}
           </h2>
 
-          <p className="text-gray-600 mb-5">
-            Type: {selectedCompetition.type}
-          </p>
-
           {loadingParticipants ? (
 
-            <p className="text-center text-gray-600">
-              Loading participants...
-            </p>
+            <p className="text-center">Loading participants...</p>
 
           ) : participants.length === 0 ? (
 
-            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded text-center">
-              <p className="text-yellow-700">
-                Attendance not marked yet
-              </p>
-            </div>
+            <p className="text-center text-yellow-600">
+              Attendance not marked yet
+            </p>
 
           ) : (
 
             <>
-              <h3 className="font-semibold mb-4">
-                Select Winners
-              </h3>
+              {winners.map((winner, index) => (
 
-              <div className="space-y-4">
+                <div
+                  key={index}
+                  className="flex gap-3 items-center mb-4"
+                >
 
-                {winners.map((winner, index) => (
+                  <span className="w-20 font-semibold">
+                    {index === 0 ? "🥇 1st" : index === 1 ? "🥈 2nd" : "🥉 3rd"}
+                  </span>
 
-                  <div
-                    key={index}
-                    className="flex flex-col sm:flex-row gap-3 items-center"
+                  <select
+                    value={winner.participantId}
+                    onChange={(e) =>
+                      handleWinnerChange(index, e.target.value)
+                    }
+                    className="flex-1 border px-3 py-2 rounded"
                   >
 
-                    <label className="font-semibold w-24">
-                      {index === 0
-                        ? "🥇 1st"
-                        : index === 1
-                        ? "🥈 2nd"
-                        : "🥉 3rd"}
-                    </label>
+                    <option value="">
+                      -- Select Winner --
+                    </option>
 
-                    <select
-                      value={winner.participantId}
-                      onChange={(e) =>
-                        handleWinnerChange(index, e.target.value)
-                      }
-                      className="flex-1 border px-3 py-2 rounded focus:ring-2 focus:ring-indigo-500"
-                    >
+                    {participants.map((p) => {
 
-                      <option value="">
-                        -- Select Winner --
-                      </option>
+                      const value =
+                        selectedCompetition.type === "individual"
+                          ? p.student?._id
+                          : p.team?._id;
 
-                      {participants.map((p) => {
+                      const label =
+                        selectedCompetition.type === "individual"
+                          ? `${p.student?.fullName}`
+                          : `${p.team?.teamName}`;
 
-                        const participantValue =
-                          selectedCompetition.type === "individual"
-                            ? p.student?._id
-                            : p.team?._id;
+                      return (
+                        <option
+                          key={p._id}
+                          value={value}
+                          disabled={isAlreadySelected(value, index)}
+                        >
+                          {label}
+                        </option>
+                      );
+                    })}
 
-                        return (
+                  </select>
 
-                          <option
-                            key={p._id}
-                            value={participantValue}
-                            disabled={isAlreadySelected(participantValue, index)}
-                          >
-                            {selectedCompetition.type === "individual"
-                              ? `${p.student?.fullName} (${p.student?.rollNumber || p.student?.email})`
-                              : `${p.team?.teamName} (${p.team?.members?.length || 0} members)`}
+                </div>
 
-                          </option>
-
-                        );
-
-                      })}
-
-                    </select>
-
-                  </div>
-
-                ))}
-
-              </div>
+              ))}
 
               <button
                 onClick={handleDeclareResults}
                 disabled={
-                  submitting ||
-                  winners.every(w => !w.participantId)
+                  submitting || winners.every(w => !w.participantId)
                 }
-                className={`w-full mt-6 py-3 rounded font-semibold text-white transition
+                className={`w-full mt-4 py-3 rounded font-semibold text-white
                 ${
-                  submitting ||
-                  winners.every(w => !w.participantId)
+                  submitting || winners.every(w => !w.participantId)
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 hover:bg-green-700"
                 }`}

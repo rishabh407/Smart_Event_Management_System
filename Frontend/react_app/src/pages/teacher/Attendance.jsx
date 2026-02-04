@@ -11,6 +11,8 @@ const Attendance = () => {
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const [activeTab, setActiveTab] = useState("LIVE");
+
   // ================= FETCH COMPETITIONS =================
 
   const fetchCompetitions = async () => {
@@ -53,23 +55,65 @@ const Attendance = () => {
 
   };
 
-  // ================= LOAD DATA =================
+  // ================= INITIAL LOAD =================
 
   useEffect(() => {
     fetchCompetitions();
   }, []);
 
+  // ================= AUTO REFRESH STATS =================
+
   useEffect(() => {
 
-    if (competitions.length > 0) {
+    if (competitions.length === 0) return;
+
+    const fetchAllStats = () => {
+
+      const now = new Date();
 
       competitions.forEach(comp => {
-        fetchStats(comp._id);
+
+        const startTime = new Date(comp.startTime);
+
+        if (now >= startTime) {
+          fetchStats(comp._id);
+        }
+
       });
 
-    }
+    };
+
+    fetchAllStats();
+
+    const interval = setInterval(fetchAllStats, 30000); // 30 seconds refresh
+
+    return () => clearInterval(interval);
 
   }, [competitions]);
+
+  // ================= FILTER LOGIC =================
+
+  const filteredCompetitions = competitions.filter(comp => {
+
+    const now = new Date();
+    const startTime = new Date(comp.startTime);
+    const endTime = new Date(comp.endTime);
+
+    if (activeTab === "LIVE") {
+      return now >= startTime && now <= endTime;
+    }
+
+    if (activeTab === "UPCOMING") {
+      return now < startTime;
+    }
+
+    if (activeTab === "COMPLETED") {
+      return now > endTime;
+    }
+
+    return true;
+
+  });
 
   // ================= LOADING UI =================
 
@@ -88,27 +132,50 @@ const Attendance = () => {
 
       {/* ================= HEADER ================= */}
 
-      <h1 className="text-2xl md:text-3xl font-bold mb-6">
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">
         Attendance Management
       </h1>
 
+      {/* ================= TABS ================= */}
+
+      <div className="flex gap-3 mb-6">
+
+        {["LIVE", "UPCOMING", "COMPLETED"].map(tab => (
+
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded-full text-sm font-semibold
+            ${
+              activeTab === tab
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            {tab}
+          </button>
+
+        ))}
+
+      </div>
+
       {/* ================= EMPTY STATE ================= */}
 
-      {competitions.length === 0 && (
+      {filteredCompetitions.length === 0 && (
 
         <div className="bg-white p-6 rounded shadow text-center">
           <p className="text-gray-500">
-            No assigned competitions found.
+            No competitions found in this category.
           </p>
         </div>
 
       )}
 
-      {/* ================= COMPETITION GRID ================= */}
+      {/* ================= GRID ================= */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        {competitions.map((competition) => {
+        {filteredCompetitions.map((competition) => {
 
           const now = new Date();
           const startTime = new Date(competition.startTime);
@@ -116,7 +183,6 @@ const Attendance = () => {
 
           const isActive = now >= startTime && now <= endTime;
           const isUpcoming = now < startTime;
-          const isCompleted = now > endTime;
 
           const totalRegistered =
             stats[competition._id]?.totalRegistered || 0;
@@ -135,8 +201,6 @@ const Attendance = () => {
               key={competition._id}
               className="bg-white rounded-lg shadow p-5 border hover:shadow-lg transition"
             >
-
-              {/* ================= HEADER ================= */}
 
               <div className="flex justify-between items-center mb-3">
 
@@ -163,27 +227,23 @@ const Attendance = () => {
 
               </div>
 
-              {/* ================= ATTENDANCE INFO ================= */}
-
-              <p className="text-sm text-gray-700 mb-1">
+              <p className="text-sm mb-1">
                 👥 Registered:
                 <span className="font-semibold ml-1">
                   {totalRegistered}
                 </span>
               </p>
 
-              <p className="text-sm text-gray-700 mb-3">
+              <p className="text-sm mb-3">
                 ✅ Present:
                 <span className="font-semibold ml-1">
                   {present}
                 </span>
               </p>
 
-              {/* ================= PROGRESS BAR ================= */}
-
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
                 <div
-                  className="bg-indigo-600 h-2 rounded-full transition-all"
+                  className="bg-indigo-600 h-2 rounded-full"
                   style={{ width: `${percentage}%` }}
                 ></div>
               </div>
@@ -192,11 +252,7 @@ const Attendance = () => {
                 Attendance Rate: {percentage}%
               </p>
 
-              {/* ================= ACTION BUTTONS ================= */}
-
-              <div className="flex flex-wrap gap-3">
-
-                {/* TAKE ATTENDANCE */}
+              <div className="flex gap-2">
 
                 <button
                   disabled={!isActive}
@@ -210,10 +266,8 @@ const Attendance = () => {
                       : "bg-gray-300 cursor-not-allowed"
                   }`}
                 >
-                  📝 Take Attendance
+                  📝 Take
                 </button>
-
-                {/* VIEW ATTENDANCE */}
 
                 <button
                   disabled={isUpcoming}
@@ -227,18 +281,7 @@ const Attendance = () => {
                       : "bg-gray-800 hover:bg-black text-white"
                   }`}
                 >
-                  📊 View Attendance
-                </button>
-
-                {/* VIEW REGISTRATIONS */}
-
-                <button
-                  onClick={() =>
-                    navigate(`/teacher/registrations/${competition._id}`)
-                  }
-                  className="flex-1 py-2 rounded text-sm bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  👥 Registrations
+                  📊 View
                 </button>
 
               </div>
