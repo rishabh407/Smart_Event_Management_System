@@ -32,9 +32,11 @@ export const generateCertificatePDF = async ({
 
     const safeName = name.replace(/[^a-zA-Z0-9]/g, "_");
 
+    const fileName = `${Date.now()}_${safeName}.pdf`;
+
     const outputPath = path.join(
       certificatesDir,
-      `${Date.now()}_${safeName}.pdf`
+      fileName
     );
 
     // ================= TEMPLATE PATH RESOLUTION =================
@@ -148,7 +150,7 @@ export const generateCertificatePDF = async ({
     doc.end();
 
     return new Promise((resolve, reject) => {
-      stream.on("finish", () => resolve(outputPath));
+      stream.on("finish", () => resolve(`/certificates/${fileName}`));
       stream.on("error", reject);
     });
 

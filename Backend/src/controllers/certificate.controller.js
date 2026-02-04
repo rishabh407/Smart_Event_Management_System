@@ -153,7 +153,9 @@ export const getMyCertificates = async (req, res) => {
 
   const certificates = await Certificate.find({
     user: req.user._id
-  });
+  })
+    .populate("competition", "name startTime endTime")
+    .populate("team", "teamName");
 
   res.json(certificates);
 };

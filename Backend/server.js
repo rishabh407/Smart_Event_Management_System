@@ -53,6 +53,7 @@ app.use(
 );
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/certificates", express.static(path.join(__dirname, "certificates")));
 
 import bcrypt from "bcrypt";
 
