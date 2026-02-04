@@ -24,28 +24,16 @@ export const generateCertificates = async (req, res) => {
       return res.status(404).json({ message: "Competition not found" });
     }
 
-    const participationType =
-      competition.type === "team"
-        ? "participant_hackathon"
-        : "participation";
+    // ================= LOAD TEMPLATES FOR THIS COMPETITION =================
 
-    const winnerType =
-      competition.type === "team"
-        ? "winner_hackathon"
-        : "winner";
-
-    const participationTemplate = await CertificateTemplate.findOne({
-      competition: competitionId,
-      type: participationType
+    const templateConfig = await CertificateTemplate.findOne({
+      competition: competitionId
     });
 
-    const winnerTemplate = await CertificateTemplate.findOne({
-      competition: competitionId,
-      type: winnerType
-    });
-
-    if (!participationTemplate || !winnerTemplate) {
-      return res.status(400).json({ message: "Templates missing" });
+    if (!templateConfig) {
+      return res.status(400).json({
+        message: "Certificate templates not uploaded for this competition"
+      });
     }
 
     const registrations = await Registration.find({
@@ -60,6 +48,7 @@ export const generateCertificates = async (req, res) => {
 
     for (const reg of registrations) {
 
+      // Find winner entry for this student or team
       const winner = results.find(r => {
         if (r.student && reg.student) return r.student.equals(reg.student);
         if (r.team && reg.team) return r.team.equals(reg.team);
@@ -67,7 +56,16 @@ export const generateCertificates = async (req, res) => {
       });
 
       const isWinner = !!winner;
-      const template = isWinner ? winnerTemplate : participationTemplate;
+
+      const templatePath = isWinner
+        ? templateConfig.winnerTemplate
+        : templateConfig.participationTemplate;
+
+      const textConfig = isWinner
+        ? templateConfig.winnerPositions
+        : templateConfig.participationPositions;
+
+      // ================= TEAM COMPETITIONS =================
 
       if (competition.type === "team") {
 
@@ -79,6 +77,7 @@ export const generateCertificates = async (req, res) => {
           const user = await User.findById(memberId);
           if (!user) continue;
 
+          // Avoid duplicate certificates per user + competition
           const exists = await Certificate.findOne({
             competition: competitionId,
             user: user._id
@@ -89,9 +88,10 @@ export const generateCertificates = async (req, res) => {
           const pdfPath = await generateCertificatePDF({
             name: user.fullName,
             teamName: team.teamName,
+            competitionName: competition.name,
             position: isWinner ? winner.position : null,
-            templatePath: template.templatePath,
-            textConfig: template.textConfig
+            templatePath,
+            textConfig: textConfig || {}
           });
 
           await Certificate.create({
@@ -108,14 +108,17 @@ export const generateCertificates = async (req, res) => {
 
       } else {
 
+        // ================= INDIVIDUAL COMPETITIONS =================
+
         const user = await User.findById(reg.student);
         if (!user) continue;
 
         const pdfPath = await generateCertificatePDF({
           name: user.fullName,
+          competitionName: competition.name,
           position: isWinner ? winner.position : null,
-          templatePath: template.templatePath,
-          textConfig: template.textConfig
+          templatePath,
+          textConfig: textConfig || {}
         });
 
         await Certificate.create({

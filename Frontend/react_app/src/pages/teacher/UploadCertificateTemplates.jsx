@@ -20,20 +20,28 @@ const UploadCertificateTemplates = () => {
   const [participationPositions, setParticipationPositions] = useState({
     nameX: 400,
     nameY: 300,
+    teamX: 400,
+    teamY: 340,
+    competitionX: 400,
+    competitionY: 260,
     positionX: 400,
-    positionY: 350,
+    positionY: 380,
     dateX: 400,
-    dateY: 400,
+    dateY: 420,
   });
 
   // Text positioning for winner certificate
   const [winnerPositions, setWinnerPositions] = useState({
     nameX: 400,
     nameY: 300,
+    teamX: 400,
+    teamY: 340,
+    competitionX: 400,
+    competitionY: 260,
     positionX: 400,
-    positionY: 350,
+    positionY: 380,
     dateX: 400,
-    dateY: 400,
+    dateY: 420,
   });
 
   // ================= FETCH ASSIGNED COMPETITIONS =================
@@ -149,7 +157,6 @@ const UploadCertificateTemplates = () => {
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       {/* ================= HEADER ================= */}
-
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">
           Upload Certificate Templates
@@ -158,9 +165,7 @@ const UploadCertificateTemplates = () => {
           Upload PDF templates and configure text positioning for certificates
         </p>
       </div>
-
       {/* ================= MAIN FORM ================= */}
-
       <div className="bg-white rounded-lg shadow-md p-5 md:p-6">
         {/* COMPETITION SELECTION */}
 
@@ -213,6 +218,43 @@ const UploadCertificateTemplates = () => {
             <div className="space-y-3">
               <h4 className="font-medium text-sm">Text Positioning (pixels)</h4>
 
+              {/* Competition name */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-600">
+                    Competition X
+                  </label>
+                  <input
+                    type="number"
+                    value={participationPositions.competitionX}
+                    onChange={(e) =>
+                      handleParticipationPositionChange(
+                        "competitionX",
+                        e.target.value,
+                      )
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600">
+                    Competition Y
+                  </label>
+                  <input
+                    type="number"
+                    value={participationPositions.competitionY}
+                    onChange={(e) =>
+                      handleParticipationPositionChange(
+                        "competitionY",
+                        e.target.value,
+                      )
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Student name */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">Name X</label>
@@ -238,6 +280,33 @@ const UploadCertificateTemplates = () => {
                 </div>
               </div>
 
+              {/* Team name */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-600">Team X</label>
+                  <input
+                    type="number"
+                    value={participationPositions.teamX}
+                    onChange={(e) =>
+                      handleParticipationPositionChange("teamX", e.target.value)
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600">Team Y</label>
+                  <input
+                    type="number"
+                    value={participationPositions.teamY}
+                    onChange={(e) =>
+                      handleParticipationPositionChange("teamY", e.target.value)
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Position */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">
@@ -273,6 +342,7 @@ const UploadCertificateTemplates = () => {
                 </div>
               </div>
 
+              {/* Date */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">Date X</label>
@@ -328,6 +398,43 @@ const UploadCertificateTemplates = () => {
             <div className="space-y-3">
               <h4 className="font-medium text-sm">Text Positioning (pixels)</h4>
 
+              {/* Competition name */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-600">
+                    Competition X
+                  </label>
+                  <input
+                    type="number"
+                    value={winnerPositions.competitionX}
+                    onChange={(e) =>
+                      handleWinnerPositionChange(
+                        "competitionX",
+                        e.target.value,
+                      )
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600">
+                    Competition Y
+                  </label>
+                  <input
+                    type="number"
+                    value={winnerPositions.competitionY}
+                    onChange={(e) =>
+                      handleWinnerPositionChange(
+                        "competitionY",
+                        e.target.value,
+                      )
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Student name */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">Name X</label>
@@ -353,6 +460,33 @@ const UploadCertificateTemplates = () => {
                 </div>
               </div>
 
+              {/* Team name */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-600">Team X</label>
+                  <input
+                    type="number"
+                    value={winnerPositions.teamX}
+                    onChange={(e) =>
+                      handleWinnerPositionChange("teamX", e.target.value)
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600">Team Y</label>
+                  <input
+                    type="number"
+                    value={winnerPositions.teamY}
+                    onChange={(e) =>
+                      handleWinnerPositionChange("teamY", e.target.value)
+                    }
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Position */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">
@@ -382,6 +516,7 @@ const UploadCertificateTemplates = () => {
                 </div>
               </div>
 
+              {/* Date */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">Date X</label>
