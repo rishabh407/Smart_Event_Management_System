@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllAssignedCompetitions } from "../../api/teacher.api";
-import { uploadTemplate } from "../../api/certificate.api";
+import { uploadTemplate, previewCertificateTemplate } from "../../api/certificate.api";
 import toast from "react-hot-toast";
 
 const UploadCertificateTemplates = () => {
@@ -10,6 +10,7 @@ const UploadCertificateTemplates = () => {
   const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
   const [selectedCompetition, setSelectedCompetition] = useState("");
 
   // Form data
@@ -63,6 +64,11 @@ const UploadCertificateTemplates = () => {
     fetchCompetitions();
   }, []);
 
+  const selectedCompetitionObj = useMemo(
+    () => competitions.find((c) => c._id === selectedCompetition),
+    [competitions, selectedCompetition],
+  );
+
   // ================= HANDLE FILE CHANGES =================
 
   const handleParticipationFileChange = (e) => {
@@ -109,6 +115,77 @@ const UploadCertificateTemplates = () => {
       ...prev,
       [field]: parseInt(value) || 0,
     }));
+  };
+
+  // ================= PREVIEW HANDLER =================
+
+  const handlePreview = async (type) => {
+    const isWinner = type === "winner";
+
+    if (!selectedCompetition) {
+      toast.error("Please select a competition to preview");
+      return;
+    }
+
+    if (isWinner && !winnerTemplate) {
+      toast.error("Please upload a winner certificate template first");
+      return;
+    }
+
+    if (!isWinner && !participationTemplate) {
+      toast.error("Please upload a participation certificate template first");
+      return;
+    }
+
+    try {
+      setPreviewing(true);
+
+      const formData = new FormData();
+
+      formData.append("type", type);
+      formData.append(
+        "competitionName",
+        selectedCompetitionObj?.name || "Sample Competition",
+      );
+
+      if (isWinner) {
+        formData.append("winnerTemplate", winnerTemplate);
+        formData.append(
+          "winnerPositions",
+          JSON.stringify(winnerPositions),
+        );
+      } else {
+        formData.append("participationTemplate", participationTemplate);
+        formData.append(
+          "participationPositions",
+          JSON.stringify(participationPositions),
+        );
+      }
+
+      const res = await previewCertificateTemplate(formData);
+
+      const file = new Blob([res.data], { type: "application/pdf" });
+      const fileURL = window.URL.createObjectURL(file);
+
+      window.open(fileURL);
+
+      // Best‑effort cleanup
+      setTimeout(() => {
+        window.URL.revokeObjectURL(fileURL);
+      }, 60_000);
+
+      toast.success(
+        `Sample ${isWinner ? "winner" : "participation"} certificate generated`,
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to generate preview certificate",
+      );
+    } finally {
+      setPreviewing(false);
+    }
   };
 
   // ================= UPLOAD HANDLER =================
@@ -223,6 +300,21 @@ const UploadCertificateTemplates = () => {
                 </p>
               )}
             </div>
+
+            <button
+              type="button"
+              onClick={() => handlePreview("participation")}
+              disabled={!selectedCompetition || !participationTemplate || previewing}
+              className={`w-full mb-4 py-2 rounded-lg text-sm font-medium transition ${
+                !selectedCompetition || !participationTemplate || previewing
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-emerald-500 hover:bg-emerald-600 text-white"
+              }`}
+            >
+              {previewing
+                ? "Generating Preview..."
+                : "👀 Preview Sample (Participation)"}
+            </button>
 
             {/* TEXT POSITIONING */}
             <div className="space-y-3">
@@ -403,6 +495,21 @@ const UploadCertificateTemplates = () => {
                 </p>
               )}
             </div>
+
+            <button
+              type="button"
+              onClick={() => handlePreview("winner")}
+              disabled={!selectedCompetition || !winnerTemplate || previewing}
+              className={`w-full mb-4 py-2 rounded-lg text-sm font-medium transition ${
+                !selectedCompetition || !winnerTemplate || previewing
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-amber-500 hover:bg-amber-600 text-white"
+              }`}
+            >
+              {previewing
+                ? "Generating Preview..."
+                : "👀 Preview Sample (Winner)"}
+            </button>
 
             {/* TEXT POSITIONING */}
             <div className="space-y-3">

@@ -28,3 +28,16 @@ export const uploadTemplate = (formData) => {
     }
   );
 };
+
+export const previewCertificateTemplate = (formData) => {
+  return api.post(
+    "/certificate-templates/preview",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      responseType: "blob"
+    }
+  );
+};
