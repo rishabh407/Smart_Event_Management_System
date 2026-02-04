@@ -55,10 +55,8 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/certificates", express.static(path.join(__dirname, "certificates")));
 
-import bcrypt from "bcrypt";
-
-const hash = await bcrypt.hash("23401066", 10);
-console.log(hash);
+// NOTE: If you need to generate password hashes for seeding,
+// use the standalone script at Backend/generateHash.js instead of doing it here.
 
 const startServer = async () => {
   await connectDB();

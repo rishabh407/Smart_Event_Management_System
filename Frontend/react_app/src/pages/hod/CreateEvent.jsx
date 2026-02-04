@@ -30,7 +30,6 @@ const CreateEvent = () => {
       try {
         setCoordinatorsLoading(true);
         const res = await getDepartmentCoordinators();
-        console.log(res.data);
         setCoordinators(res.data || []);
         if (res.data && res.data.length === 0) {
           toast.error("No coordinators available in your department. Please create a coordinator first.");

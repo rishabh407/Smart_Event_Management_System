@@ -266,20 +266,40 @@ const Results = () => {
                     {competition.shortDescription}
                   </p>
 
-                  <button
-                    disabled={competition.resultsDeclared}
-                    onClick={() => handleSelectCompetition(competition._id)}
-                    className={`w-full py-2 rounded font-medium transition
-                    ${
-                      competition.resultsDeclared
-                        ? "bg-gray-400 text-white cursor-not-allowed"
-                        : "bg-indigo-600 hover:bg-indigo-700 text-white"
-                    }`}
-                  >
-                    {competition.resultsDeclared
-                      ? "✓ Results Declared"
-                      : "🏆 Declare Results"}
-                  </button>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      disabled={competition.resultsDeclared}
+                      onClick={() => handleSelectCompetition(competition._id)}
+                      className={`w-full py-2 rounded font-medium transition
+                      ${
+                        competition.resultsDeclared
+                          ? "bg-gray-400 text-white cursor-not-allowed"
+                          : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                      }`}
+                    >
+                      {competition.resultsDeclared
+                        ? "✓ Results Declared"
+                        : "🏆 Declare Results"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        window.location.assign(
+                          `/teacher/results/${competition._id}`
+                        )
+                      }
+                      disabled={!competition.resultsDeclared}
+                      className={`w-full py-2 rounded font-medium border transition
+                      ${
+                        !competition.resultsDeclared
+                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-white text-indigo-700 border-indigo-200 hover:bg-indigo-50"
+                      }`}
+                    >
+                      👁 View Results
+                    </button>
+                  </div>
 
                 </div>
 

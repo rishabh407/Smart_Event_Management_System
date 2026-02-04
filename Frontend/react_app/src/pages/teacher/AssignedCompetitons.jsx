@@ -19,7 +19,6 @@ const AssignedCompetitons = () => {
 
     try {
       const res = await getinchargeteacherscompetitions(id);
-      console.log(res.data);
       setCompetitions(res?.data || []);
     } catch (error) {
       console.error("Fetch Error:", error);

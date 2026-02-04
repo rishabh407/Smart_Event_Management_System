@@ -62,7 +62,6 @@ const MyEvents = () => {
   });
 
   // ================= LOADING =================
-  console.log(filteredEvents);
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">

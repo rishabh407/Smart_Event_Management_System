@@ -17,7 +17,6 @@ const TeacherEvents = () => {
     const fetchEvents = async () => {
       try {
         const res = await getAllEvents();
-        console.log(res.data);
         setEvents(res.data || []);
       } catch (error) {
         console.error("Fetch events error:", error);

@@ -117,3 +117,45 @@ export const declareResults = async (req, res) => {
     });
   }
 };
+
+export const getCompetitionResults = async (req, res) => {
+  try {
+    const { competitionId } = req.params;
+
+    if (!competitionId) {
+      return res.status(400).json({
+        message: "competitionId is required",
+      });
+    }
+
+    const competition = await Competition.findById(competitionId);
+
+    if (!competition) {
+      return res.status(404).json({
+        message: "Competition not found",
+      });
+    }
+
+    const results = await Result.find({ competition: competitionId })
+      .populate("student", "fullName rollNumber email")
+      .populate("team", "teamName members")
+      .sort({ position: 1 });
+
+    return res.json({
+      competition: {
+        _id: competition._id,
+        name: competition.name,
+        type: competition.type,
+        venue: competition.venue,
+        startTime: competition.startTime,
+        endTime: competition.endTime,
+      },
+      results,
+    });
+  } catch (error) {
+    console.error("GET COMPETITION RESULTS ERROR:", error);
+    return res.status(500).json({
+      message: "Failed to load competition results",
+    });
+  }
+};
