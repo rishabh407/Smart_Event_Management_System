@@ -79,6 +79,10 @@ const HodLayout = () => {
               ➕ {sidebarOpen && "Create Event"}
             </NavLink>
 
+            <NavLink to="/hod/results" className={linkStyle}>
+              🏆 {sidebarOpen && "Department Results"}
+            </NavLink>
+
           </nav>
 
         </div>

@@ -80,6 +80,14 @@ const CoordinatorLayout = () => {
               📅 My Events
             </NavLink>
 
+            <NavLink
+              to="/coordinator/results"
+              onClick={() => setOpen(false)}
+              className={linkStyle}
+            >
+              🏆 Event Results
+            </NavLink>
+
           </nav>
 
         </div>

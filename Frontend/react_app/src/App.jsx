@@ -39,6 +39,9 @@ import ViewAttendance from "./pages/teacher/ViewAttendance";
 import TeacherEvents from "./pages/teacher/TeacherEvents";
 import UploadCertificateTemplates from "./pages/teacher/UploadCertificateTemplates";
 import ViewResults from "./pages/teacher/ViewResults";
+import MyResults from "./pages/student/MyResults";
+import EventResults from "./pages/coordinator/EventResults";
+import DepartmentResults from "./pages/hod/DepartmentResults";
 const App = () => {
   return (
     <BrowserRouter>
@@ -80,6 +83,7 @@ const App = () => {
             element={<TeamRegisteration />}
           />
           <Route path="/student/registrations" element={<MyRegistrations />} />
+          <Route path="/student/results" element={<MyResults />} />
 
           <Route path="certificates" element={<Certificates />} />
 
@@ -171,6 +175,7 @@ const App = () => {
             path="competitions/:id/registrations"
             element={<CompetitionRegistrations />}
           />
+          <Route path="results" element={<EventResults />} />
         </Route>
 
         {/*=============================== HOD PANEL ======================*/}
@@ -187,6 +192,7 @@ const App = () => {
           <Route path="/hod/manage-events" element={<ManageEvents />} />
           <Route path="/hod/events/create" element={<CreateEvent />} />
           <Route path="/hod/events/edit/:id" element={<EditEvent />} />
+          <Route path="/hod/results" element={<DepartmentResults />} />
         </Route>
       </Routes>
     </BrowserRouter>

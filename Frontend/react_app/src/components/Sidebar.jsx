@@ -56,6 +56,10 @@ const Sidebar = ({ open, setOpen }) => {
             🎓 Certificates
           </NavLink>
 
+          <NavLink to="/student/results" onClick={() => setOpen(false)} className={linkStyle}>
+            🏆 My Results
+          </NavLink>
+
           <NavLink to="/student/team" onClick={() => setOpen(false)} className={linkStyle}>
             👥 Teams
           </NavLink>
