@@ -55,13 +55,17 @@ const storage = multer.diskStorage({
 
 });
 
-// Only allow PDF
+// Only allow image files that PDFKit supports as background (PNG/JPEG)
 const fileFilter = (req, file, cb) => {
 
-  if (file.mimetype === "application/pdf") {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/jpg"
+  ) {
     cb(null, true);
   } else {
-    cb(new Error("Only PDF files allowed"), false);
+    cb(new Error("Only PNG or JPEG image files are allowed for certificate templates"), false);
   }
 
 };

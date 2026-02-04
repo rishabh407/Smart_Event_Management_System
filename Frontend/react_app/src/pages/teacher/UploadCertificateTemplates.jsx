@@ -67,20 +67,30 @@ const UploadCertificateTemplates = () => {
 
   const handleParticipationFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === "application/pdf") {
+    if (
+      file &&
+      (file.type === "image/png" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/jpg")
+    ) {
       setParticipationTemplate(file);
     } else {
-      toast.error("Please select a valid PDF file");
+      toast.error("Please select a PNG or JPEG image file");
       e.target.value = "";
     }
   };
 
   const handleWinnerFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === "application/pdf") {
+    if (
+      file &&
+      (file.type === "image/png" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/jpg")
+    ) {
       setWinnerTemplate(file);
     } else {
-      toast.error("Please select a valid PDF file");
+      toast.error("Please select a PNG or JPEG image file");
       e.target.value = "";
     }
   };
@@ -199,11 +209,11 @@ const UploadCertificateTemplates = () => {
 
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
-                Template PDF
+                Template Image (PNG/JPEG)
               </label>
               <input
                 type="file"
-                accept=".pdf"
+                accept="image/*"
                 onChange={handleParticipationFileChange}
                 className="w-full border rounded px-3 py-2"
               />
@@ -379,11 +389,11 @@ const UploadCertificateTemplates = () => {
 
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
-                Template PDF
+                Template Image (PNG/JPEG)
               </label>
               <input
                 type="file"
-                accept=".pdf"
+                accept="image/*"
                 onChange={handleWinnerFileChange}
                 className="w-full border rounded px-3 py-2"
               />
@@ -584,7 +594,8 @@ const UploadCertificateTemplates = () => {
         <h3 className="font-semibold mb-2">ℹ Important Information</h3>
         <ul className="text-sm text-blue-800 list-disc list-inside space-y-1">
           <li>
-            Upload PDF templates for both participation and winner certificates
+            Upload PNG/JPEG image templates for both participation and winner
+            certificates
           </li>
           <li>
             Configure text positioning coordinates (X, Y) for name, position,
@@ -592,7 +603,7 @@ const UploadCertificateTemplates = () => {
           </li>
           <li>
             Coordinates are measured in pixels from the top-left corner of the
-            PDF
+            image
           </li>
           <li>Test positioning with sample data before finalizing</li>
           <li>Templates must be uploaded before generating certificates</li>

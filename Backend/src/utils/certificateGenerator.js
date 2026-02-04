@@ -37,11 +37,18 @@ export const generateCertificatePDF = async ({
       `${Date.now()}_${safeName}.pdf`
     );
 
-    // ================= TEMPLATE PATH FIX =================
+    // ================= TEMPLATE PATH RESOLUTION =================
 
-    const safeTemplatePath = templatePath.replace(/\\/g, "/");
+    let resolvedTemplatePath;
 
-    const resolvedTemplatePath = path.join(projectRoot, safeTemplatePath);
+    if (path.isAbsolute(templatePath)) {
+      // When Multer saved with an absolute path (uploads/certificates)
+      resolvedTemplatePath = templatePath;
+    } else {
+      // Backward compatibility: stored as relative to project root
+      const safeTemplatePath = templatePath.replace(/\\/g, "/");
+      resolvedTemplatePath = path.join(projectRoot, safeTemplatePath);
+    }
 
     if (!fs.existsSync(resolvedTemplatePath)) {
       throw new Error("Template file not found: " + resolvedTemplatePath);
