@@ -26,8 +26,6 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 app.use(cookieParser());
 app.use(cors({
   origin: "http://localhost:5173", // React URL
@@ -54,10 +52,8 @@ app.use(
   certificateTemplateRoutes
 );
 
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Serve generated PDFs
-// app.use("/certificates", express.static("certificates"));
 import bcrypt from "bcrypt";
 
 const hash = await bcrypt.hash("234011115", 10);
