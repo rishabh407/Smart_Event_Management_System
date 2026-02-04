@@ -13,10 +13,10 @@ import teamRoutes from "./src/routes/team.routes.js";
 import registrationRoutes from "./src/routes/registration.routes.js";
 import attendanceRoutes from "./src/routes/attendance.routes.js";
 import resultRoutes from "./src/routes/result.routes.js";
-import certificateTemplateRoutes from "./src/routes/certificateTemplate.routes.js";
 import certificateRoutes from "./src/routes/certificate.routes.js";
 import teacherRoutes from "./src/routes/teacher.routes.js";
 import assignmentRoutes from "./src/routes/competitionAssignment.routes.js";
+import certificateTemplateRoutes from "./src/routes/certificateTemplate.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 dotenv.config();
@@ -45,13 +45,19 @@ app.use("/api/teams", teamRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/results", resultRoutes);
-app.use("/api/templates", certificateTemplateRoutes);
+// app.use("/api/templates", certificateTemplateRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/assignments", assignmentRoutes);
+app.use(
+  "/api/certificate-templates",
+  certificateTemplateRoutes
+);
+
+app.use("/uploads", express.static("uploads"));
 
 // Serve generated PDFs
-app.use("/certificates", express.static("certificates"));
+// app.use("/certificates", express.static("certificates"));
 import bcrypt from "bcrypt";
 
 const hash = await bcrypt.hash("234011115", 10);

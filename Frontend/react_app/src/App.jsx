@@ -37,6 +37,7 @@ import ScanAttendance from "./pages/student/ScanAttendance";
 import ViewRegistrations from "./pages/teacher/ViewRegisterations";
 import ViewAttendance from "./pages/teacher/ViewAttendance";
 import TeacherEvents from "./pages/teacher/TeacherEvents";
+import UploadCertificateTemplates from "./pages/teacher/UploadCertificateTemplates";
 const App = () => {
   return (
     <BrowserRouter>
@@ -52,7 +53,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-{/*===================== Student Dashboard ==============*/}
+        {/*===================== Student Dashboard ==============*/}
         <Route
           path="/student"
           element={
@@ -78,18 +79,15 @@ const App = () => {
             element={<TeamRegisteration />}
           />
           <Route path="/student/registrations" element={<MyRegistrations />} />
-        
+
           <Route path="certificates" element={<Certificates />} />
-        
+
           <Route path="/student/team" element={<Team />} />
-        
-        <Route path="/student/scan" element={<ScanAttendance />} />
 
+          <Route path="/student/scan" element={<ScanAttendance />} />
 
-        {/* <Route path="/attendance/scan" element={<ScanAttendance />} /> */}
-
+          {/* <Route path="/attendance/scan" element={<ScanAttendance />} /> */}
         </Route>
-
 
         <Route
           path="/teacher"
@@ -100,86 +98,80 @@ const App = () => {
           }
         />
 
+        {/* ================= Teacher PANEL ================= */}
 
+        <Route
+          path="/teacher"
+          element={
+            <ProtectedRoute>
+              <TeacherLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<TeacherDashboard />} />
 
-{/* ================= Teacher PANEL ================= */}
+          <Route path="events" element={<TeacherEvents />} />
+          <Route path="events/:id" element={<AssignedCompetitons />} />
 
-<Route
-  path="/teacher"
-  element={
-    <ProtectedRoute>
-      <TeacherLayout />
-    </ProtectedRoute>
-  }
->
- <Route index element={<Navigate to="dashboard" />} />
-  <Route path="dashboard" element={<TeacherDashboard
-   />} />
-  
-   <Route path="events" element={<TeacherEvents />} />
-  <Route path="events/:id" element={<AssignedCompetitons />} />
+          <Route path="attendance" element={<Attendance />} />
+          <Route path="attendance/:id" element={<AttendancePage />} />
 
-  <Route path="attendance" element={<Attendance />} />
-  <Route path="attendance/:id" element={<AttendancePage />} />
+          <Route path="results" element={<Results />} />
+          <Route path="certificates" element={<GenerateCertificates />} />
+          <Route
+            path="certificates/upload"
+            element={<UploadCertificateTemplates />}
+          />
+          <Route path="attendance/view/:id" element={<ViewAttendance />} />
+          <Route path="registrations/:id" element={<ViewRegistrations />} />
+        </Route>
 
-  <Route path="results" element={<Results />} />
-  <Route path="certificates" element={<GenerateCertificates />} />
-<Route path="attendance/view/:id" element={<ViewAttendance />} />
-<Route path="registrations/:id" element={<ViewRegistrations />} />
-</Route>
+        {/* ================= COORDINATOR PANEL ================= */}
 
+        <Route
+          path="/coordinator"
+          element={
+            <ProtectedRoute>
+              <CoordinatorLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Default page */}
+          {/* <Route index element={<CoordinatorDashboard />} /> */}
+          <Route index element={<Navigate to="dashboard" />} />
+          {/* Dashboard */}
+          <Route path="dashboard" element={<CoordinatorDashboard />} />
 
-{/* ================= COORDINATOR PANEL ================= */}
+          {/* My Events page (NEW) */}
+          <Route path="events" element={<MyEvents />} />
 
-<Route
- path="/coordinator"
- element={
-  <ProtectedRoute>
-   <CoordinatorLayout />
-  </ProtectedRoute>
- }
->
+          {/* Event based competition management */}
+          <Route
+            path="events/:eventId/competitions"
+            element={<ManageCompetitions />}
+          />
+          <Route
+            path="events/:eventId/competitions/create"
+            element={<CreateCompetitions />}
+          />
+          <Route path="competitions/edit/:id" element={<EditCompetition />} />
+          <Route
+            path="competitions/details/:id"
+            element={<CompetitionDetails />}
+          />
 
- {/* Default page */}
- {/* <Route index element={<CoordinatorDashboard />} /> */}
-<Route index element={<Navigate to="dashboard" />} />
- {/* Dashboard */}
- <Route path="dashboard" element={<CoordinatorDashboard />} />
+          <Route
+            path="competitions/:competitionId/assign-teachers"
+            element={<AssignTeachers />}
+          />
+          <Route
+            path="competitions/:id/registrations"
+            element={<CompetitionRegistrations />}
+          />
+        </Route>
 
- {/* My Events page (NEW) */}
- <Route path="events" element={<MyEvents />} />
-
- {/* Event based competition management */}
- <Route
-  path="events/:eventId/competitions"
-  element={<ManageCompetitions />}
- />
- <Route
- path="events/:eventId/competitions/create"
- element={<CreateCompetitions />}
-/>
-<Route
- path="competitions/edit/:id"
- element={<EditCompetition/>}
-/>
-<Route
- path="competitions/details/:id"
- element={<CompetitionDetails />}
-/>
-
-<Route
- path="competitions/:competitionId/assign-teachers"
- element={<AssignTeachers />}
-/>
-<Route
- path="competitions/:id/registrations"
- element={<CompetitionRegistrations />}
-/>
-
-</Route>
-
-
-{/*=============================== HOD PANEL ======================*/}
+        {/*=============================== HOD PANEL ======================*/}
 
         <Route
           path="/hod"
