@@ -56,7 +56,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 import bcrypt from "bcrypt";
 
-const hash = await bcrypt.hash("234011115", 10);
+const hash = await bcrypt.hash("23401066", 10);
 console.log(hash);
 
 const startServer = async () => {

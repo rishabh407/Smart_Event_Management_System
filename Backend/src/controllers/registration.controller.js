@@ -722,34 +722,58 @@ export const markAttendanceByQR = async (req, res) => {
       });
     }
 
-    // 3️⃣ Check student registration
-    const registration = await Registration.findOne({
-      competition: competitionId,
-      student: studentId,
-      status: "registered"
-    });
+    let registration;
 
+    // 3️⃣ Check registration based on competition type
+    if (competition.type === "individual") {
+      // Individual: registration is stored against student field
+      registration = await Registration.findOne({
+        competition: competitionId,
+        student: studentId,
+        status: "registered"
+      });
+    } else if (competition.type === "team") {
+      // Team: find a team for this competition where the student is leader or member,
+      // then check registration exists for that team
+      const team = await Team.findOne({
+        competitionId,
+        $or: [
+          { leader: studentId },
+          { members: studentId }
+        ]
+      });
+
+      if (team) {
+        registration = await Registration.findOne({
+          competition: competitionId,
+          team: team._id,
+          status: "registered"
+        });
+      }
+    }
+
+    // 4️⃣ If no matching registration, block attendance
     if (!registration) {
       return res.status(403).json({
         message: "You are not registered for this competition"
       });
     }
 
-    // 4️⃣ Prevent double attendance
+    // 5️⃣ Prevent double attendance (per registration: individual or team)
     if (registration.attended === true) {
       return res.status(409).json({
         message: "Attendance already marked"
       });
     }
 
-    // 5️⃣ Mark attendance
+    // 6️⃣ Mark attendance
     registration.attended = true;
     registration.status = "attended";
     registration.attendedAt = new Date();
 
     await registration.save();
 
-    // 6️⃣ Success response
+    // 7️⃣ Success response
     res.status(200).json({
       success: true,
       message: "Attendance marked successfully"
