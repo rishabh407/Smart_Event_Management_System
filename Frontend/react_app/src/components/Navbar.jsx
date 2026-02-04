@@ -1,4 +1,5 @@
 import { useAuth } from "../context/AuthContext";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = ({ toggleSidebar }) => {
 
@@ -35,17 +36,25 @@ const Navbar = ({ toggleSidebar }) => {
 
       </div>
 
-      {/* RIGHT */}
-      {user?.rollNumber && (
-        <div className="hidden sm:block text-right">
-          <p className="text-xs text-gray-500">
-            Roll No
-          </p>
-          <p className="font-medium">
-            {user.rollNumber}
-          </p>
-        </div>
-      )}
+      {/* RIGHT: Notifications + Roll number */}
+      <div className="flex items-center gap-4">
+
+        {/* NOTIFICATIONS */}
+        <NotificationBell />
+
+        {/* ROLL NUMBER (student) */}
+        {user?.rollNumber && (
+          <div className="hidden sm:block text-right">
+            <p className="text-xs text-gray-500">
+              Roll No
+            </p>
+            <p className="font-medium">
+              {user.rollNumber}
+            </p>
+          </div>
+        )}
+
+      </div>
 
     </header>
   );

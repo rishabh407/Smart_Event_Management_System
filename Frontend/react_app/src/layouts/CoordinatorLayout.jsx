@@ -1,6 +1,7 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
+import NotificationBell from "../components/NotificationBell";
 
 const CoordinatorLayout = () => {
 
@@ -25,12 +26,15 @@ const CoordinatorLayout = () => {
           🎯 Coordinator Panel
         </h2>
 
-        <button
-          onClick={() => setOpen(true)}
-          className="text-2xl"
-        >
-          ☰
-        </button>
+        <div className="flex items-center gap-3">
+          <NotificationBell variant="dark" />
+          <button
+            onClick={() => setOpen(true)}
+            className="text-2xl"
+          >
+            ☰
+          </button>
+        </div>
 
       </div>
 

@@ -77,6 +77,12 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    // Last time user cleared in-app notifications
+    notificationsClearedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

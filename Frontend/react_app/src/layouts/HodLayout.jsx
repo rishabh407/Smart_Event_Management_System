@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
+import NotificationBell from "../components/NotificationBell";
 
 const HodLayout = () => {
 
@@ -105,9 +106,12 @@ const HodLayout = () => {
             HOD Dashboard Panel
           </h2>
 
-          <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-            {user?.fullName}
-          </span>
+          <div className="flex items-center gap-3">
+            <NotificationBell />
+            <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+              {user?.fullName}
+            </span>
+          </div>
 
         </div>
 
