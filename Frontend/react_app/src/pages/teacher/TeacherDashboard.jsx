@@ -103,7 +103,7 @@ const TeacherDashboard = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
 
-          <ActionButton label="📋 Competitions" onClick={() => navigate("/teacher/competitions")} color="indigo" />
+          <ActionButton label="📋 Competitions" onClick={() => navigate("/teacher/events")} color="indigo" />
           <ActionButton label="📝 Attendance" onClick={() => navigate("/teacher/attendance")} color="green" />
           <ActionButton label="🏆 Results" onClick={() => navigate("/teacher/results")} color="blue" />
           <ActionButton label="🎓 Certificates" onClick={() => navigate("/teacher/certificates")} color="purple" />

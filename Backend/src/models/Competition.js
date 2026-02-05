@@ -77,7 +77,11 @@ isDeleted: {
       type: Date,
       required: true,
     },
-
+    certificatesGenerated: {
+  type: Boolean,
+  default: false
+}
+,
     // Teachers assigned to this competition
     assignedTeachers: [
       {
