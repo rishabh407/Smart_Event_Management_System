@@ -188,6 +188,7 @@ const App = () => {
             </ProtectedRoute>
           }
         >
+        <Route index element={<Navigate to="/hod/dashboard" />} />
           <Route index path="/hod/dashboard" element={<HodDashboard />} />
           <Route path="/hod/manage-events" element={<ManageEvents />} />
           <Route path="/hod/events/create" element={<CreateEvent />} />

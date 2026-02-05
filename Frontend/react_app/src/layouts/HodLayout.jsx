@@ -6,8 +6,6 @@ import {
 } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
-import NotificationBell from "../components/NotificationBell";
-
 const HodLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -131,7 +129,6 @@ const HodLayout = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <NotificationBell />
             <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full max-w-[160px] truncate">
               {user?.fullName}
             </span>

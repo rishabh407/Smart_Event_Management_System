@@ -1,7 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
-import NotificationBell from "../components/NotificationBell";
 
 const TeacherLayout = () => {
   const { user, logout } = useAuth();
@@ -22,7 +21,6 @@ const TeacherLayout = () => {
         <h2 className="font-bold">👨‍🏫 Teacher Panel</h2>
 
         <div className="flex items-center gap-3">
-          <NotificationBell variant="dark" />
           <button onClick={() => setOpen(true)} className="text-2xl">
             ☰
           </button>
