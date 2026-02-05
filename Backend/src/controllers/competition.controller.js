@@ -109,21 +109,6 @@ const competition = await Competition.create({
   }
 };
 
-// export const getAllCompetitionsByEvent = async (req, res) => {
-//   try {
-//     const { eventId } = req.params;
-//     console.log("Event Id Is",eventId);
-//     const competitions = await Competition.find({
-//       eventId: eventId
-//     })
-//       .populate("assignedTeachers.teacher", "fullName")
-//       .sort({ startTime: 1 });
-
-//     res.json(competitions);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 export const getCompetitionDetails = async (req, res) => {
 

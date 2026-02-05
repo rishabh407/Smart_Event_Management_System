@@ -1,7 +1,6 @@
 import express from "express";
 import { registerStudent, registerStaff, login, changePassword, refreshToken, logout, getMe } from "../controllers/auth.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
-// import { hodOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 

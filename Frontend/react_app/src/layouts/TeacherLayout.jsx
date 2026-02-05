@@ -53,15 +53,6 @@ const TeacherLayout = () => {
             >
               📊 Dashboard
             </NavLink>
-            {/* 
-            <NavLink
-              to="/teacher/competitions"
-              onClick={() => setOpen(false)}
-              className={linkStyle}
-            >
-              📋 Assigned Competitions
-            </NavLink> */}
-
             <NavLink
               to="/teacher/events"
               onClick={() => setOpen(false)}

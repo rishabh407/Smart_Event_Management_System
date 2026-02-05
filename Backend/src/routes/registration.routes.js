@@ -13,7 +13,7 @@ import {
   markAttendanceByQR,
   getAttendanceStats,
 } from "../controllers/registration.controller.js";
-import { allowRoles, coordinatorOnly, hodOnly, studentOnly, teacherOnly } from "../middlewares/role.middleware.js";
+import { allowRoles,studentOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
@@ -27,12 +27,6 @@ router.post("/team", protect, registerTeam);
 
 router.patch("/:id/cancel", protect, cancelRegistration);
 router.delete("/:id/delete",protect,deleteRegistration);
-
-// router.get(
-//  "/competition/:competitionId",
-//  protect,
-//  getRegistrationsByCompetition
-// );
 
 router.get(
  "/competition/:id/stats",

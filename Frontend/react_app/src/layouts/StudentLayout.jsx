@@ -30,5 +30,3 @@ const StudentLayout = () => {
 };
 
 export default StudentLayout;
-
-// .made this page also fully responsive and if you think there is need of any thing to add into this add it successfully?

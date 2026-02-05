@@ -139,65 +139,6 @@ export const registerStaff = async (req, res) => {
   }
 };
 
-// ================================
-// LOGIN (ALL USERS)
-// ================================
-
-
-// export const login = async (req, res) => {
-
-//   const { identifier, password } = req.body;
-//    console.log(req.body); 
-//   const user = await User.findOne({
-//     $or: [{ email: identifier }, { rollNumber: identifier }]
-//   }).select("+password");
-
-//   if (!user) {
-//     return res.status(401).json({ message: "Invalid credentials" });
-//   }
-
-//   const match = await bcrypt.compare(password, user.password);
-
-//   if (!match) {
-//     return res.status(401).json({ message: "Invalid credentials" });
-//   }
-
-//   const accessToken = generateAccessToken({
-//     id: user._id,
-//     role: user.role
-//   });
-
-//   const refreshToken = generateRefreshToken({
-//     id: user._id
-//   });
-
-//   // ================= COOKIE SET =================
-
-//   res.cookie("accessToken", accessToken, {
-//     httpOnly: true,
-//     secure: false, // true in production HTTPS
-//     sameSite: "strict",
-//     maxAge: 15 * 60 * 1000
-//   });
-
-//   res.cookie("refreshToken", refreshToken, {
-//     httpOnly: true,
-//     secure: false,
-//     sameSite: "strict",
-//     maxAge: 7 * 24 * 60 * 60 * 1000
-//   });
-
-//   res.json({
-//     message: "Login successful",
-//     user: {
-//       id: user._id,
-//       fullName: user.fullName,
-//       role: user.role
-//     }
-//   });
-// };
-
-
 export const login = async (req, res) => {
 
  try {
@@ -343,30 +284,6 @@ export const logout = (req, res) => {
   res.clearCookie("refreshToken");
   res.json({ message: "Logged out successfully" });
 };
-
-// export const getMe = async (req, res) => {
-//   try {
-
-//     // protect middleware already attached user
-//     const userdata = req.user;
-//   //  console.log(user._id);
-//     res.json({
-//       user: {
-//         id: userdata._id,
-//         fullName: userdata.fullName,
-//         role: userdata.role,
-//         email: userdata.email
-//       }
-//     });
-
-//   } catch (error) {
-
-//     res.status(500).json({
-//       message: "Failed to fetch user"
-//     });
-
-//   }
-// };
 
 export const getMe = async (req, res) => {
   try {

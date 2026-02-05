@@ -1,8 +1,6 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-// import morgan from "morgan";
-// import "express-async-errors";
 import dotenv from "dotenv";
 import connectDB from "./src/config.js/db.js";
 import authRoutes from "./src/routes/auth.routes.js";
@@ -33,8 +31,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(morgan("dev"));
-
 app.use("/api/auth", authRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/events", eventRoutes);
@@ -43,7 +39,6 @@ app.use("/api/teams", teamRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/results", resultRoutes);
-// app.use("/api/templates", certificateTemplateRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/assignments", assignmentRoutes);
@@ -54,9 +49,6 @@ app.use(
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/certificates", express.static(path.join(__dirname, "certificates")));
-
-// NOTE: If you need to generate password hashes for seeding,
-// use the standalone script at Backend/generateHash.js instead of doing it here.
 
 const startServer = async () => {
   await connectDB();
@@ -72,6 +64,3 @@ app.get("/", (req, res) => {
 });
 
 export default app;
-
-// Student First Password aaaaaa.
-// password of Rohit is rohit07.

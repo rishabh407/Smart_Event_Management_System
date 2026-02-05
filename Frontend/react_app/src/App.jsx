@@ -90,8 +90,6 @@ const App = () => {
           <Route path="/student/team" element={<Team />} />
 
           <Route path="/student/scan" element={<ScanAttendance />} />
-
-          {/* <Route path="/attendance/scan" element={<ScanAttendance />} /> */}
         </Route>
 
         <Route
@@ -143,16 +141,10 @@ const App = () => {
             </ProtectedRoute>
           }
         >
-          {/* Default page */}
-          {/* <Route index element={<CoordinatorDashboard />} /> */}
           <Route index element={<Navigate to="dashboard" />} />
-          {/* Dashboard */}
           <Route path="dashboard" element={<CoordinatorDashboard />} />
 
-          {/* My Events page (NEW) */}
           <Route path="events" element={<MyEvents />} />
-
-          {/* Event based competition management */}
           <Route
             path="events/:eventId/competitions"
             element={<ManageCompetitions />}
