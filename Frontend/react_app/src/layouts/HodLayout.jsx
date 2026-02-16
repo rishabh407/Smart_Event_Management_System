@@ -100,10 +100,7 @@ const HodLayout = () => {
           {/* LOGOUT */}
           <div className="p-4 border-t border-gray-800">
             <button
-              onClick={() => {
-                logout();
-                navigate("/");
-              }}
+              onClick={logout}
               className="w-full bg-red-600 hover:bg-red-700 py-2 rounded text-sm font-medium"
             >
               🚪 Logout
