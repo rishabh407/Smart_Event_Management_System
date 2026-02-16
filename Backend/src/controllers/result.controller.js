@@ -340,29 +340,38 @@ export const getCoordinatorResults = async (req, res) => {
   }
 };
 
-// GET /api/results/hod/my (HOD: Get results for all competitions in their department's events)
 export const getHodResults = async (req, res) => {
   try {
     if (req.user.role !== "HOD") {
       return res.status(403).json({ message: "HOD only" });
     }
 
-    // Get HOD's events
+    // 1️⃣ Get HOD's events
     const myEvents = await Event.find({
       createdBy: req.user._id,
       isDeleted: false
-    });
+    }).select(
+      "title shortDescription startDate endDate liveStatus bannerImage coordinator"
+    );
 
     const eventIds = myEvents.map(e => e._id);
 
-    // Get competitions under these events that have results
+    // 2️⃣ Get competitions under these events
     const competitions = await Competition.find({
       eventId: { $in: eventIds },
       isDeleted: false,
       resultsDeclared: true
-    }).populate("eventId", "title coordinator");
+    }).populate({
+      path: "eventId",
+      select:
+        "title shortDescription startDate endDate liveStatus bannerImage coordinator",
+      populate: {
+        path: "coordinator",
+        select: "fullName email"
+      }
+    });
 
-    // Get results for each competition
+    // 3️⃣ Get results for each competition
     const resultsData = await Promise.all(
       competitions.map(async (comp) => {
         const results = await Result.find({ competition: comp._id })
@@ -378,21 +387,22 @@ export const getHodResults = async (req, res) => {
             venue: comp.venue,
             startTime: comp.startTime,
             endTime: comp.endTime,
-            event: comp.eventId,
+            event: comp.eventId // 🔥 FULL EVENT OBJECT NOW
           },
-          results,
+          results
         };
       })
     );
 
-    res.json({
+    return res.status(200).json({
       success: true,
-      data: resultsData,
+      data: resultsData
     });
+
   } catch (error) {
     console.error("GET HOD RESULTS ERROR:", error);
-    res.status(500).json({
-      message: "Failed to load results",
+    return res.status(500).json({
+      message: "Failed to load results"
     });
   }
 };
