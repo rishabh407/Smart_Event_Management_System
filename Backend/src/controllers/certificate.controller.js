@@ -7,6 +7,7 @@ import Team from "../models/Team.js";
 import User from "../models/User.js";
 import Certificate from "../models/Certificate.js";
 import { generateCertificatePDF } from "../utils/certificateGenerator.js";
+import path from "path"; // ✅ ADD THIS
 
 export const generateCertificates = async (req, res) => {
   try {
@@ -93,15 +94,15 @@ export const generateCertificates = async (req, res) => {
             templatePath,
             textConfig: textConfig || {}
           });
+        await Certificate.create({
+  competition: competitionId,
+  user: user._id,
+  team: team._id,
+  type: isWinner ? "winner" : "participation",
+  position: isWinner ? winner.position : null,
+  pdfUrl: `/certificates/${path.basename(pdfPath)}` // ✅ FIX
+});
 
-          await Certificate.create({
-            competition: competitionId,
-            user: user._id,
-            team: team._id,
-            type: isWinner ? "winner" : "participation",
-            position: isWinner ? winner.position : null,
-            pdfUrl: pdfPath
-          });
 
           count++;
         }
@@ -123,7 +124,7 @@ export const generateCertificates = async (req, res) => {
           user: user._id,
           type: isWinner ? "winner" : "participation",
           position: isWinner ? winner.position : null,
-          pdfUrl: pdfPath
+           pdfUrl: `/certificates/${path.basename(pdfPath)}` // ✅ public URL
         });
 
         count++;

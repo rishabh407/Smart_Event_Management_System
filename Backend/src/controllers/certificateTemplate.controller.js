@@ -78,8 +78,6 @@ export const uploadTemplate = async (req, res) => {
 
 };
 
-// Generate a one-off preview certificate PDF without saving template config to DB.
-// Teachers can use this to fine‑tune coordinates using a fake student.
 export const previewTemplate = async (req, res) => {
   try {
     const {
@@ -92,7 +90,7 @@ export const previewTemplate = async (req, res) => {
     const isWinner = type === "winner";
     const fileField = isWinner ? "winnerTemplate" : "participationTemplate";
 
-    if (!req.files?.[fileField] || !req.files[fileField][0]) {
+    if (!req.files?.[fileField]?.[0]) {
       return res.status(400).json({
         message: `Template image for ${isWinner ? "winner" : "participation"} certificate is required for preview`
       });
@@ -101,45 +99,54 @@ export const previewTemplate = async (req, res) => {
     const templatePath = req.files[fileField][0].path;
 
     let textConfig = {};
-
     try {
       if (isWinner && winnerPositions) {
         textConfig = JSON.parse(winnerPositions);
       } else if (!isWinner && participationPositions) {
         textConfig = JSON.parse(participationPositions);
       }
-    } catch (err) {
+    } catch {
       return res.status(400).json({
         message: "Invalid positions JSON for preview"
       });
     }
 
-    // Use fixed fake values so teachers can see approximate placement
+    console.log("TEMPLATE PATH:", templatePath);
+    console.log("TEXT CONFIG:", textConfig);
+
     const pdfPath = await generateCertificatePDF({
       name: "Sample Student",
       teamName: "Sample Team",
       competitionName,
       position: isWinner ? 1 : null,
       templatePath,
-      textConfig: textConfig || {}
+      textConfig
     });
 
-    // Ensure absolute path for sendFile
+    console.log("PDF GENERATED AT:", pdfPath);
+
+    // 🔥 THIS WAS MISSING
     const absolutePdfPath = path.isAbsolute(pdfPath)
       ? pdfPath
       : path.join(process.cwd(), pdfPath);
 
+    if (!fs.existsSync(absolutePdfPath)) {
+      console.error("PDF NOT FOUND:", absolutePdfPath);
+      return res.status(500).json({
+        message: "Preview PDF could not be generated"
+      });
+    }
+
     return res.sendFile(absolutePdfPath, (err) => {
       if (err) {
         console.error("PREVIEW SEND FILE ERROR:", err);
-        if (!res.headersSent) {
-          res.status(500).end();
-        }
       }
 
-      // Best‑effort cleanup of generated preview PDF
-      fs.unlink(absolutePdfPath, () => {});
+      setTimeout(() => {
+        fs.unlink(absolutePdfPath, () => {});
+      }, 3000);
     });
+
   } catch (error) {
     console.error("TEMPLATE PREVIEW ERROR:", error);
     return res.status(500).json({
