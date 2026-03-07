@@ -322,62 +322,120 @@ export const getCompetitionById = async (req, res) => {
 
 
 export const updateCompetition = async (req, res) => {
+  try {
 
- try {
+    const { id } = req.params;
 
-  const { id } = req.params;
+    const competition = await Competition.findById(id);
 
-  const competition = await Competition.findById(id);
+    if (!competition) {
+      return res.status(404).json({
+        message: "Competition not found"
+      });
+    }
 
-  if (!competition) {
-   return res.status(404).json({
-    message: "Competition not found"
-   });
+    // ================= PREVENT EDIT AFTER START =================
+
+    if (new Date() >= competition.startTime) {
+      return res.status(400).json({
+        message: "Competition already started"
+      });
+    }
+
+    // ================= ALLOWED FIELDS =================
+
+    const allowedFields = [
+      "name",
+      "shortDescription",
+      "rules",
+      "venue",
+      "type",
+      "registrationDeadline",
+      "startTime",
+      "endTime",
+      "maxParticipants",
+      "minTeamSize",
+      "maxTeamSize"
+    ];
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        competition[field] = req.body[field];
+      }
+    });
+
+    // ================= HANDLE TYPE CHANGE =================
+
+    if (req.body.type === "individual") {
+
+      // remove team sizes for individual competition
+      competition.minTeamSize = null;
+      competition.maxTeamSize = null;
+
+    }
+
+    if (req.body.type === "team") {
+
+      const minTeamSize = Number(req.body.minTeamSize);
+      const maxTeamSize = Number(req.body.maxTeamSize);
+
+      if (!minTeamSize || !maxTeamSize) {
+        return res.status(400).json({
+          message: "Team size is required for team competitions"
+        });
+      }
+
+      if (minTeamSize > maxTeamSize) {
+        return res.status(400).json({
+          message: "Min team size cannot be greater than max team size"
+        });
+      }
+
+      competition.minTeamSize = minTeamSize;
+      competition.maxTeamSize = maxTeamSize;
+
+    }
+
+    // ================= DATE VALIDATION =================
+
+    if (
+      competition.registrationDeadline &&
+      competition.startTime &&
+      new Date(competition.registrationDeadline) >= new Date(competition.startTime)
+    ) {
+      return res.status(400).json({
+        message: "Registration deadline must be before start time"
+      });
+    }
+
+    if (
+      competition.startTime &&
+      competition.endTime &&
+      new Date(competition.startTime) >= new Date(competition.endTime)
+    ) {
+      return res.status(400).json({
+        message: "End time must be after start time"
+      });
+    }
+
+    // ================= SAVE =================
+
+    await competition.save();
+
+    res.status(200).json({
+      message: "Competition updated successfully",
+      competition
+    });
+
+  } catch (error) {
+
+    console.error("Update competition error:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
   }
-
-  // Prevent editing after start
-  if (new Date() >= competition.startTime) {
-   return res.status(400).json({
-    message: "Competition already started"
-   });
-  }
-
-  const allowedFields = [
-   "name",
-   "shortDescription",
-   "venue",
-   "registrationDeadline",
-   "startTime",
-   "endTime",
-   "maxParticipants",
-   "minTeamSize",
-   "maxTeamSize"
-  ];
-
-  allowedFields.forEach(field => {
-
-   if (req.body[field] !== undefined) {
-    competition[field] = req.body[field];
-   }
-
-  });
-
-  await competition.save();
-
-  res.status(200).json({
-   message: "Competition updated successfully",
-   competition
-  });
-
- } catch (error) {
-
-  console.error(error);
-
-  res.status(500).json({
-   message: "Server error"
-  });
-
- }
 };
 
 export const getCoordinatorDashboardStats = async (req, res) => {

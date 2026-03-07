@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  getCompetitionById,
-  updateCompetition
-} from "../../api/competition.api";
+import { getCompetitionById, updateCompetition } from "../../api/competition.api";
 import toast from "react-hot-toast";
 
 const EditCompetition = () => {
@@ -18,7 +15,8 @@ const EditCompetition = () => {
     name: "",
     shortDescription: "",
     venue: "",
-    type: "",
+    rules: "",
+    type: "individual",
     minTeamSize: "",
     maxTeamSize: "",
     maxParticipants: "",
@@ -29,9 +27,10 @@ const EditCompetition = () => {
 
   const [errors, setErrors] = useState({});
 
-  // ================= FETCH DATA =================
+  // ================= FETCH COMPETITION =================
 
   const fetchCompetition = async () => {
+
     try {
 
       setLoading(true);
@@ -43,18 +42,21 @@ const EditCompetition = () => {
         name: data.name || "",
         shortDescription: data.shortDescription || "",
         venue: data.venue || "",
+        rules: data.rules || "",
         type: data.type || "individual",
         minTeamSize: data.minTeamSize || "",
         maxTeamSize: data.maxTeamSize || "",
         maxParticipants: data.maxParticipants || "",
-        registrationDeadline: data.registrationDeadline ? data.registrationDeadline.slice(0, 16) : "",
+        registrationDeadline: data.registrationDeadline
+          ? data.registrationDeadline.slice(0, 16)
+          : "",
         startTime: data.startTime ? data.startTime.slice(0, 16) : "",
         endTime: data.endTime ? data.endTime.slice(0, 16) : ""
       });
 
     } catch (error) {
 
-      console.error("Error fetching competition:", error);
+      console.error(error);
       toast.error("Failed to load competition");
       navigate(-1);
 
@@ -63,6 +65,7 @@ const EditCompetition = () => {
       setLoading(false);
 
     }
+
   };
 
   useEffect(() => {
@@ -75,30 +78,48 @@ const EditCompetition = () => {
 
     const newErrors = {};
 
-    if (!formData.name.trim()) newErrors.name = "Competition name is required";
-    if (!formData.shortDescription.trim()) newErrors.shortDescription = "Short description is required";
-    if (!formData.venue.trim()) newErrors.venue = "Venue is required";
+    if (!formData.name.trim())
+      newErrors.name = "Competition name is required";
+
+    if (!formData.shortDescription.trim())
+      newErrors.shortDescription = "Short description is required";
+
+    if (!formData.rules.trim())
+      newErrors.rules = "Competition rules are required";
+
+    if (!formData.venue.trim())
+      newErrors.venue = "Venue is required";
 
     if (formData.type === "team") {
 
       if (!formData.minTeamSize || !formData.maxTeamSize) {
         newErrors.teamSize = "Team size is required";
-      } else if (+formData.minTeamSize > +formData.maxTeamSize) {
-        newErrors.teamSize = "Min team size cannot be greater than max team size";
+      }
+
+      if (+formData.minTeamSize > +formData.maxTeamSize) {
+        newErrors.teamSize = "Min team size cannot exceed max team size";
       }
 
     }
 
     if (formData.registrationDeadline && formData.startTime) {
-      if (new Date(formData.registrationDeadline) >= new Date(formData.startTime)) {
-        newErrors.registrationDeadline = "Registration deadline must be before start time";
+
+      if (
+        new Date(formData.registrationDeadline) >=
+        new Date(formData.startTime)
+      ) {
+        newErrors.registrationDeadline =
+          "Registration deadline must be before start time";
       }
+
     }
 
     if (formData.startTime && formData.endTime) {
+
       if (new Date(formData.startTime) >= new Date(formData.endTime)) {
         newErrors.endTime = "End time must be after start time";
       }
+
     }
 
     setErrors(newErrors);
@@ -107,19 +128,19 @@ const EditCompetition = () => {
 
   };
 
-  // ================= INPUT HANDLER =================
+  // ================= HANDLE INPUT =================
 
   const handleChange = (e) => {
 
     const { name, value } = e.target;
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
 
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         [name]: ""
       }));
@@ -144,13 +165,17 @@ const EditCompetition = () => {
 
       await updateCompetition(id, formData);
 
-      toast.success("Competition updated successfully!");
+      toast.success("Competition updated successfully");
+
       navigate(-1);
 
     } catch (error) {
 
       console.error(error);
-      toast.error(error.response?.data?.message || "Update failed");
+
+      toast.error(
+        error.response?.data?.message || "Failed to update competition"
+      );
 
     } finally {
 
@@ -165,33 +190,31 @@ const EditCompetition = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[250px]">
-        <div className="text-center text-gray-600">
-          Loading competition...
-        </div>
+        <p className="text-gray-600">Loading competition...</p>
       </div>
     );
   }
 
   return (
 
-    <div className="max-w-4xl mx-auto px-3 sm:px-6">
+    <div className="max-w-3xl mx-auto p-6">
 
       {/* HEADER */}
 
-      <div className="mb-5">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">
           Edit Competition
         </h1>
-        <p className="text-gray-600 text-sm sm:text-base mt-1">
+        <p className="text-gray-600 mt-1">
           Update competition details
         </p>
       </div>
 
-      {/* FORM CARD */}
+      {/* FORM */}
 
-      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* NAME */}
 
@@ -205,7 +228,7 @@ const EditCompetition = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`w-full border px-3 py-2 rounded-lg ${
+              className={`w-full border px-4 py-3 rounded-lg ${
                 errors.name ? "border-red-500" : "border-gray-300"
               }`}
             />
@@ -223,14 +246,44 @@ const EditCompetition = () => {
             </label>
 
             <textarea
-              rows="3"
               name="shortDescription"
+              rows="3"
               value={formData.shortDescription}
               onChange={handleChange}
-              className={`w-full border px-3 py-2 rounded-lg ${
-                errors.shortDescription ? "border-red-500" : "border-gray-300"
+              className={`w-full border px-4 py-3 rounded-lg ${
+                errors.shortDescription
+                  ? "border-red-500"
+                  : "border-gray-300"
               }`}
             />
+
+            {errors.shortDescription && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.shortDescription}
+              </p>
+            )}
+          </div>
+
+          {/* RULES */}
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Competition Rules *
+            </label>
+
+            <textarea
+              name="rules"
+              rows="5"
+              value={formData.rules}
+              onChange={handleChange}
+              className={`w-full border px-4 py-3 rounded-lg ${
+                errors.rules ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+
+            {errors.rules && (
+              <p className="text-red-600 text-sm mt-1">{errors.rules}</p>
+            )}
           </div>
 
           {/* VENUE */}
@@ -245,10 +298,14 @@ const EditCompetition = () => {
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              className={`w-full border px-3 py-2 rounded-lg ${
+              className={`w-full border px-4 py-3 rounded-lg ${
                 errors.venue ? "border-red-500" : "border-gray-300"
               }`}
             />
+
+            {errors.venue && (
+              <p className="text-red-600 text-sm mt-1">{errors.venue}</p>
+            )}
           </div>
 
           {/* TYPE */}
@@ -262,7 +319,7 @@ const EditCompetition = () => {
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded-lg border-gray-300"
+              className="w-full border px-4 py-3 rounded-lg border-gray-300"
             >
               <option value="individual">Individual</option>
               <option value="team">Team</option>
@@ -273,25 +330,37 @@ const EditCompetition = () => {
 
           {formData.type === "team" && (
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
 
-              <input
-                type="number"
-                name="minTeamSize"
-                value={formData.minTeamSize}
-                onChange={handleChange}
-                placeholder="Min Team Size"
-                className="border px-3 py-2 rounded-lg"
-              />
+              <label className="block text-sm font-medium mb-2">
+                Team Size
+              </label>
 
-              <input
-                type="number"
-                name="maxTeamSize"
-                value={formData.maxTeamSize}
-                onChange={handleChange}
-                placeholder="Max Team Size"
-                className="border px-3 py-2 rounded-lg"
-              />
+              <div className="grid grid-cols-2 gap-4">
+
+                <input
+                  type="number"
+                  name="minTeamSize"
+                  placeholder="Min Team Size"
+                  value={formData.minTeamSize}
+                  onChange={handleChange}
+                  className="border px-4 py-3 rounded-lg"
+                />
+
+                <input
+                  type="number"
+                  name="maxTeamSize"
+                  placeholder="Max Team Size"
+                  value={formData.maxTeamSize}
+                  onChange={handleChange}
+                  className="border px-4 py-3 rounded-lg"
+                />
+
+              </div>
+
+              {errors.teamSize && (
+                <p className="text-red-600 text-sm mt-1">{errors.teamSize}</p>
+              )}
 
             </div>
 
@@ -309,7 +378,7 @@ const EditCompetition = () => {
               name="maxParticipants"
               value={formData.maxParticipants}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded-lg border-gray-300"
+              className="w-full border px-4 py-3 rounded-lg border-gray-300"
             />
           </div>
 
@@ -322,7 +391,7 @@ const EditCompetition = () => {
               name="registrationDeadline"
               value={formData.registrationDeadline}
               onChange={handleChange}
-              className="border px-3 py-2 rounded-lg"
+              className="border px-4 py-3 rounded-lg"
             />
 
             <input
@@ -330,7 +399,7 @@ const EditCompetition = () => {
               name="startTime"
               value={formData.startTime}
               onChange={handleChange}
-              className="border px-3 py-2 rounded-lg"
+              className="border px-4 py-3 rounded-lg"
             />
 
           </div>
@@ -340,12 +409,12 @@ const EditCompetition = () => {
             name="endTime"
             value={formData.endTime}
             onChange={handleChange}
-            className="border px-3 py-2 rounded-lg w-full"
+            className="border px-4 py-3 rounded-lg w-full"
           />
 
           {/* BUTTONS */}
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-3">
+          <div className="flex gap-4 pt-4">
 
             <button
               type="submit"
@@ -376,6 +445,7 @@ const EditCompetition = () => {
     </div>
 
   );
+
 };
 
 export default EditCompetition;
