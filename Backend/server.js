@@ -50,6 +50,12 @@ app.use(
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/certificates", express.static(path.join(__dirname, "certificates")));
 
+import bcrypt from "bcrypt";
+
+const password = "hod2";
+
+const hash = await bcrypt.hash(password, 10);
+console.log(hash);
 const startServer = async () => {
   await connectDB();
 
@@ -62,5 +68,6 @@ startServer();
 app.get("/", (req, res) => {
   res.json({ message: "Smart Event Management API running" });
 });
+
 
 export default app;

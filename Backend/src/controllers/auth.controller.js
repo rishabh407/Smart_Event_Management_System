@@ -139,19 +139,28 @@ export const registerStaff = async (req, res) => {
   }
 };
 
+
+
 export const login = async (req, res) => {
 
  try {
 
   const { identifier, password } = req.body;
 
-  // 1. Find user
+// 1. Find user
+
+//  $or operator =>
+
+  // Find user where email = identifier OR rollNumber = identifier
   const user = await User.findOne({
     $or: [
       { email: identifier },
       { rollNumber: identifier }
     ]
   }).select("+password");
+
+  // console.log(user);
+  //this line means provide only password of particular roll no or email for next verifications.
 
   if (!user) {
     return res.status(401).json({ message: "Invalid credentials" });
@@ -175,6 +184,7 @@ export const login = async (req, res) => {
   });
 
   // 4. Set cookies (LOCALHOST CONFIG)
+
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: false,       // true in production
@@ -199,6 +209,16 @@ export const login = async (req, res) => {
       isFirstLogin: user.isFirstLogin
     }
   });
+
+// 🧠 FINAL MENTAL MODEL (REMEMBER THIS)
+
+// Option	    Protects from	Who enforces it
+
+// httpOnly	 JavaScript hackers (XSS)	       Browser
+// secure	   Wi-Fi / network hackers	       Browser
+// sameSite   Fake requests (CSRF)	           Browser
+// maxAge	   Long-term damage	               Browser
+
 
  } catch (error) {
 

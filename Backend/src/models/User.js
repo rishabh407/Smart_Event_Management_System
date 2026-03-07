@@ -17,19 +17,19 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      sparse: true,
+      sparse: true, //Allows multiple documents with null email
       lowercase: true,
     },
 
     password: {
       type: String,
       required: true,
-      select: false,
+      select: false, // when user find data of user then password not get beacause we are using select:false.
     },
 
     role: {
       type: String,
-      enum: ["STUDENT", "TEACHER", "HOD", "COORDINATOR"],
+      enum: ["STUDENT", "TEACHER", "HOD", "COORDINATOR"],// enum means only allows these values which are present here.
       required: true,
     },
 
@@ -78,11 +78,6 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
 
-    // Last time user cleared in-app notifications
-    notificationsClearedAt: {
-      type: Date,
-      default: null,
-    },
   },
   { timestamps: true }
 );

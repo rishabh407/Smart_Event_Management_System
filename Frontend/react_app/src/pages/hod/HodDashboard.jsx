@@ -32,6 +32,8 @@ const HODDashboard = () => {
     to: ""
   });
 
+// useRef=used to save original dashboardss data Save original dashboard data,Instantly restore on reset,Avoid unnecessary API calls
+
   const originalStatsRef = useRef(null);
 
   // ================= DASHBOARD STATE =================

@@ -2,9 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
 const Login = () => {
-
   const [form, setForm] = useState({
     identifier: "",
     password: ""
