@@ -418,6 +418,81 @@ export const getMyRegistrations = async (req, res) => {
 
 };
 
+// export const cancelRegistration = async (req, res) => {
+
+//   try {
+
+//     const { id } = req.params;
+
+//     const registration = await Registration.findById(id)
+//       .populate("competition");
+
+//     if (!registration) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Registration not found"
+//       });
+//     }
+//     // Ownership check
+//     if (registration.registeredBy.toString() !== req.user._id.toString()) {
+//       return res.status(403).json({
+//         success: false,
+//         message: "Not authorized"
+//       });
+//     }
+
+//     // Status check
+//     if (registration.status !== "registered") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Cannot cancel this registration"
+//       });
+//     }
+
+//     // Deadline check
+//     if (new Date() > registration.competition.registrationDeadline) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Cancellation deadline passed"
+//       });
+//     }
+
+//     // Results declared check
+//     if (registration.competition.resultsDeclared) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Results already declared"
+//       });
+//     }
+    
+//     // Cancel
+//     registration.status = "cancelled";
+//     await registration.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Registration cancelled successfully"
+//     });
+// if (registration.team) {
+//   const team = await Team.findById(registration.team);
+//   if (team) {
+//     team.isSubmitted = false;
+//     await team.save();
+//   }
+
+// }
+
+//   } catch (error) {
+
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error"
+//     });
+
+//   }
+
+// };
+
 export const cancelRegistration = async (req, res) => {
 
   try {
@@ -433,6 +508,7 @@ export const cancelRegistration = async (req, res) => {
         message: "Registration not found"
       });
     }
+
     // Ownership check
     if (registration.registeredBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
@@ -464,25 +540,32 @@ export const cancelRegistration = async (req, res) => {
         message: "Results already declared"
       });
     }
-    
-    // Cancel
+
+    // Cancel registration
     registration.status = "cancelled";
     await registration.save();
 
+    // Reset team submission if exists
+    if (registration.team) {
+
+      const team = await Team.findById(registration.team);
+
+      if (team) {
+        team.isSubmitted = false;
+        await team.save();
+      }
+
+    }
+
+    // Send response LAST
     res.status(200).json({
       success: true,
       message: "Registration cancelled successfully"
     });
-if (registration.team) {
-  const team = await Team.findById(registration.team);
-  if (team) {
-    team.isSubmitted = false;
-    await team.save();
-  }
-
-}
 
   } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
       success: false,
@@ -497,11 +580,70 @@ if (registration.team) {
 // DELETE CANCELLED REGISTRATION
 // ================================
 
+// export const deleteRegistration = async (req, res) => {
+
+//   try {
+
+//     const { id } = req.params;
+
+//     const registration = await Registration.findById(id);
+
+//     if (!registration) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Registration not found"
+//       });
+//     }
+
+//     // Only owner can delete
+//     if (registration.registeredBy.toString() !== req.user._id.toString()) {
+//       return res.status(403).json({
+//         success: false,
+//         message: "Not authorized"
+//       });
+//     }
+
+//     // Only cancelled allowed
+//     if (registration.status !== "cancelled") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Only cancelled registrations can be deleted"
+//       });
+//     }
+
+//     await Registration.findByIdAndDelete(id);
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Registration deleted permanently"
+//     });
+
+//   } catch (error) {
+
+//     console.error(error);
+
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error"
+//     });
+
+//   }
+
+// };
+
 export const deleteRegistration = async (req, res) => {
 
   try {
 
     const { id } = req.params;
+
+    // Check authentication
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+    }
 
     const registration = await Registration.findById(id);
 
@@ -512,7 +654,7 @@ export const deleteRegistration = async (req, res) => {
       });
     }
 
-    // Only owner can delete
+    // Check ownership
     if (registration.registeredBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -520,7 +662,7 @@ export const deleteRegistration = async (req, res) => {
       });
     }
 
-    // Only cancelled allowed
+    // Only cancelled registrations can be deleted
     if (registration.status !== "cancelled") {
       return res.status(400).json({
         success: false,
@@ -528,7 +670,8 @@ export const deleteRegistration = async (req, res) => {
       });
     }
 
-    await Registration.findByIdAndDelete(id);
+    // Delete registration
+    await registration.deleteOne();
 
     res.status(200).json({
       success: true,
@@ -537,7 +680,7 @@ export const deleteRegistration = async (req, res) => {
 
   } catch (error) {
 
-    console.error(error);
+    console.error("Delete registration error:", error);
 
     res.status(500).json({
       success: false,

@@ -17,7 +17,7 @@ export const registerTeam = (data) => {
 };
 
 export const deleteRegistration = (id) => {
-  return api.d+elete(`/registrations/${id}/delete`);
+  return api.delete(`/registrations/${id}/delete`);
 };
 
 export const getRegistrationsByCompetition = (competitionId) => {

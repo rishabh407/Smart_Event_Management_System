@@ -114,7 +114,7 @@ const MyRegistrations = () => {
     } catch (error) {
 
       toast.error(error.response?.data?.message || "Delete failed");
-
+     console.error(error);
     } finally {
 
       setDeleteLoadingId(null);
