@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   getHodDashboardStats,
   getEventPerformanceRanking
 } from "../../api/event.api";
+
 import toast from "react-hot-toast";
 
 import {
@@ -18,25 +19,49 @@ import {
   Legend
 } from "recharts";
 
+import {
+  FaChartBar,
+  FaHourglassStart,
+  FaPlayCircle,
+  FaCheckCircle,
+  FaCalendarAlt
+} from "react-icons/fa";
+
+
+/* ================= HELPER : LAST MONTH RANGE ================= */
+
+const getLastMonthRange = () => {
+
+  const now = new Date();
+
+  const firstDayLastMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    1
+  );
+
+  const lastDayLastMonth = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    0
+  );
+
+  return {
+    from: firstDayLastMonth.toISOString().split("T")[0],
+    to: lastDayLastMonth.toISOString().split("T")[0]
+  };
+
+};
+
+
+/* ================= COMPONENT ================= */
+
 const HODDashboard = () => {
 
-  // ================= FILTER STATES =================
+  const lastMonth = getLastMonthRange();
 
-  const [tempFilter, setTempFilter] = useState({
-    from: "",
-    to: ""
-  });
-
-  const [dateFilter, setDateFilter] = useState({
-    from: "",
-    to: ""
-  });
-
-// useRef=used to save original dashboardss data Save original dashboard data,Instantly restore on reset,Avoid unnecessary API calls
-
-  const originalStatsRef = useRef(null);
-
-  // ================= DASHBOARD STATE =================
+  const [tempFilter, setTempFilter] = useState(lastMonth);
+  const [dateFilter, setDateFilter] = useState(lastMonth);
 
   const [stats, setStats] = useState({
     total: 0,
@@ -50,132 +75,138 @@ const HODDashboard = () => {
   });
 
   const [ranking, setRanking] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
-  // ================= FETCH STATS =================
+
+  /* ================= FETCH DASHBOARD ================= */
 
   const fetchStats = async () => {
-    try {
 
-      // prevent re-fetch on reset
-      if (
-        !dateFilter.from &&
-        !dateFilter.to &&
-        originalStatsRef.current
-      ) {
-        return;
-      }
+    try {
 
       setLoading(true);
 
-      const params = {};
-
-      if (dateFilter.from && dateFilter.to) {
-        params.from = dateFilter.from;
-        params.to = dateFilter.to;
-      }
-
-      const res = await getHodDashboardStats(params);
-
-      // Save default snapshot once
-      if (
-        !dateFilter.from &&
-        !dateFilter.to &&
-        !originalStatsRef.current
-      ) {
-        originalStatsRef.current = res.data;
-      }
+      const res = await getHodDashboardStats(dateFilter);
 
       setStats(res.data);
 
     } catch (error) {
-      console.error("Dashboard Stats Error:", error);
+
+      console.error(error);
       toast.error("Failed to load dashboard data");
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
-  // ================= FETCH RANKING =================
+
+  /* ================= FETCH RANKING ================= */
 
   const fetchRanking = async () => {
+
     try {
-      const res = await getEventPerformanceRanking();
+
+      const res = await getEventPerformanceRanking(dateFilter);
+
       setRanking(res.data);
+
     } catch (error) {
-      console.error("Ranking Error:", error);
+
+      console.error(error);
+
     }
+
   };
 
-  // ================= INITIAL LOAD =================
+
+  /* ================= INITIAL LOAD ================= */
 
   useEffect(() => {
+
     fetchStats();
+    fetchRanking();
+
   }, [dateFilter]);
 
-  useEffect(() => {
-    fetchRanking();
-  }, []);
 
-  // ================= APPLY FILTER =================
+  /* ================= APPLY FILTER ================= */
 
   const handleApplyFilter = () => {
 
     if (!tempFilter.from || !tempFilter.to) return;
 
     if (new Date(tempFilter.from) > new Date(tempFilter.to)) {
+
       toast.error("From date must be before To date");
       return;
+
     }
 
     setDateFilter(tempFilter);
+
   };
 
-  // ================= RESET FILTER =================
 
-  const handleResetFilter = () => {
+  /* ================= CLEAR FILTER ================= */
 
-    const empty = { from: "", to: "" };
+  const handleClearFilter = () => {
 
-    setTempFilter(empty);
-    setDateFilter(empty);
+    const lastMonth = getLastMonthRange();
 
-    // Restore cached data instantly
-    if (originalStatsRef.current) {
-      setStats(originalStatsRef.current);
-    }
+    setTempFilter(lastMonth);
+    setDateFilter(lastMonth);
+
   };
 
-  // ================= LOADING =================
+
+  /* ================= LOADING ================= */
 
   if (loading) {
+
     return (
+
       <div className="flex items-center justify-center min-h-[300px]">
+
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+
       </div>
+
     );
+
   }
 
+
   return (
-    <div className="p-4 md:p-6">
+
+    <div className="p-4 md:p-6 space-y-6">
 
       {/* ================= HEADER ================= */}
 
-      <div className="mb-6">
+      <div>
+
         <h1 className="text-2xl md:text-3xl font-bold">
           HOD Dashboard
         </h1>
+
         <p className="text-gray-600">
-          Event management overview
+          Department event analytics overview
         </p>
+
       </div>
+
 
       {/* ================= DATE FILTER ================= */}
 
-      <div className="bg-white p-4 md:p-6 rounded-lg shadow mb-6">
+      <div className="bg-white p-4 md:p-6 rounded-lg shadow">
 
-        <h2 className="font-semibold mb-4">
-          📅 Filter by Date
+        <h2 className="font-semibold mb-4 flex items-center gap-2">
+          <FaCalendarAlt />
+          Filter by Date
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -206,110 +237,201 @@ const HODDashboard = () => {
 
           <button
             onClick={handleApplyFilter}
-            disabled={!tempFilter.from || !tempFilter.to}
-            className={`rounded text-white font-medium ${
-              tempFilter.from && tempFilter.to
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded font-medium py-2"
           >
             Apply
           </button>
 
-          {(tempFilter.from || tempFilter.to) && (
-            <button
-              onClick={handleResetFilter}
-              className="rounded bg-gray-200 hover:bg-gray-300"
-            >
-              Reset
-            </button>
-          )}
+          <button
+            onClick={handleClearFilter}
+            className="bg-gray-200 hover:bg-gray-300 rounded font-medium py-2"
+          >
+            Clear
+          </button>
 
         </div>
+
       </div>
+
 
       {/* ================= STATS CARDS ================= */}
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-        <StatCard title="Total Events" value={stats.total} icon="📊" />
-        <StatCard title="Upcoming" value={stats.upcoming} icon="⏳" />
-        <StatCard title="Ongoing" value={stats.ongoing} icon="🟢" />
-        <StatCard title="Completed" value={stats.completed} icon="✅" />
+        <StatCard title="Total Events" value={stats.total} icon={<FaChartBar />} />
 
-      </div>
+        <StatCard title="Upcoming" value={stats.upcoming} icon={<FaHourglassStart />} />
 
-      {/* ================= STATUS CHART ================= */}
+        <StatCard title="Ongoing" value={stats.ongoing} icon={<FaPlayCircle />} />
 
-      <div className="bg-white p-4 rounded shadow mb-6">
-
-        {stats.charts.statusChart.length === 0 ? (
-          <p className="text-center text-gray-400 py-10">
-            No chart data available
-          </p>
-        ) : (
-          <ResponsiveContainer
-            width="100%"
-            height={window.innerWidth < 640 ? 220 : 300}
-          >
-            <BarChart data={stats.charts.statusChart}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#2563eb" />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
+        <StatCard title="Completed" value={stats.completed} icon={<FaCheckCircle />} />
 
       </div>
 
-      {/* ================= MONTHLY TREND ================= */}
+
+      {/* ================= CHARTS ================= */}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {/* STATUS CHART */}
+
+        <div className="bg-white p-4 rounded shadow h-[280px] md:h-[320px]">
+
+          {stats.charts.statusChart.length === 0 ? (
+
+            <p className="text-center text-gray-400 py-20">
+              No status data available
+            </p>
+
+          ) : (
+
+            <ResponsiveContainer width="100%" height="100%">
+
+              <BarChart data={stats.charts.statusChart}>
+
+                <CartesianGrid strokeDasharray="3 3" />
+
+                <XAxis dataKey="name" />
+
+                <YAxis />
+
+                <Tooltip />
+
+                <Legend />
+
+                <Bar dataKey="value" fill="#2563eb" />
+
+              </BarChart>
+
+            </ResponsiveContainer>
+
+          )}
+
+        </div>
+
+
+        {/* MONTHLY TREND */}
+
+        <div className="bg-white p-4 rounded shadow h-[280px] md:h-[320px]">
+
+          {stats.charts.monthlyChart.length === 0 ? (
+
+            <p className="text-center text-gray-400 py-20">
+              No monthly trend data
+            </p>
+
+          ) : (
+
+            <ResponsiveContainer width="100%" height="100%">
+
+              <LineChart data={stats.charts.monthlyChart}>
+
+                <CartesianGrid strokeDasharray="3 3" />
+
+                <XAxis dataKey="month" />
+
+                <YAxis />
+
+                <Tooltip />
+
+                <Legend />
+
+                <Line dataKey="count" stroke="#10b981" />
+
+              </LineChart>
+
+            </ResponsiveContainer>
+
+          )}
+
+        </div>
+
+      </div>
+
+
+      {/* ================= EVENT PERFORMANCE ================= */}
 
       <div className="bg-white p-4 rounded shadow">
 
-        {stats.charts.monthlyChart.length === 0 ? (
-          <p className="text-center text-gray-400 py-10">
-            No monthly trend data
+        <h2 className="font-semibold mb-4">
+          🏆 Top Performing Events
+        </h2>
+
+        {ranking.length === 0 ? (
+
+          <p className="text-gray-400 text-center py-6">
+            No event participation yet
           </p>
+
         ) : (
-          <ResponsiveContainer
-            width="100%"
-            height={window.innerWidth < 640 ? 220 : 300}
-          >
-            <LineChart data={stats.charts.monthlyChart}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line dataKey="count" stroke="#10b981" />
-            </LineChart>
-          </ResponsiveContainer>
+
+          <div className="space-y-3">
+
+            {ranking.map((event, index) => (
+
+              <div
+                key={event._id}
+                className="flex justify-between border-b pb-2"
+              >
+
+                <span>
+
+                  {index + 1}. {event.name}
+
+                </span>
+
+                <span className="font-semibold">
+
+                  {event.participants} participants
+
+                </span>
+
+              </div>
+
+            ))}
+
+          </div>
+
         )}
 
       </div>
 
     </div>
+
   );
+
 };
 
-// ================= STAT CARD =================
+
+/* ================= STAT CARD ================= */
 
 const StatCard = ({ title, value, icon }) => {
 
   return (
+
     <div className="bg-white rounded shadow p-4 flex justify-between items-center">
+
       <div>
-        <p className="text-gray-600 text-sm">{title}</p>
+
+        <p className="text-gray-600 text-sm">
+          {title}
+        </p>
+
         <h2 className="text-xl md:text-2xl font-bold">
           {value}
         </h2>
+
       </div>
-      <span className="text-2xl">{icon}</span>
+
+      <span className="text-2xl text-blue-600">
+        {icon}
+      </span>
+
     </div>
+
   );
+
 };
+
 
 export default HODDashboard;

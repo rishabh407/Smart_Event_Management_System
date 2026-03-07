@@ -484,18 +484,25 @@ export const getHodDashboardStats = async (req, res) => {
       isDeleted: false
     };
 
-    // ---------- DATE FILTER ----------
+    /* ================= DATE FILTER ================= */
 
     if (from && to) {
 
+      const startDate = new Date(from);
+      const endDate = new Date(to);
+
+      endDate.setHours(23, 59, 59, 999);
+
       filter.createdAt = {
-        $gte: new Date(from),
-        $lte: new Date(to)
+        $gte: startDate,
+        $lte: endDate
       };
 
     }
 
     const events = await Event.find(filter);
+
+    /* ================= BASIC STATS ================= */
 
     const total = events.length;
 
@@ -511,14 +518,17 @@ export const getHodDashboardStats = async (req, res) => {
       e => e.liveStatus === "completed"
     ).length;
 
-    // ---------- MONTHLY TREND ----------
+    /* ================= MONTHLY TREND ================= */
 
     const monthlyStats = {};
 
     events.forEach(event => {
 
       const month = new Date(event.createdAt)
-        .toLocaleString("default", { month: "short" });
+        .toLocaleString("default", {
+          month: "short",
+          year: "numeric"
+        });
 
       monthlyStats[month] = (monthlyStats[month] || 0) + 1;
 
@@ -528,6 +538,9 @@ export const getHodDashboardStats = async (req, res) => {
       month,
       count: monthlyStats[month]
     }));
+
+
+    /* ================= RESPONSE ================= */
 
     res.status(200).json({
 
@@ -552,7 +565,7 @@ export const getHodDashboardStats = async (req, res) => {
 
   } catch (error) {
 
-    console.error(error);
+    console.error("Dashboard Error:", error);
 
     res.status(500).json({
       message: "Server error"
@@ -562,16 +575,18 @@ export const getHodDashboardStats = async (req, res) => {
 
 };
 
-
 export const getEventPerformanceRanking = async (req, res) => {
 
   try {
-console.log("REQ USER:", req.user);
-    const hodDepartment = new mongoose.Types.ObjectId(req.user.departmentId);
+
+    const hodDepartment = new mongoose.Types.ObjectId(
+      req.user.departmentId
+    );
 
     const ranking = await Registration.aggregate([
 
-      // STEP 1: Registration -> Competition
+      /* STEP 1: Registration → Competition */
+
       {
         $lookup: {
           from: "competitions",
@@ -583,11 +598,12 @@ console.log("REQ USER:", req.user);
 
       { $unwind: "$competitionData" },
 
-      // STEP 2: Competition -> Event (FIXED FIELD)
+      /* STEP 2: Competition → Event */
+
       {
         $lookup: {
           from: "events",
-          localField: "competitionData.eventId", // ✅ FIX HERE
+          localField: "competitionData.eventId",
           foreignField: "_id",
           as: "eventData"
         }
@@ -595,24 +611,37 @@ console.log("REQ USER:", req.user);
 
       { $unwind: "$eventData" },
 
-      // STEP 3: Filter by HOD department
+      /* STEP 3: Filter by Department */
+
       {
         $match: {
           "eventData.departmentId": hodDepartment
         }
       },
 
-      // STEP 4: Group by Event
+      /* STEP 4: Group by Event */
+
       {
         $group: {
+
           _id: "$eventData._id",
-          title: { $first: "$eventData.title" },
-          banner: { $first: "$eventData.bannerImage" },
-          registrations: { $sum: 1 }
+
+          name: {
+            $first: "$eventData.title"
+          },
+
+          banner: {
+            $first: "$eventData.bannerImage"
+          },
+
+          participants: {
+            $sum: 1
+          }
+
         }
       },
 
-      { $sort: { registrations: -1 } },
+      { $sort: { participants: -1 } },
 
       { $limit: 10 }
 
@@ -631,7 +660,6 @@ console.log("REQ USER:", req.user);
   }
 
 };
-
 
 export const getCoordinatorEvents = async (req, res) => {
 
