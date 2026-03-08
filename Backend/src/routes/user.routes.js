@@ -4,7 +4,7 @@ import express from "express";
 import { protect } from "../middlewares/auth.middleware.js";
 import { hodOnly } from "../middlewares/role.middleware.js";
 
-import { createStudent, createTeacher, getDepartmentStudents, getDepartmentTeachers, toggleStudentStatus, toggleTeacherStatus, updateStudent, updateTeacher, uploadStudents } from "../controllers/user.controller.js";
+import { createCoordinator, createStudent, createTeacher, getDepartmentCoordinator, getDepartmentStudents, getDepartmentTeachers,  toggleStudentStatus, toggleTeacherStatus, updateCoordinator, updateStudent, updateTeacher, uploadStudents } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/upload.js";
 
 
@@ -29,6 +29,14 @@ router.post("/students",  protect, hodOnly, createStudent);
 router.put("/students/:id",  protect, hodOnly, updateStudent);
 
 router.patch("/students/status/:studentId",  protect, hodOnly, toggleStudentStatus);
+
+router.post("/create-coordinator", protect, hodOnly, createCoordinator);
+router.get("/coordinator", protect, hodOnly, getDepartmentCoordinator);
+router.patch(
+  "/update-coordinator/:id",
+  protect,hodOnly,
+  updateCoordinator
+);
 
 router.post(
   "/students/upload",

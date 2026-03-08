@@ -575,3 +575,115 @@ export const uploadStudents = async (req, res) => {
 
   }
 };
+
+export const createCoordinator = async (req, res) => {
+
+  try {
+
+    const { fullName, email, userId, password } = req.body;
+
+    const departmentId = req.user.departmentId;
+
+    const existingCoordinator = await User.findOne({
+      role: "COORDINATOR",
+      departmentId
+    });
+
+    if (existingCoordinator) {
+      return res.status(400).json({
+        message: "Coordinator already exists"
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const coordinator = await User.create({
+
+      fullName,
+      email,
+      userId,
+      password: hashedPassword,
+
+      role: "COORDINATOR",
+
+      departmentId,
+
+      isActive: true,
+      isFirstLogin: true
+
+    });
+
+    const response = coordinator.toObject();
+    delete response.password;
+
+    res.status(201).json(response);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Failed to create coordinator"
+    });
+
+  }
+
+};
+
+export const getDepartmentCoordinator = async (req, res) => {
+
+  try {
+
+    const coordinator = await User.findOne({
+      role: "COORDINATOR",
+      departmentId: req.user.departmentId
+    }).select("fullName email userId role");
+
+    res.json(coordinator);
+
+  } catch {
+
+    res.status(500).json({
+      message: "Failed to fetch coordinator"
+    });
+
+  }
+
+};
+
+export const updateCoordinator = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fullName, email } = req.body;
+
+    const coordinator = await User.findById(id);
+
+    if (!coordinator) {
+      return res.status(404).json({
+        message: "Coordinator not found"
+      });
+    }
+
+    if (coordinator.role !== "COORDINATOR") {
+      return res.status(400).json({
+        message: "User is not coordinator"
+      });
+    }
+
+    if (fullName) coordinator.fullName = fullName;
+    if (email) coordinator.email = email;
+
+    await coordinator.save();
+
+    const response = coordinator.toObject();
+    delete response.password;
+
+    res.json(response);
+
+  } catch {
+
+    res.status(500).json({
+      message: "Failed to update coordinator"
+    });
+
+  }
+
+};

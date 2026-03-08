@@ -44,3 +44,12 @@ export const uploadStudents = (file) => {
   });
 
 };
+
+export const getDepartmentCoordinator = () =>
+  api.get("/users/coordinator");
+
+export const createCoordinator = (data) =>
+  api.post("/users/create-coordinator", data);
+
+export const updateCoordinator = (id, data) =>
+  api.patch(`/users/update-coordinator/${id}`, data);
