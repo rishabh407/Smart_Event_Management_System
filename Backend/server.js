@@ -6,6 +6,7 @@ import connectDB from "./src/config.js/db.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import departmentRoutes from "./src/routes/departments.routes.js";
 import eventRoutes from "./src/routes/event.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
 import competitionRoutes from "./src/routes/competition.routes.js";
 import teamRoutes from "./src/routes/team.routes.js";
 import registrationRoutes from "./src/routes/registration.routes.js";
@@ -42,6 +43,7 @@ app.use("/api/results", resultRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/assignments", assignmentRoutes);
+app.use("/api/users", userRoutes);
 app.use(
   "/api/certificate-templates",
   certificateTemplateRoutes
