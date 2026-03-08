@@ -10,3 +10,11 @@ export const getDepartmentTeachers = () => {
 export const toggleTeacherStatus = (id) => {
   return api.patch(`/users/hod/teachers/${id}/status`);
 };
+
+export const createTeacher = (data) => {
+  return api.post("/users/hod/teachers", data);
+};
+
+export const updateTeacher = (id, data) => {
+  return api.put(`/users/hod/teachers/${id}`, data);
+};

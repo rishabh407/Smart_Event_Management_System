@@ -1,3 +1,90 @@
+// import mongoose from "mongoose";
+
+// const userSchema = new mongoose.Schema(
+//   {
+//     userId: {
+//       type: String,
+//       required: true,
+//       unique: true,
+//     },
+
+//     fullName: {
+//       type: String,
+//       required: true,
+//       trim: true,
+//     },
+
+//     email: {
+//       type: String,
+//       unique: true,
+//       sparse: true, //Allows multiple documents with null email
+//       lowercase: true,
+//     },
+
+//     password: {
+//       type: String,
+//       required: true,
+//       select: false, // when user find data of user then password not get beacause we are using select:false.
+//     },
+
+//     role: {
+//       type: String,
+//       enum: ["STUDENT", "TEACHER", "HOD", "COORDINATOR"],// enum means only allows these values which are present here.
+//       required: true,
+//     },
+
+//     // =====================
+//     // STUDENT FIELDS
+//     // =====================
+
+//     rollNumber: {
+//       type: String,
+//       unique: true,
+//       sparse: true,
+//     },
+
+//     isFirstLogin: {
+//       type: Boolean,
+//       default: false,
+//     },
+
+//     course: {
+//       type: String,
+//       default: null,
+//     },
+
+//     year: {
+//       type: Number,
+//       default: null,
+//     },
+
+//     section: {
+//       type: String,
+//       default: null,
+//     },
+
+//     // =====================
+//     // COMMON
+//     // =====================
+
+//     departmentId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: "Department",
+//       default: null,
+//     },
+
+//     isActive: {
+//       type: Boolean,
+//       default: true,
+//     },
+
+//   },
+//   { timestamps: true }
+// );
+
+// export default mongoose.model("User", userSchema);
+
+
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -6,31 +93,33 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true
     },
 
     fullName: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
 
     email: {
       type: String,
       unique: true,
-      sparse: true, //Allows multiple documents with null email
+      sparse: true, // allows multiple docs with null email
       lowercase: true,
+      trim: true
     },
 
     password: {
       type: String,
       required: true,
-      select: false, // when user find data of user then password not get beacause we are using select:false.
+      select: false // hide password by default
     },
 
     role: {
       type: String,
-      enum: ["STUDENT", "TEACHER", "HOD", "COORDINATOR"],// enum means only allows these values which are present here.
-      required: true,
+      enum: ["STUDENT", "TEACHER", "HOD", "COORDINATOR"],
+      required: true
     },
 
     // =====================
@@ -41,45 +130,50 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
       sparse: true,
-    },
-
-    isFirstLogin: {
-      type: Boolean,
-      default: false,
+      trim: true
     },
 
     course: {
       type: String,
-      default: null,
+      trim: true
     },
 
     year: {
-      type: Number,
-      default: null,
+      type: Number
     },
 
     section: {
       type: String,
-      default: null,
+      trim: true
     },
 
     // =====================
-    // COMMON
+    // LOGIN CONTROL
+    // =====================
+
+    isFirstLogin: {
+      type: Boolean,
+      default: false
+    },
+
+    // =====================
+    // COMMON FIELDS
     // =====================
 
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Department",
-      default: null,
+      required: true
     },
 
     isActive: {
       type: Boolean,
-      default: true,
-    },
-
+      default: true
+    }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
 export default mongoose.model("User", userSchema);
