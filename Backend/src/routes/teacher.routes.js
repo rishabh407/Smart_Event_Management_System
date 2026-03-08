@@ -13,11 +13,13 @@ router.get(
 );
 
 router.get(
-  "/teacher/assigned/all",
+  "/competitions",
   protect,
   teacherOnly,
   getAllAssignedCompetitions
 );
+
+
 router.get("/teacher/assigned/:id",protect,teacherOnly,getassigncompetition);
 
 

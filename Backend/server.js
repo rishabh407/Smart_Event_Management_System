@@ -16,6 +16,7 @@ import certificateRoutes from "./src/routes/certificate.routes.js";
 import teacherRoutes from "./src/routes/teacher.routes.js";
 import assignmentRoutes from "./src/routes/competitionAssignment.routes.js";
 import certificateTemplateRoutes from "./src/routes/certificateTemplate.routes.js";
+import exportRoutes from "./src/routes/export.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 dotenv.config();
@@ -44,6 +45,7 @@ app.use("/api/certificates", certificateRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/exports", exportRoutes);
 app.use(
   "/api/certificate-templates",
   certificateTemplateRoutes

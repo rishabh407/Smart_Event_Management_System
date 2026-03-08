@@ -1,10 +1,8 @@
 import Competition from "../models/Competition.js";
 import User from "../models/User.js";
 import Registration from "../models/Registration.js";
-import Attendance from "../models/Attendance.js";
 import Result from "../models/Result.js";
 import Certificate from "../models/Certificate.js";
-import mongoose from "mongoose";
 
 export const getDepartmentTeachers = async (req, res) => {
 
@@ -32,16 +30,14 @@ export const getAllAssignedCompetitions = async (req, res) => {
 
   try {
 
-    const competitions = await Competition.find({
-
-      "assignedTeachers.teacher": req.user._id,
-      isDeleted: false,
-      isPublished: true
-
-    })
-    .sort({ startTime: 1 })
-    .lean();
-
+const competitions = await Competition.find({
+  "assignedTeachers.teacher": req.user._id,
+  isDeleted: false,
+  isPublished: true
+})
+.populate("eventId", "title")
+.sort({ startTime: 1 })
+.lean();
     res.status(200).json(competitions);
 
   } catch (error) {
@@ -55,7 +51,6 @@ export const getAllAssignedCompetitions = async (req, res) => {
   }
 
 };
-
 
 export const getassigncompetition = async (req, res) => {
 

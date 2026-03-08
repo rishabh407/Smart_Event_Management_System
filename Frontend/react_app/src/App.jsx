@@ -46,6 +46,7 @@ import CompetitionHod from "./pages/hod/CompetitionHod";
 import HodTeachers from "./pages/hod/HodTeachers";
 import HodStudents from "./pages/hod/Hodstudents";
 import HodCoordinators from "./pages/hod/Hodcoordinators";
+import ExportReports from "./pages/teacher/ExportReports";
 const App = () => {
   return (
     <BrowserRouter>
@@ -127,6 +128,7 @@ const App = () => {
           <Route path="results" element={<Results />} />
           <Route path="results/:id" element={<ViewResults />} />
           <Route path="certificates" element={<GenerateCertificates />} />
+          <Route path="export" element={<ExportReports />} />
           <Route
             path="certificates/upload"
             element={<UploadCertificateTemplates />}

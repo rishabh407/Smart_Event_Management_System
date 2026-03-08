@@ -14,5 +14,7 @@ export const getTeacherDashboardStats = () => {
 };
 
 export const getAllAssignedCompetitions = () => {
-  return api.get("/teachers/teacher/assigned/all");
+  return api.get("/teachers/competitions");
 };
+
+

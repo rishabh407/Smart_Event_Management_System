@@ -84,6 +84,5 @@ router.get(
   hodOnly,
   getDepartmentCoordinators
 );
-
 export default router;
 

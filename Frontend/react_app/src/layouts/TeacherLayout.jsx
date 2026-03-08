@@ -91,6 +91,11 @@ const TeacherLayout = () => {
             >
               📤 Upload Templates
             </NavLink>
+            <NavLink to="/teacher/export"
+            onClick={() => setOpen(false)}
+              className={linkStyle}>
+ 📤 Export Reports
+</NavLink>
           </nav>
         </div>
 
