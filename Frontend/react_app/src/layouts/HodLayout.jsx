@@ -187,29 +187,6 @@ const HODLayout = () => {
 
           </div>
 
-          {/* PARTICIPATION */}
-
-          <div>
-
-            <p className="text-gray-400 text-xs mb-2 uppercase">
-              Participation
-            </p>
-
-            <div className="space-y-1">
-
-              <NavLink to="/hod/registrations" className={navClass}>
-                <FaClipboardList />
-                Registrations
-              </NavLink>
-
-              <NavLink to="/hod/participants" className={navClass}>
-                <FaUsers />
-                Participants
-              </NavLink>
-
-            </div>
-
-          </div>
 
           {/* RESULTS */}
 
@@ -226,10 +203,6 @@ const HODLayout = () => {
                 Department Results
               </NavLink>
 
-              <NavLink to="/hod/publish-results" className={navClass}>
-                <FaClipboardList />
-                Publish Results
-              </NavLink>
 
             </div>
 
