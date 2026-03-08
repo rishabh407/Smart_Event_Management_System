@@ -14,7 +14,8 @@ import {
   getHodDashboardStats,
   getEventPerformanceRanking,
   getCoordinatorEvents,
-  getDepartmentCoordinators
+  getDepartmentCoordinators,
+  getEventCompetitions
 } from "../controllers/event.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
@@ -55,7 +56,7 @@ router.put(
 // PUBLISH / UNPUBLISH
 router.patch("/:id/publish", protect, hodOnly, publishEvent);
 router.patch("/:id/unpublish", protect, hodOnly, unpublishEvent);
-
+router.get("/:eventId/competitions", protect, hodOnly, getEventCompetitions);
 // DELETE / RESTORE
 router.patch("/:id/delete", protect, hodOnly, deleteEvent);
 router.patch("/:id/restore", protect, hodOnly, restoreEvent);

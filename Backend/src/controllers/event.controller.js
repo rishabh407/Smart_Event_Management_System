@@ -1,3 +1,4 @@
+import Competition from "../models/Competition.js";
 import Event from "../models/Event.js";
 import Registration from "../models/Registration.js";
 import User from "../models/User.js";
@@ -699,4 +700,35 @@ export const getDepartmentCoordinators = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+export const getEventCompetitions = async (req, res) => {
+
+  try {
+
+    const { eventId } = req.params;
+
+    console.log("EVENT ID RECEIVED:", eventId);
+
+    const competitions = await Competition.find({
+      eventId,
+      isDeleted: false
+    })
+      .populate("assignedTeachers.teacher", "fullName email")
+      .lean();
+
+    console.log("COMPETITIONS FOUND:", competitions);
+
+    res.status(200).json(competitions);
+
+  } catch (error) {
+
+    console.error("Competition fetch error:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch competitions"
+    });
+
+  }
+
 };

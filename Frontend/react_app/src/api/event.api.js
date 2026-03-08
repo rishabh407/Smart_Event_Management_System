@@ -61,3 +61,8 @@ export const getCoordinatorEvents = () => {
 export const getDepartmentCoordinators = () => {
  return api.get("/events/hod/coordinators");
 };
+
+// GET COMPETITIONS OF A PARTICULAR EVENT (HOD VIEW)
+export const getEventCompetitions = (eventId) => {
+  return api.get(`/events/${eventId}/competitions`);
+};

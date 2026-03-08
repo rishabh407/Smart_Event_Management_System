@@ -42,6 +42,10 @@ import ViewResults from "./pages/teacher/ViewResults";
 import MyResults from "./pages/student/MyResults";
 import EventResults from "./pages/coordinator/EventResults";
 import DepartmentResults from "./pages/hod/DepartmentResults";
+import CompetitionHod from "./pages/hod/CompetitionHod";
+import HodTeachers from "./pages/hod/HodTeachers";
+import HodStudents from "./pages/hod/Hodstudents";
+import HodCoordinators from "./pages/hod/Hodcoordinators";
 const App = () => {
   return (
     <BrowserRouter>
@@ -186,6 +190,11 @@ const App = () => {
           <Route path="/hod/events/create" element={<CreateEvent />} />
           <Route path="/hod/events/edit/:id" element={<EditEvent />} />
           <Route path="/hod/results" element={<DepartmentResults />} />
+          <Route path="/hod/teachers" element={<HodTeachers />} />
+          <Route path="/hod/students" element={<HodStudents />} />
+          <Route path="/hod/coordinators" element={<HodCoordinators />} />
+          <Route path="/hod/events/:eventId/competitions" element={<CompetitionHod />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

@@ -418,7 +418,7 @@ const HODLayout = () => {
         </div>
 
         {/* MENU */}
-<div className="flex-1 p-4 space-y-6 overflow-y-auto hide-scrollbar">
+<div className="flex-1 p-4 spacex-y-6 overflow-y-auto hide-scrollbar">
           <div>
 
             <p className="text-gray-400 text-sm">Welcome</p>
@@ -461,10 +461,6 @@ const HODLayout = () => {
                 Create Event
               </NavLink>
 
-              <NavLink to="/hod/competitions" className={navClass}>
-                <FaTrophy />
-                Competitions
-              </NavLink>
 
             </div>
 
