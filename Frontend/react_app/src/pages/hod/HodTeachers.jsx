@@ -194,10 +194,11 @@ const HodTeachers = () => {
       setModalOpen(false);
 
     } catch (error) {
+  const message =
+    error.response?.data?.message || "Operation failed";
 
-      toast.error("Operation failed");
-
-    }
+  toast.error(message);
+}
 
   };
 

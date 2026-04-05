@@ -86,6 +86,74 @@ export const registerStudent = async (req, res) => {
 };
 
 
+// export const registerStudent = async (req, res) => {
+//   try {
+//     const { fullName, rollNumber, course, year, section } = req.body;
+
+//     // ✅ 1. Role check
+//     if (!["HOD", "COORDINATOR"].includes(req.user.role)) {
+//       return res.status(403).json({
+//         message: "Only staff can create students"
+//       });
+//     }
+
+//     // ✅ 2. Validation
+//     if (!fullName || !rollNumber || !course || !year || !section) {
+//       return res.status(400).json({
+//         message: "All student fields required"
+//       });
+//     }
+
+//     // ✅ 3. Duplicate check (STRICT)
+//     const existingStudent = await User.findOne({
+//       rollNumber,
+//       role: "STUDENT"
+//     });
+
+//     if (existingStudent) {
+//       return res.status(400).json({
+//         message: "Student already exists with this roll number"
+//       });
+//     }
+
+//     // ✅ 4. Default password = rollNumber
+//     const hashedPassword = await bcrypt.hash(rollNumber, 10);
+
+//     // ✅ 5. Create student (NO email, NO userId input)
+//     const student = await User.create({
+//       userId: uuidv4(), // internal use only
+//       fullName,
+//       rollNumber,
+//       course,
+//       year,
+//       section,
+//       password: hashedPassword,
+//       role: "STUDENT",
+//       departmentId: req.user.departmentId,
+//       isFirstLogin: true
+//     });
+
+//     // ✅ 6. Response
+//     res.status(201).json({
+//       message: "Student registered successfully",
+//       student: {
+//         id: student._id,
+//         fullName: student.fullName,
+//         rollNumber: student.rollNumber,
+//         role: student.role,
+//         isFirstLogin: student.isFirstLogin
+//       }
+//     });
+
+//   } catch (error) {
+//     console.error("STUDENT REGISTER ERROR:", error);
+
+//     res.status(500).json({
+//       message: "Server error"
+//     });
+//   }
+// };
+
 // ================================
 // REGISTER STAFF (HOD ONLY)
 // ================================
@@ -102,18 +170,25 @@ export const registerStaff = async (req, res) => {
       return res.status(400).json({ message: "All staff fields required" });
     }
 
-    if (!["TEACHER", "COORDINATOR"].includes(role)) {
-      return res.status(400).json({ message: "Invalid staff role" });
-    }
+// Validation
+if (!["TEACHER", "COORDINATOR"].includes(role)) {
+  return res.status(400).json({ message: "Invalid staff role" });
+}
 
-    const existingUser = await User.findOne({ email });
+// 🔥 ADD DUPLICATE CHECK HERE
+const existingTeacher = await User.findOne({
+  email,
+  role: { $in: ["TEACHER", "COORDINATOR"] }
+});
 
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
+if (existingTeacher) {
+  return res.status(400).json({
+    message: "Teacher already exists with this email"
+  });
+}
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+// THEN HASH PASSWORD
+const hashedPassword = await bcrypt.hash(password, 10);
     const staff = await User.create({
       userId: uuidv4(),
       fullName,
@@ -163,8 +238,15 @@ export const login = async (req, res) => {
   //this line means provide only password of particular roll no or email for next verifications.
 
   if (!user) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
+  return res.status(401).json({ message: "Invalid credentials" });
+}
+
+// ✅ ADD THIS BLOCK
+if (!user.isActive) {
+  return res.status(403).json({
+    message: "Your account is deactivated. Contact admin."
+  });
+}
 
   // 2. Compare password
   const isMatch = await bcrypt.compare(password, user.password);

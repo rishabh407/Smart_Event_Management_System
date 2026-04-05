@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const departmentSchema = new mongoose.Schema(
@@ -21,20 +20,31 @@ const departmentSchema = new mongoose.Schema(
     description: {
       type: String,
       default: "",
+      trim: true
     },
 
+    location: {
+      type: String,
+      default: "",
+      trim: true
+    },
+
+    // ✅ Optional HOD (assigned later)
     hod: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
 
-    location: {
-      type: String,
-      default: null,
-    },
+    // ✅ Optional: department status
+    isActive: {
+      type: Boolean,
+      default: true
+    }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
 export default mongoose.model("Department", departmentSchema);
