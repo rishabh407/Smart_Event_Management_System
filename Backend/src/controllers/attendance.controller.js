@@ -2,6 +2,7 @@ import Registration from "../models/Registration.js";
 import Competition from "../models/Competition.js";
 import Attendance from "../models/Attendance.js";
 
+
 export const scanAttendance = async (req, res) => {
   try {
     const { qrData } = req.body;
@@ -22,7 +23,7 @@ export const scanAttendance = async (req, res) => {
 
     try {
       payload = JSON.parse(qrData);
-    } catch (error) {
+    } catch {
       return res.status(400).json({
         message: "Invalid QR code format",
       });
@@ -126,6 +127,31 @@ export const markAttendance = async (req, res) => {
       });
     }
 
+    let registration;
+
+    registration = await Registration.findOne({
+      competition: competitionId,
+      student: studentId
+    });
+
+    if (!registration) {
+
+      const teamRegistration = await Registration.findOne({
+        competition: competitionId,
+        team: { $ne: null }
+      }).populate("team");
+
+      if (teamRegistration && teamRegistration.team?.members?.includes(studentId)) {
+        registration = teamRegistration;
+      }
+    }
+
+    if (!registration) {
+      return res.status(400).json({
+        message: "You are not registered for this competition ❌"
+      });
+    }
+
     const existing = await Attendance.findOne({
       competition: competitionId,
       student: studentId
@@ -145,6 +171,11 @@ export const markAttendance = async (req, res) => {
       teacher,
       method: method || "QR"
     });
+
+    if (registration.status !== "attended") {
+      registration.status = "attended";
+      await registration.save();
+    }
 
     res.status(201).json({
       message: "Attendance marked successfully",

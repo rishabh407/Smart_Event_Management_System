@@ -418,81 +418,6 @@ export const getMyRegistrations = async (req, res) => {
 
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const cancelRegistration = async (req, res) => {
 
   try {
@@ -575,61 +500,6 @@ export const cancelRegistration = async (req, res) => {
   }
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export const deleteRegistration = async (req, res) => {
 
@@ -750,9 +620,6 @@ export const getRegistrationsByCompetition = async (req, res) => {
  }
 };
 
-
-
-
 export const getCompetitionRegistrationStats = async (req, res) => {
 
   try {
@@ -838,102 +705,6 @@ export const getCompetitionRegistrations = async (req, res) => {
  }
 
 };
-
-
-export const markAttendanceByQR = async (req, res) => {
-
-  try {
-
-    const { competitionId } = req.body;
-    const studentId = req.user._id;
-
-    
-    const competition = await Competition.findById(competitionId);
-
-    if (!competition) {
-      return res.status(404).json({
-        message: "Competition not found"
-      });
-    }
-
-    const now = new Date();
-
-    
-    if (now < competition.startTime || now > competition.endTime) {
-      return res.status(400).json({
-        message: "Attendance allowed only during competition time"
-      });
-    }
-
-    let registration;
-
-    
-    if (competition.type === "individual") {
-      
-      registration = await Registration.findOne({
-        competition: competitionId,
-        student: studentId,
-        status: "registered"
-      });
-    } else if (competition.type === "team") {
-      
-      
-      const team = await Team.findOne({
-        competitionId,
-        $or: [
-          { leader: studentId },
-          { members: studentId }
-        ]
-      });
-
-      if (team) {
-        registration = await Registration.findOne({
-          competition: competitionId,
-          team: team._id,
-          status: "registered"
-        });
-      }
-    }
-
-    
-    if (!registration) {
-      return res.status(403).json({
-        message: "You are not registered for this competition"
-      });
-    }
-
-    
-    if (registration.attended === true) {
-      return res.status(409).json({
-        message: "Attendance already marked"
-      });
-    }
-
-    
-    registration.attended = true;
-    registration.status = "attended";
-    registration.attendedAt = new Date();
-
-    await registration.save();
-
-    
-    res.status(200).json({
-      success: true,
-      message: "Attendance marked successfully"
-    });
-
-  } catch (error) {
-
-    console.error("ATTENDANCE ERROR:", error);
-
-    res.status(500).json({
-      message: "Attendance failed"
-    });
-
-  }
-
-};
-
 
 export const getAttendanceStats = async (req, res) => {
 

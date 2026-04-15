@@ -1,12 +1,13 @@
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { useEffect, useRef } from "react";
-import { markAttendanceByQR } from "../../api/registeration.api";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { markattendance } from "../../api/attendance.api";
 
 const ScanAttendance = () => {
 
   const navigate = useNavigate();
+  const { competitionId: currentCompetitionId } = useParams();
 
   const scannedRef = useRef(false);
 
@@ -26,29 +27,43 @@ const ScanAttendance = () => {
     async function onScanSuccess(decodedText) {
 
       if (scannedRef.current) return;
-
       scannedRef.current = true;
 
       try {
 
-    
-        if (!decodedText.includes("/student/scan/")) {
-          toast.error("Invalid attendance QR");
+        let competitionId;
+
+        
+        try {
+          const payload = JSON.parse(decodedText);
+          competitionId = payload.competitionId;
+        } catch {
+          
+          if (decodedText.includes("/student/scan/")) {
+            competitionId = decodedText.split("/").pop();
+          }
+        }
+
+        
+        if (!competitionId) {
+          toast.error("Invalid QR code ❌");
           scannedRef.current = false;
           return;
         }
 
-        const competitionId = decodedText.split("/").pop();
-
-        if (!competitionId) {
-          toast.error("Invalid QR format");
+        
+        if (competitionId !== currentCompetitionId) {
+          toast.error("Wrong QR for this competition ❌");
           scannedRef.current = false;
           return;
         }
 
         await scanner.clear();
 
-        await markAttendanceByQR({ competitionId });
+        await markattendance({
+          competitionId,
+          method: "QR"
+        });
 
         toast.success("Attendance marked successfully ✅");
 
@@ -59,8 +74,7 @@ const ScanAttendance = () => {
         scannedRef.current = false;
 
         toast.error(
-          error.response?.data?.message ||
-          "Attendance failed"
+          error?.response?.data?.message || "Attendance failed"
         );
 
       }
@@ -75,7 +89,7 @@ const ScanAttendance = () => {
       scanner.clear().catch(() => {});
     };
 
-  }, []);
+  }, [currentCompetitionId]);
 
   return (
     <div className="p-6">

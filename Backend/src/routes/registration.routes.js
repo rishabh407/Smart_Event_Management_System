@@ -5,12 +5,10 @@ import {
   deleteRegistration,
   getCompetitionRegistrationStats,
   getMyRegistrations,
-  getRegistrationsByCompetition,
   registerIndividual,
   registerTeam,
   getStudentDashboardStats,
   getCompetitionRegistrations,
-  markAttendanceByQR,
   getAttendanceStats,
 } from "../controllers/registration.controller.js";
 import { allowRoles,studentOnly } from "../middlewares/role.middleware.js";
@@ -40,13 +38,6 @@ router.get(
  protect,
  allowRoles("TEACHER", "COORDINATOR", "HOD"),
  getCompetitionRegistrations
-);
-
-router.post(
- "/attendance/mark",
- protect,
- studentOnly,
- markAttendanceByQR
 );
 
 router.get(

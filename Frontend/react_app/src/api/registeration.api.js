@@ -33,12 +33,6 @@ export const getCompetitionRegistrations = (id) => {
 };
 
 
-export const markAttendance = (registrationId) => {
- return api.post("/registrations/attendance", {
-  registrationId
- });
-};
-
 export const getStudentDashboardStats = () => {
  return api.get("/registrations/student/dashboard-stats");
 };

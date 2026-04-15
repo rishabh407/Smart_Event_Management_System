@@ -226,7 +226,7 @@ const MyRegistrations = () => {
               className="relative bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 sm:p-6 border flex flex-col"
             >
 
-              {/* DELETE */}
+        
 
               {reg.status === "cancelled" && (
 
@@ -306,7 +306,7 @@ const MyRegistrations = () => {
 
                     <button
                       disabled={!canScan}
-                      onClick={() => navigate("/student/scan")}
+                      onClick={() => navigate(`/student/scan/${reg.competition?._id}`)}
                       className={`w-full py-2 rounded-lg font-medium transition
                         ${canScan
                           ? "bg-indigo-600 hover:bg-indigo-700 text-white"
