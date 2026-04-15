@@ -19,7 +19,7 @@ const router = express.Router();
 
 router.post("/", protect, createCompetition);
 
-// GET single competition (for edit page)
+
 router.get(
  "/:id",
  protect,
@@ -27,7 +27,7 @@ router.get(
 );
 
 
-// UPDATE competition
+
 router.put(
  "/:id",
  protect,

@@ -24,7 +24,7 @@ import { eventUpload } from "../middlewares/eventUpload.js";
 
 const router = express.Router();
 
-// CREATE EVENT
+
 router.post(
   "/",
   protect,
@@ -33,18 +33,18 @@ router.post(
   createEvent
 );
 
-// PUBLIC EVENTS
+
 router.get("/", protect, getAllEvents);
 
-// STUDENT EVENTS
+
 router.get("/student/my", protect, getStudentEvents);
 
-// ================= HOD MANAGEMENT =================
 
-// HOD OWN EVENTS
+
+
 router.get("/hod/my", protect, hodOnly, getMyEvents);
 
-// UPDATE EVENT
+
 router.put(
   "/:id/update",
   protect,
@@ -53,11 +53,11 @@ router.put(
   updateEvent
 );
 
-// PUBLISH / UNPUBLISH
+
 router.patch("/:id/publish", protect, hodOnly, publishEvent);
 router.patch("/:id/unpublish", protect, hodOnly, unpublishEvent);
 router.get("/:eventId/competitions", protect, hodOnly, getEventCompetitions);
-// DELETE / RESTORE
+
 router.patch("/:id/delete", protect, hodOnly, deleteEvent);
 router.patch("/:id/restore", protect, hodOnly, restoreEvent);
 router.get("/:id", protect, getEventById);
@@ -76,7 +76,7 @@ router.get(
  getCoordinatorEvents
 );
 
-// GET DEPARTMENT COORDINATORS (HOD only)
+
 
 router.get(
   "/hod/coordinators",

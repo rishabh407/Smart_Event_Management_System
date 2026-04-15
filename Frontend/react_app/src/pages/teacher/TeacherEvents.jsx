@@ -10,7 +10,6 @@ const TeacherEvents = () => {
 
   const navigate = useNavigate();
 
-  // ================= FETCH EVENTS =================
 
   useEffect(() => {
 
@@ -29,7 +28,6 @@ const TeacherEvents = () => {
 
   }, []);
 
-  // ================= STATUS LOGIC =================
 
   const getStatus = (start, end) => {
 
@@ -41,7 +39,6 @@ const TeacherEvents = () => {
     return "COMPLETED";
   };
 
-  // ================= FILTER EVENTS =================
 
   const filteredEvents = useMemo(() => {
 
@@ -60,7 +57,6 @@ const TeacherEvents = () => {
 
   }, [events, filter]);
 
-  // ================= UI =================
 
   return (
     <div className="p-4 md:p-6">
@@ -75,7 +71,6 @@ const TeacherEvents = () => {
         Select an event to view your assigned competitions
       </p>
 
-      {/* FILTER BUTTONS */}
 
       <div className="flex flex-wrap gap-3 mb-6">
 
@@ -98,7 +93,6 @@ const TeacherEvents = () => {
 
       </div>
 
-      {/* LOADING STATE */}
 
       {loading && (
         <p className="text-gray-500">
@@ -106,7 +100,6 @@ const TeacherEvents = () => {
         </p>
       )}
 
-      {/* EMPTY STATE */}
 
       {!loading && filteredEvents.length === 0 && (
         <div className="bg-white p-6 rounded shadow text-center">
@@ -116,7 +109,6 @@ const TeacherEvents = () => {
         </div>
       )}
 
-      {/* EVENTS GRID */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
@@ -134,7 +126,6 @@ const TeacherEvents = () => {
               className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col"
             >
 
-              {/* BANNER IMAGE */}
 
               <div className="relative h-40 w-full">
 
@@ -144,7 +135,6 @@ const TeacherEvents = () => {
                   className="h-full w-full object-cover"
                 />
 
-                {/* STATUS BADGE */}
 
                 <span
                   className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold
@@ -161,7 +151,6 @@ const TeacherEvents = () => {
 
               </div>
 
-              {/* CONTENT */}
 
               <div className="p-4 flex flex-col flex-1">
 
@@ -191,7 +180,6 @@ const TeacherEvents = () => {
 
                 </div>
 
-                {/* ACTION BUTTON */}
 
                 <button
                   onClick={() =>

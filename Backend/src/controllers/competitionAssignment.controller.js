@@ -28,8 +28,6 @@ export const assignTeacher = async (req, res) => {
     message: "Invalid teacher"
    });
   }
-
-  // Prevent duplicate
   const alreadyAssigned =
     competition.assignedTeachers.some(
       t => t.teacher.toString() === teacherId

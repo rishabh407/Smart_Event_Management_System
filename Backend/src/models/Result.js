@@ -8,14 +8,14 @@ const resultSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Individual winner
+    
     student: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
 
-    // Team winner
+    
     team: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
@@ -37,13 +37,13 @@ const resultSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Prevent same position twice
+
 resultSchema.index(
   { competition: 1, position: 1 },
   { unique: true }
 );
 
-// Prevent same student winning twice
+
 resultSchema.index(
   { competition: 1, student: 1 },
   {
@@ -54,7 +54,7 @@ resultSchema.index(
   }
 );
 
-// Prevent same team winning twice
+
 resultSchema.index(
   { competition: 1, team: 1 },
   {

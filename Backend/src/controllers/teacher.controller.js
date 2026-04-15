@@ -56,7 +56,7 @@ export const getassigncompetition = async (req, res) => {
 
   try {
 
-    const { id } = req.params; // eventId
+    const { id } = req.params; 
 
     const competitions = await Competition.find({
 
@@ -70,9 +70,9 @@ export const getassigncompetition = async (req, res) => {
     })
     .populate("assignedTeachers.teacher", "fullName email")
     .sort({ startTime: 1 })
-    .lean(); // ✅ IMPORTANT
+    .lean(); 
 
-    // ================= ADD REGISTRATION COUNT =================
+    
 
     for (let comp of competitions) {
 
@@ -106,7 +106,7 @@ export const getTeacherDashboardStats = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    // ================= FETCH ASSIGNED COMPETITIONS =================
+    
 
     const competitions = await Competition.find({
       "assignedTeachers.teacher": req.user._id,
@@ -118,7 +118,7 @@ export const getTeacherDashboardStats = async (req, res) => {
 
     const now = new Date();
 
-    // ================= REGISTRATION COUNTS =================
+    
 
     const totalRegistrations = await Registration.countDocuments({
       competition: { $in: competitionIds }
@@ -129,10 +129,10 @@ export const getTeacherDashboardStats = async (req, res) => {
       status: "attended"
     });
 
-    // Attendance is SAME as attended registrations
+    
     const totalAttendance = attendedRegistrations;
 
-    // ================= RESULT & CERTIFICATE =================
+    
 
     const resultsDeclared = await Result.countDocuments({
       competition: { $in: competitionIds }
@@ -142,7 +142,7 @@ export const getTeacherDashboardStats = async (req, res) => {
       competition: { $in: competitionIds }
     });
 
-    // ================= COMPETITION STATUS =================
+    
 
     const upcomingCompetitions = competitions.filter(
       c => new Date(c.startTime) > now
@@ -158,7 +158,7 @@ export const getTeacherDashboardStats = async (req, res) => {
       c => new Date(c.endTime) < now
     ).length;
 
-    // ================= RESPONSE =================
+    
 
     res.status(200).json({
       totalCompetitions: competitions.length,

@@ -16,7 +16,7 @@ const CompetitionDetails = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ================= FETCH =================
+  
 
   const fetchDetails = async () => {
 
@@ -43,7 +43,7 @@ const CompetitionDetails = () => {
     fetchDetails();
   }, [id]);
 
-  // ================= STATUS =================
+  
 
   const getStatus = () => {
 
@@ -57,7 +57,7 @@ const CompetitionDetails = () => {
     return "COMPLETED";
   };
 
-  // ================= TOGGLE REGISTRATION =================
+  
 
   const handleToggleRegistration = async () => {
 
@@ -77,7 +77,7 @@ const CompetitionDetails = () => {
     }
   };
 
-  // ================= UI STATES =================
+  
 
   if (loading) {
     return (
@@ -102,7 +102,6 @@ const CompetitionDetails = () => {
 
     <div className="max-w-5xl mx-auto bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-xl">
 
-      {/* HEADER */}
 
       <div className="mb-6">
 
@@ -151,8 +150,6 @@ const CompetitionDetails = () => {
 
       </div>
 
-      {/* ================= STATS ================= */}
-
       {stats && (
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -170,8 +167,6 @@ const CompetitionDetails = () => {
         </div>
 
       )}
-
-      {/* BASIC INFO */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
 
@@ -195,8 +190,6 @@ const CompetitionDetails = () => {
 
       </div>
 
-      {/* DESCRIPTION */}
-
       <div className="mb-5">
 
         <h3 className="font-semibold mb-2">
@@ -208,8 +201,6 @@ const CompetitionDetails = () => {
         </p>
 
       </div>
-
-      {/* ACTION BUTTONS */}
 
       <div className="flex flex-wrap gap-3 mt-6">
 
@@ -274,9 +265,6 @@ const CompetitionDetails = () => {
 
   );
 };
-
-
-// ================= STAT BOX =================
 
 const StatBox = ({ label, value, color }) => {
 

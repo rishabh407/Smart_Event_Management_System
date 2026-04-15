@@ -17,7 +17,6 @@ const CoordinatorLayout = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
 
-      {/* ================= MOBILE TOP BAR ================= */}
 
       <div className="md:hidden fixed top-0 left-0 right-0 bg-gray-900 text-white flex items-center justify-between px-4 py-3 z-50 shadow">
 
@@ -36,8 +35,6 @@ const CoordinatorLayout = () => {
         </div>
 
       </div>
-
-      {/* ================= SIDEBAR ================= */}
 
       <aside
         className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-gray-900 text-white p-5 flex flex-col justify-between z-50 transform transition-transform duration-300 overflow-y-auto
@@ -91,8 +88,6 @@ const CoordinatorLayout = () => {
 
         </div>
 
-        {/* LOGOUT BUTTON */}
-
         <button
           onClick={logout}
           className="w-full bg-red-600 hover:bg-red-700 py-2 rounded text-white font-medium transition"
@@ -101,8 +96,6 @@ const CoordinatorLayout = () => {
         </button>
 
       </aside>
-
-      {/* ================= OVERLAY ================= */}
 
       {open && (
         <div

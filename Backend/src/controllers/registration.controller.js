@@ -17,7 +17,7 @@ export const registerIndividual = async (req, res) => {
    });
   }
 
-  // Role check
+  
   if (req.user.role !== "STUDENT") {
    return res.status(403).json({
     success: false,
@@ -25,7 +25,7 @@ export const registerIndividual = async (req, res) => {
    });
   }
 
-  // Fetch competition
+  
   const competition = await Competition.findById(competitionId);
 
   if (!competition) {
@@ -35,7 +35,7 @@ export const registerIndividual = async (req, res) => {
    });
   }
 
-  // Type check
+  
   if (competition.type !== "individual") {
    return res.status(400).json({
     success: false,
@@ -43,7 +43,7 @@ export const registerIndividual = async (req, res) => {
    });
   }
 
-  // Deadline check
+  
   if (new Date() > competition.registrationDeadline) {
    return res.status(400).json({
     success: false,
@@ -51,7 +51,7 @@ export const registerIndividual = async (req, res) => {
    });
   }
 
-  // Duplicate check
+  
   const alreadyRegistered = await Registration.findOne({
    competition: competitionId,
    student: req.user._id,
@@ -65,7 +65,7 @@ export const registerIndividual = async (req, res) => {
    });
   }
 
-  // Capacity check
+  
   if (competition.maxParticipants) {
 
    const count = await Registration.countDocuments({
@@ -87,7 +87,7 @@ export const registerIndividual = async (req, res) => {
 
   }
 
-  // Registration toggle check
+  
   if (!competition.registrationOpen) {
    return res.status(403).json({
     success: false,
@@ -95,7 +95,7 @@ export const registerIndividual = async (req, res) => {
    });
   }
 
-  // Generate QR
+  
   const qrPayload = JSON.stringify({
    competitionId,
    studentId: req.user._id,
@@ -104,7 +104,7 @@ export const registerIndividual = async (req, res) => {
 
   const qrImage = await QRCode.toDataURL(qrPayload);
 
-  // Save registration
+  
   const registration = await Registration.create({
    competition: competitionId,
    student: req.user._id,
@@ -143,14 +143,14 @@ export const registerTeam = async (req, res) => {
    });
   }
 
-  // Role check
+  
   if (req.user.role !== "STUDENT") {
    return res.status(403).json({
     message: "Only students can register teams"
    });
   }
 
-  // Fetch team
+  
   const team = await Team.findById(teamId);
 
   if (!team) {
@@ -159,21 +159,21 @@ export const registerTeam = async (req, res) => {
    });
   }
 
-  // Only leader allowed
+  
   if (team.leader.toString() !== req.user._id.toString()) {
    return res.status(403).json({
     message: "Only team leader can register"
    });
   }
 
-  // Prevent double submit
+  
   if (team.isSubmitted) {
    return res.status(400).json({
     message: "Team already submitted"
    });
   }
 
-  // Fetch competition
+  
   const competition = await Competition.findById(competitionId);
 
   if (!competition) {
@@ -182,42 +182,42 @@ export const registerTeam = async (req, res) => {
    });
   }
 
-  // Registration toggle check
+  
   if (!competition.registrationOpen) {
    return res.status(403).json({
     message: "Registrations are closed for this competition"
    });
   }
 
-  // Result declared block
+  
   if (competition.resultsDeclared === true) {
    return res.status(400).json({
     message: "Results already declared"
    });
   }
 
-  // Type check
+  
   if (competition.type !== "team") {
    return res.status(400).json({
     message: "This competition is not team type"
    });
   }
 
-  // Deadline check
+  
   if (new Date() > competition.registrationDeadline) {
    return res.status(400).json({
     message: "Registration deadline passed"
    });
   }
 
-  // Team belongs check
+  
   if (team.competitionId.toString() !== competitionId) {
    return res.status(400).json({
     message: "Team does not belong to this competition"
    });
   }
 
-  // Team size validation
+  
   if (
    team.members.length < competition.minTeamSize ||
    team.members.length > competition.maxTeamSize
@@ -227,7 +227,7 @@ export const registerTeam = async (req, res) => {
    });
   }
 
-  // Duplicate team registration check
+  
   const alreadyRegistered = await Registration.findOne({
    competition: competitionId,
    team: teamId,
@@ -240,7 +240,7 @@ export const registerTeam = async (req, res) => {
    });
   }
 
-  // Capacity check
+  
   if (competition.maxParticipants) {
 
    const count = await Registration.countDocuments({
@@ -261,7 +261,7 @@ export const registerTeam = async (req, res) => {
 
   }
 
-  // Generate QR
+  
   const qrPayload = JSON.stringify({
    competitionId,
    teamId,
@@ -270,7 +270,7 @@ export const registerTeam = async (req, res) => {
 
   const qrImage = await QRCode.toDataURL(qrPayload);
 
-  // Create registration
+  
   const registration = await Registration.create({
    competition: competitionId,
    team: teamId,
@@ -278,7 +278,7 @@ export const registerTeam = async (req, res) => {
    qrCode: qrImage
   });
 
-  // Lock team
+  
   team.isSubmitted = true;
   await team.save();
 
@@ -308,14 +308,14 @@ export const getStudentDashboardStats = async (req, res) => {
 
     const studentId = req.user._id;
 
-    // Get student's teams
+    
     const teams = await Team.find({
       members: studentId
     }).select("_id");
 
     const teamIds = teams.map(t => t._id);
 
-    // Total registrations (individual + team where student is member)
+    
     const totalRegistrations = await Registration.countDocuments({
       $or: [
         { student: studentId, status: { $ne: "cancelled" } },
@@ -323,7 +323,7 @@ export const getStudentDashboardStats = async (req, res) => {
       ]
     });
 
-    // Active registrations
+    
     const activeRegistrations = await Registration.countDocuments({
       $or: [
         { student: studentId, status: "registered" },
@@ -331,7 +331,7 @@ export const getStudentDashboardStats = async (req, res) => {
       ]
     });
 
-    // Attended registrations
+    
     const attendedRegistrations = await Registration.countDocuments({
       $or: [
         { student: studentId, status: "attended" },
@@ -339,7 +339,7 @@ export const getStudentDashboardStats = async (req, res) => {
       ]
     });
 
-    // Cancelled registrations
+    
     const cancelledRegistrations = await Registration.countDocuments({
       $or: [
         { student: studentId, status: "cancelled" },
@@ -347,7 +347,7 @@ export const getStudentDashboardStats = async (req, res) => {
       ]
     });
 
-    // Certificates count
+    
     const Certificate = (await import("../models/Certificate.js")).default;
     const certificatesCount = await Certificate.countDocuments({
       user: studentId
@@ -372,21 +372,21 @@ export const getMyRegistrations = async (req, res) => {
 
     const userId = req.user._id;
 
-    // 1️⃣ Individual registrations
+    
     const individualRegs = await Registration.find({
       student: userId
     })
       .populate("competition", "name venue startTime endTime")
       .sort({ createdAt: -1 });
 
-    // 2️⃣ Find user's teams
+    
     const teams = await Team.find({
       members: userId
     }).select("_id");
 
     const teamIds = teams.map(t => t._id);
 
-    // 3️⃣ Team registrations
+    
     const teamRegs = await Registration.find({
       team: { $in: teamIds }
     })
@@ -394,7 +394,7 @@ export const getMyRegistrations = async (req, res) => {
       .populate("team", "teamName")
       .sort({ createdAt: -1 });
 
-    // 4️⃣ Merge
+    
     const allRegistrations = [
       ...individualRegs,
       ...teamRegs
@@ -418,80 +418,80 @@ export const getMyRegistrations = async (req, res) => {
 
 };
 
-// export const cancelRegistration = async (req, res) => {
 
-//   try {
 
-//     const { id } = req.params;
 
-//     const registration = await Registration.findById(id)
-//       .populate("competition");
 
-//     if (!registration) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Registration not found"
-//       });
-//     }
-//     // Ownership check
-//     if (registration.registeredBy.toString() !== req.user._id.toString()) {
-//       return res.status(403).json({
-//         success: false,
-//         message: "Not authorized"
-//       });
-//     }
 
-//     // Status check
-//     if (registration.status !== "registered") {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Cannot cancel this registration"
-//       });
-//     }
 
-//     // Deadline check
-//     if (new Date() > registration.competition.registrationDeadline) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Cancellation deadline passed"
-//       });
-//     }
 
-//     // Results declared check
-//     if (registration.competition.resultsDeclared) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Results already declared"
-//       });
-//     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
-//     // Cancel
-//     registration.status = "cancelled";
-//     await registration.save();
 
-//     res.status(200).json({
-//       success: true,
-//       message: "Registration cancelled successfully"
-//     });
-// if (registration.team) {
-//   const team = await Team.findById(registration.team);
-//   if (team) {
-//     team.isSubmitted = false;
-//     await team.save();
-//   }
 
-// }
 
-//   } catch (error) {
 
-//     res.status(500).json({
-//       success: false,
-//       message: "Server error"
-//     });
 
-//   }
 
-// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const cancelRegistration = async (req, res) => {
 
@@ -509,7 +509,7 @@ export const cancelRegistration = async (req, res) => {
       });
     }
 
-    // Ownership check
+    
     if (registration.registeredBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -517,7 +517,7 @@ export const cancelRegistration = async (req, res) => {
       });
     }
 
-    // Status check
+    
     if (registration.status !== "registered") {
       return res.status(400).json({
         success: false,
@@ -525,7 +525,7 @@ export const cancelRegistration = async (req, res) => {
       });
     }
 
-    // Deadline check
+    
     if (new Date() > registration.competition.registrationDeadline) {
       return res.status(400).json({
         success: false,
@@ -533,7 +533,7 @@ export const cancelRegistration = async (req, res) => {
       });
     }
 
-    // Results declared check
+    
     if (registration.competition.resultsDeclared) {
       return res.status(400).json({
         success: false,
@@ -541,11 +541,11 @@ export const cancelRegistration = async (req, res) => {
       });
     }
 
-    // Cancel registration
+    
     registration.status = "cancelled";
     await registration.save();
 
-    // Reset team submission if exists
+    
     if (registration.team) {
 
       const team = await Team.findById(registration.team);
@@ -557,7 +557,7 @@ export const cancelRegistration = async (req, res) => {
 
     }
 
-    // Send response LAST
+    
     res.status(200).json({
       success: true,
       message: "Registration cancelled successfully"
@@ -576,60 +576,60 @@ export const cancelRegistration = async (req, res) => {
 
 };
 
-// ================================
-// DELETE CANCELLED REGISTRATION
-// ================================
 
-// export const deleteRegistration = async (req, res) => {
 
-//   try {
 
-//     const { id } = req.params;
 
-//     const registration = await Registration.findById(id);
 
-//     if (!registration) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Registration not found"
-//       });
-//     }
 
-//     // Only owner can delete
-//     if (registration.registeredBy.toString() !== req.user._id.toString()) {
-//       return res.status(403).json({
-//         success: false,
-//         message: "Not authorized"
-//       });
-//     }
 
-//     // Only cancelled allowed
-//     if (registration.status !== "cancelled") {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Only cancelled registrations can be deleted"
-//       });
-//     }
 
-//     await Registration.findByIdAndDelete(id);
 
-//     res.status(200).json({
-//       success: true,
-//       message: "Registration deleted permanently"
-//     });
 
-//   } catch (error) {
 
-//     console.error(error);
 
-//     res.status(500).json({
-//       success: false,
-//       message: "Server error"
-//     });
 
-//   }
 
-// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const deleteRegistration = async (req, res) => {
 
@@ -637,7 +637,7 @@ export const deleteRegistration = async (req, res) => {
 
     const { id } = req.params;
 
-    // Check authentication
+    
     if (!req.user) {
       return res.status(401).json({
         success: false,
@@ -654,7 +654,7 @@ export const deleteRegistration = async (req, res) => {
       });
     }
 
-    // Check ownership
+    
     if (registration.registeredBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -662,7 +662,7 @@ export const deleteRegistration = async (req, res) => {
       });
     }
 
-    // Only cancelled registrations can be deleted
+    
     if (registration.status !== "cancelled") {
       return res.status(400).json({
         success: false,
@@ -670,7 +670,7 @@ export const deleteRegistration = async (req, res) => {
       });
     }
 
-    // Delete registration
+    
     await registration.deleteOne();
 
     res.status(200).json({
@@ -697,14 +697,14 @@ export const getRegistrationsByCompetition = async (req, res) => {
 
   const { competitionId } = req.params;
 
-  // Role check
+  
   if (req.user.role !== "COORDINATOR") {
    return res.status(403).json({
     message: "Only coordinator allowed"
    });
   }
 
-  // Competition check
+  
   const competition = await Competition.findById(competitionId)
    .populate("eventId");
 
@@ -714,7 +714,7 @@ export const getRegistrationsByCompetition = async (req, res) => {
    });
   }
 
-  // Ownership check
+  
   if (
    competition.eventId.coordinator.toString() !==
    req.user._id.toString()
@@ -724,7 +724,7 @@ export const getRegistrationsByCompetition = async (req, res) => {
    });
   }
 
-  // Fetch registrations
+  
   const registrations = await Registration.find({
    competition: competitionId
   })
@@ -815,7 +815,7 @@ export const getCompetitionRegistrations = async (req, res) => {
 
   const registrations = await Registration.find({
    competition: id,
-   status: { $ne: "cancelled" }   // IMPORTANT FIX
+   status: { $ne: "cancelled" }   
   })
    .populate("student", "fullName email rollNumber")
    .populate("team", "teamName members")
@@ -847,7 +847,7 @@ export const markAttendanceByQR = async (req, res) => {
     const { competitionId } = req.body;
     const studentId = req.user._id;
 
-    // 1️⃣ Check competition exists
+    
     const competition = await Competition.findById(competitionId);
 
     if (!competition) {
@@ -858,7 +858,7 @@ export const markAttendanceByQR = async (req, res) => {
 
     const now = new Date();
 
-    // 2️⃣ Check competition timing
+    
     if (now < competition.startTime || now > competition.endTime) {
       return res.status(400).json({
         message: "Attendance allowed only during competition time"
@@ -867,17 +867,17 @@ export const markAttendanceByQR = async (req, res) => {
 
     let registration;
 
-    // 3️⃣ Check registration based on competition type
+    
     if (competition.type === "individual") {
-      // Individual: registration is stored against student field
+      
       registration = await Registration.findOne({
         competition: competitionId,
         student: studentId,
         status: "registered"
       });
     } else if (competition.type === "team") {
-      // Team: find a team for this competition where the student is leader or member,
-      // then check registration exists for that team
+      
+      
       const team = await Team.findOne({
         competitionId,
         $or: [
@@ -895,28 +895,28 @@ export const markAttendanceByQR = async (req, res) => {
       }
     }
 
-    // 4️⃣ If no matching registration, block attendance
+    
     if (!registration) {
       return res.status(403).json({
         message: "You are not registered for this competition"
       });
     }
 
-    // 5️⃣ Prevent double attendance (per registration: individual or team)
+    
     if (registration.attended === true) {
       return res.status(409).json({
         message: "Attendance already marked"
       });
     }
 
-    // 6️⃣ Mark attendance
+    
     registration.attended = true;
     registration.status = "attended";
     registration.attendedAt = new Date();
 
     await registration.save();
 
-    // 7️⃣ Success response
+    
     res.status(200).json({
       success: true,
       message: "Attendance marked successfully"

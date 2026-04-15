@@ -20,7 +20,6 @@ const MyRegistrations = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  // ================= COMP STATUS =================
 
   const getCompetitionStatus = (startTime, endTime) => {
 
@@ -34,7 +33,6 @@ const MyRegistrations = () => {
     return "COMPLETED";
   };
 
-  // ================= FETCH =================
 
   const fetchRegistrations = async () => {
     try {
@@ -60,7 +58,6 @@ const MyRegistrations = () => {
     fetchRegistrations();
   }, []);
 
-  // ================= CANCEL =================
 
   const handleCancel = async (registrationId) => {
 
@@ -93,7 +90,6 @@ const MyRegistrations = () => {
     }
   };
 
-  // ================= DELETE =================
 
   const handleDelete = async (registrationId) => {
 
@@ -122,7 +118,6 @@ const MyRegistrations = () => {
     }
   };
 
-  // ================= SEARCH + FILTER =================
 
   const filteredRegistrations = useMemo(() => {
     return registrations.filter((reg) => {
@@ -140,7 +135,6 @@ const MyRegistrations = () => {
     });
   }, [registrations, search, filter]);
 
-  // ================= LOADING =================
 
   if (loading) {
     return (
@@ -156,7 +150,6 @@ const MyRegistrations = () => {
   return (
     <div className="p-4 sm:p-6 space-y-6">
 
-      {/* ================= HEADER ================= */}
 
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -168,7 +161,6 @@ const MyRegistrations = () => {
         </p>
       </div>
 
-      {/* ================= SEARCH + FILTER ================= */}
 
       <div className="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row gap-3">
 
@@ -191,7 +183,6 @@ const MyRegistrations = () => {
 
       </div>
 
-      {/* ================= EMPTY ================= */}
 
       {filteredRegistrations.length === 0 && (
 
@@ -214,7 +205,6 @@ const MyRegistrations = () => {
 
       )}
 
-      {/* ================= CARDS ================= */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
@@ -254,13 +244,11 @@ const MyRegistrations = () => {
 
               )}
 
-              {/* TITLE */}
 
               <h2 className="font-semibold text-base sm:text-lg mb-2 pr-8">
                 {reg.competition?.name || "Competition"}
               </h2>
 
-              {/* DETAILS */}
 
               <div className="text-sm text-gray-600 space-y-1 mb-3">
 
@@ -284,7 +272,6 @@ const MyRegistrations = () => {
 
               </div>
 
-              {/* REG STATUS */}
 
               <div className="mb-3">
 
@@ -304,7 +291,6 @@ const MyRegistrations = () => {
 
               </div>
 
-              {/* ACTIONS */}
 
               <div className="space-y-2 mt-auto">
 
@@ -368,7 +354,6 @@ const MyRegistrations = () => {
   );
 };
 
-// ================= FILTER BUTTON =================
 
 const FilterBtn = ({ label, value, filter, setFilter }) => (
   <button

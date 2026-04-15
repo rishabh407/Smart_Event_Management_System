@@ -38,12 +38,12 @@ const certificateSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// Prevent duplicate certificate
+
 certificateSchema.index(
   { competition: 1, user: 1 },
   { unique: true }
 );
 
-// export default mongoose.model("Certificate", certificateSchema);
+
 export default mongoose.models.Certificate ||
 mongoose.model("Certificate", certificateSchema);

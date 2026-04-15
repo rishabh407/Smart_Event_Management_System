@@ -35,7 +35,6 @@ const TeamRegistration = ({ competition }) => {
     }
   };
 
-  // ================= CREATE TEAM =================
 
   const handleCreateTeam = async () => {
 
@@ -72,7 +71,6 @@ const TeamRegistration = ({ competition }) => {
     }
   };
 
-  // ================= JOIN TEAM =================
 
   const handleJoinTeam = async () => {
 
@@ -108,7 +106,6 @@ const TeamRegistration = ({ competition }) => {
     }
   };
 
-  // ================= REGISTER TEAM =================
 
   const handleSubmitTeam = async (teamId) => {
 
@@ -138,7 +135,6 @@ const TeamRegistration = ({ competition }) => {
     }
   };
 
-  // ================= TEAM SIZE LOGIC =================
 
   const minSize = competition?.minTeamSize || 1;
   const maxSize = competition?.maxTeamSize || "∞";
@@ -146,7 +142,6 @@ const TeamRegistration = ({ competition }) => {
   return (
     <div className="space-y-6">
 
-      {/* INFO CARD */}
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
 
@@ -160,7 +155,6 @@ const TeamRegistration = ({ competition }) => {
 
       </div>
 
-      {/* CREATE TEAM */}
 
       <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
 
@@ -194,7 +188,6 @@ const TeamRegistration = ({ competition }) => {
 
       </div>
 
-      {/* JOIN TEAM */}
 
       <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
 
@@ -228,7 +221,6 @@ const TeamRegistration = ({ competition }) => {
 
       </div>
 
-      {/* MY TEAMS */}
 
       <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
 
@@ -282,7 +274,6 @@ const TeamRegistration = ({ competition }) => {
 
                   </div>
 
-                  {/* JOIN CODE */}
 
                   <div className="bg-gray-50 rounded p-3 mb-3">
 
@@ -300,7 +291,6 @@ const TeamRegistration = ({ competition }) => {
 
                   </div>
 
-                  {/* REGISTER BUTTON */}
 
                   {!team.isSubmitted && (
 

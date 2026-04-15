@@ -12,7 +12,6 @@ const GenerateCertificates = () => {
   const [generating, setGenerating] = useState(false);
   const [selectedCompetition, setSelectedCompetition] = useState("");
 
-  // ================= FETCH =================
   useEffect(() => {
     const fetchCompetitions = async () => {
       try {
@@ -29,7 +28,6 @@ const GenerateCertificates = () => {
     fetchCompetitions();
   }, []);
 
-  // ================= GENERATE =================
   const handleGenerate = async () => {
     if (!selectedCompetition) {
       toast.error("Please select a competition");
@@ -65,7 +63,6 @@ const GenerateCertificates = () => {
         `🎉 ${res.data.generated || 0} certificates generated successfully`
       );
 
-      // 🔥 Lock locally
       setCompetitions(prev =>
         prev.map(c =>
           c._id === selectedCompetition

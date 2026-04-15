@@ -61,7 +61,6 @@ const CompetitionRegistration = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* ================= HEADER ================= */}
       <div className="mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -73,7 +72,6 @@ const CompetitionRegistration = () => {
         <p className="text-gray-600 mt-2">{competition.shortDescription}</p>
       </div>
 
-      {/* ================= COMPETITION DETAILS CARD ================= */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Competition Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -105,7 +103,6 @@ const CompetitionRegistration = () => {
           )}
         </div>
 
-        {/* Status Badge */}
         <div className="mt-4">
           {isRegistrationOpen ? (
             <span className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full font-medium">
@@ -119,7 +116,6 @@ const CompetitionRegistration = () => {
         </div>
       </div>
 
-      {/* ================= REGISTRATION FORM ================= */}
       <div className="bg-white rounded-lg shadow-md p-6">
         {competition.type === "individual" ? (
           <IndividualRegistration competitionId={competition._id} />

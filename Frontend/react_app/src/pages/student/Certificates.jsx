@@ -31,7 +31,7 @@ const Certificates = () => {
     fetchCertificates();
   }, []);
 
-  // ================= LOADING =================
+
 
   if (loading) {
     return (
@@ -49,7 +49,7 @@ const Certificates = () => {
   return (
     <div className="p-4 sm:p-6 space-y-6">
 
-      {/* ================= HEADER ================= */}
+
 
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -61,7 +61,7 @@ const Certificates = () => {
         </p>
       </div>
 
-      {/* ================= EMPTY STATE ================= */}
+
 
       {certificates.length === 0 && (
 
@@ -81,7 +81,7 @@ const Certificates = () => {
 
       )}
 
-      {/* ================= CERTIFICATES GRID ================= */}
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
@@ -92,7 +92,7 @@ const Certificates = () => {
             className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 sm:p-6 border border-gray-200 flex flex-col"
           >
 
-            {/* TOP BADGES */}
+
 
             <div className="flex items-center justify-between mb-3">
 
@@ -116,13 +116,13 @@ const Certificates = () => {
 
             </div>
 
-            {/* TITLE */}
+
 
             <h3 className="font-semibold text-base sm:text-lg mb-2 line-clamp-2">
               {certificate.competition?.name || "Competition"}
             </h3>
 
-            {/* INFO */}
+
 
             <div className="text-sm text-gray-600 space-y-1 mb-4">
 
@@ -136,10 +136,8 @@ const Certificates = () => {
                 <strong>Issued:</strong>{" "}
                 {new Date(certificate.createdAt).toLocaleDateString()}
               </p>
-
-            </div>
-
-            {/* DOWNLOAD */}
+</div>
+ 
 
             <a
               href={`http://localhost:5000${certificate.pdfUrl}`}

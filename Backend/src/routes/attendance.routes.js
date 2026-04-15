@@ -4,7 +4,7 @@ import { getCompetitionAttendance, markAttendance } from "../controllers/attenda
 
 const router = express.Router();
 
-// Student marks attendance (QR + Manual)
+
 router.post("/mark", protect, markAttendance);
 router.get(
   "/competition/:competitionId",

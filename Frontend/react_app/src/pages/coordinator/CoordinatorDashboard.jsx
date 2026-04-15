@@ -56,8 +56,6 @@ const CoordinatorDashboard = () => {
 
   }, []);
 
-  // ================= LOADING =================
-
   if (loading) {
 
     return (
@@ -80,8 +78,6 @@ const CoordinatorDashboard = () => {
 
   }
 
-  // ================= ERROR =================
-
   if (error) {
 
     return (
@@ -103,8 +99,6 @@ const CoordinatorDashboard = () => {
 
   }
 
-  // ================= CHART DATA =================
-
   const chartData = [
     { name: "Total", value: stats?.totalCompetitions || 0 },
     { name: "Published", value: stats?.publishedCompetitions || 0 }
@@ -118,8 +112,6 @@ const CoordinatorDashboard = () => {
   return (
 
     <div className="space-y-6">
-
-      {/* ================= HEADER ================= */}
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
 
@@ -151,8 +143,6 @@ const CoordinatorDashboard = () => {
         </button>
 
       </div>
-
-      {/* ================= STATS ================= */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
 
@@ -193,8 +183,6 @@ const CoordinatorDashboard = () => {
 
       </div>
 
-      {/* ================= QUICK ACTIONS ================= */}
-
       <div className="bg-white rounded-lg shadow-md p-5">
 
         <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800">
@@ -221,19 +209,14 @@ const CoordinatorDashboard = () => {
 
       </div>
 
-      {/* ================= CHARTS ================= */}
-
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
-        {/* COMPETITION CHART */}
 
         <ChartCard
           title="Competitions Overview"
           data={chartData}
           color="#10B981"
         />
-
-        {/* REGISTRATION CHART */}
 
         <ChartCard
           title="Registrations Overview"
@@ -248,8 +231,6 @@ const CoordinatorDashboard = () => {
   );
 
 };
-
-// ================= CHART CARD =================
 
 const ChartCard = ({ title, data, color }) => {
 
@@ -298,7 +279,6 @@ const ChartCard = ({ title, data, color }) => {
 
 };
 
-// ================= STAT CARD =================
 
 const StatCard = ({ title, value, icon, color }) => {
 

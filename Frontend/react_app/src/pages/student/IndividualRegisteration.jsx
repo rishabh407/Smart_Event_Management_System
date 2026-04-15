@@ -40,8 +40,6 @@ const IndividualRegistration = ({ competitionId }) => {
   return (
     <div className="space-y-4">
 
-      {/* INFO BOX */}
-
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
 
         <h3 className="font-semibold text-blue-900 mb-2 text-sm sm:text-base">
@@ -54,7 +52,6 @@ const IndividualRegistration = ({ competitionId }) => {
 
       </div>
 
-      {/* REGISTER BUTTON */}
 
       <button
         disabled={loading}

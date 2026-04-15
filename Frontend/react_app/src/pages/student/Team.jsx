@@ -23,8 +23,6 @@ const Team = () => {
     fetchMyTeams();
   }, []);
 
-  // ================= FETCH USER =================
-
   const fetchUser = async () => {
     try {
       const res = await getMe();
@@ -34,7 +32,6 @@ const Team = () => {
     }
   };
 
-  // ================= FETCH TEAMS =================
 
   const fetchMyTeams = async () => {
     try {
@@ -46,8 +43,6 @@ const Team = () => {
       setLoading(false);
     }
   };
-
-  // ================= LEAVE TEAM =================
 
   const handleLeave = async (teamId) => {
 
@@ -74,7 +69,6 @@ const Team = () => {
     }
   };
 
-  // ================= DELETE TEAM =================
 
   const handleDelete = async (teamId) => {
 
@@ -100,8 +94,6 @@ const Team = () => {
 
     }
   };
-
-  // ================= SUBMIT TEAM =================
 
   const handleSubmitTeam = async (teamId, competitionId) => {
 
@@ -139,7 +131,6 @@ const Team = () => {
     }
   };
 
-  // ================= LOADING =================
 
   if (loading) {
     return (
@@ -155,13 +146,11 @@ const Team = () => {
   return (
     <div className="p-4 sm:p-6 space-y-6">
 
-      {/* HEADER */}
 
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
         My Teams
       </h1>
 
-      {/* EMPTY */}
 
       {userTeams.length === 0 && (
 
@@ -177,7 +166,6 @@ const Team = () => {
 
       )}
 
-      {/* GRID */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
@@ -193,13 +181,9 @@ const Team = () => {
               className="bg-white border rounded-lg shadow-sm hover:shadow-md transition p-4 flex flex-col"
             >
 
-              {/* TITLE */}
-
               <h2 className="font-semibold text-lg mb-1">
                 {team.teamName}
               </h2>
-
-              {/* INFO */}
 
               <p className="text-sm text-gray-600">
                 Competition: {team.competitionId?.name || "Competition"}
@@ -220,7 +204,6 @@ const Team = () => {
                 </span>
               </p>
 
-              {/* ACTIONS */}
 
               {!isLocked && (
 

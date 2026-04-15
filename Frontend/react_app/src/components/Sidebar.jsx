@@ -14,7 +14,7 @@ const Sidebar = ({ open, setOpen }) => {
 
   return (
     <>
-      {/* BACKDROP FOR MOBILE */}
+      
       {open && (
         <div
           onClick={() => setOpen(false)}
@@ -29,7 +29,6 @@ const Sidebar = ({ open, setOpen }) => {
         md:translate-x-0 md:static md:shadow-none`}
       >
 
-        {/* HEADER */}
         <div className="p-5 border-b sticky top-0 bg-white z-10">
           <h2 className="text-xl font-bold">🎓 Student Panel</h2>
           <p className="text-sm text-gray-500 truncate">
@@ -37,7 +36,6 @@ const Sidebar = ({ open, setOpen }) => {
           </p>
         </div>
 
-        {/* MENU */}
         <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-160px)]">
 
           <NavLink to="/student" onClick={() => setOpen(false)} className={linkStyle}>
@@ -66,7 +64,6 @@ const Sidebar = ({ open, setOpen }) => {
 
         </nav>
 
-        {/* LOGOUT FIXED BOTTOM */}
         <div className="absolute bottom-0 w-full p-4 border-t bg-white">
           <button
             onClick={logout}

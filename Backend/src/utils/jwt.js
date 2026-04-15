@@ -1,6 +1,6 @@
 export const generateToken = (id) => {
   return jwt.sign(
-    { id }, // only Mongo _id
+    { id }, 
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );

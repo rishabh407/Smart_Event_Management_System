@@ -13,7 +13,6 @@ const AssignedCompetitons = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
-  // ================= FETCH DATA =================
 
   const fetchAssigned = useCallback(async () => {
 
@@ -32,7 +31,6 @@ const AssignedCompetitons = () => {
     fetchAssigned();
   }, [fetchAssigned]);
 
-  // ================= LIVE CLOCK =================
 
   useEffect(() => {
 
@@ -44,8 +42,7 @@ const AssignedCompetitons = () => {
 
   }, []);
 
-  // ================= STATUS =================
-
+ 
   const getCompetitionStatus = (startTime, endTime) => {
 
     const now = currentTime;
@@ -56,7 +53,6 @@ const AssignedCompetitons = () => {
     return "COMPLETED";
   };
 
-  // ================= COUNTDOWN =================
 
   const getCountdown = (startTime, endTime) => {
 
@@ -74,8 +70,7 @@ const AssignedCompetitons = () => {
     return `${h}h ${m}m`;
   };
 
-  // ================= FILTER + SEARCH =================
-
+  
   const filteredCompetitions = useMemo(() => {
 
     return competitions.filter(comp => {
@@ -97,12 +92,10 @@ const AssignedCompetitons = () => {
 
   }, [competitions, search, statusFilter, currentTime]);
 
-  // ================= UI =================
-
+ 
   return (
     <div className="p-4 md:p-6">
 
-      {/* HEADER */}
 
       <div className="flex justify-between items-center mb-4">
 
@@ -119,7 +112,6 @@ const AssignedCompetitons = () => {
 
       </div>
 
-      {/* SEARCH BAR */}
 
       <input
         type="text"
@@ -129,7 +121,6 @@ const AssignedCompetitons = () => {
         className="w-full mb-4 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
       />
 
-      {/* FILTER BUTTONS */}
 
       <div className="flex flex-wrap gap-3 mb-6">
 
@@ -152,15 +143,12 @@ const AssignedCompetitons = () => {
 
       </div>
 
-      {/* LOADING */}
-
       {loading && (
         <p className="text-gray-500">
           Loading competitions...
         </p>
       )}
 
-      {/* EMPTY */}
 
       {!loading && filteredCompetitions.length === 0 && (
         <div className="bg-white p-6 rounded shadow text-center">
@@ -170,7 +158,6 @@ const AssignedCompetitons = () => {
         </div>
       )}
 
-      {/* GRID */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
@@ -193,7 +180,6 @@ const AssignedCompetitons = () => {
               className="bg-white rounded-lg shadow p-5 border hover:shadow-lg transition"
             >
 
-              {/* HEADER */}
 
               <div className="flex justify-between items-center mb-2">
 
@@ -216,13 +202,11 @@ const AssignedCompetitons = () => {
 
               </div>
 
-              {/* REGISTRATION COUNT */}
 
               <p className="text-sm text-gray-600 mb-2">
                 👥 {data.totalRegistrations || 0} Registered
               </p>
 
-              {/* COUNTDOWN */}
 
               <p className="text-indigo-600 text-sm font-semibold mb-2">
 
@@ -232,7 +216,6 @@ const AssignedCompetitons = () => {
 
               </p>
 
-              {/* ACTIONS */}
 
               <div className="flex flex-wrap gap-3 mt-4">
 

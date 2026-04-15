@@ -116,7 +116,7 @@ const AssignTeachers = () => {
     }
   };
 
-  // ================= LOADING =================
+  
 
   if (loading) {
     return (
@@ -136,7 +136,7 @@ const AssignTeachers = () => {
     );
   }
 
-  // Filter out already assigned teachers
+  
 
   const availableTeachers = teachers.filter(
     (t) => !competition.assignedTeachers?.some(
@@ -147,7 +147,6 @@ const AssignTeachers = () => {
   return (
     <div className="max-w-5xl mx-auto bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-xl space-y-8">
 
-      {/* ================= HEADER ================= */}
 
       <div>
 
@@ -168,7 +167,6 @@ const AssignTeachers = () => {
 
       </div>
 
-      {/* ================= ASSIGN FORM ================= */}
 
       <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
 
@@ -178,7 +176,6 @@ const AssignTeachers = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-          {/* TEACHER SELECT */}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -209,7 +206,6 @@ const AssignTeachers = () => {
 
           </div>
 
-          {/* ROLE */}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -228,7 +224,6 @@ const AssignTeachers = () => {
 
           </div>
 
-          {/* BUTTON */}
 
           <div className="flex items-end">
 
@@ -250,7 +245,6 @@ const AssignTeachers = () => {
 
       </div>
 
-      {/* ================= ASSIGNED TEACHERS ================= */}
 
       <div>
 

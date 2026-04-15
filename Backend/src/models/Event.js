@@ -43,9 +43,9 @@ const eventSchema = new mongoose.Schema(
       default: "upcoming",
     },
 
-    // ---------- CONTROL FLAGS ----------
+    
 
-// ---------- CONTROL FLAGS ----------
+
 isPublished: {
   type: Boolean,
   default: false,
@@ -60,7 +60,7 @@ isDeleted: {
   type: Boolean,
   default: false,
 },
-    // ---------- RELATIONS ----------
+    
 
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -83,14 +83,14 @@ isDeleted: {
   { timestamps: true }
 );
 
-// ---------- INDEXING ----------
+
 
 eventSchema.index({ startDate: 1 });
 eventSchema.index({ departmentId: 1 });
 eventSchema.index({ coordinator: 1 });
 eventSchema.index({ isPublished: 1, isDeleted: 1 });
 
-// ---------- LIVE STATUS VIRTUAL ----------
+
 
 eventSchema.virtual("liveStatus").get(function () {
 

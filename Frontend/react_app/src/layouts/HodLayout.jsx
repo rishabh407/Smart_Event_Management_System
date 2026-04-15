@@ -23,7 +23,7 @@ const HODLayout = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  /* ================= ROLE PROTECTION ================= */
+
 
   useEffect(() => {
 
@@ -33,13 +33,13 @@ const HODLayout = () => {
 
   }, [user, loading, navigate]);
 
-  /* ================= CLOSE SIDEBAR ON ROUTE CHANGE ================= */
+
 
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  /* ================= LOGOUT ================= */
+
 
   const handleLogout = () => {
 
@@ -60,7 +60,7 @@ const HODLayout = () => {
         : "text-gray-300 hover:bg-slate-800 hover:text-white"
     }`;
 
-  /* ================= LOADING ================= */
+
 
   if (loading) {
     return (
@@ -74,7 +74,7 @@ const HODLayout = () => {
 
     <div className="flex h-screen overflow-hidden bg-gray-100">
 
-      {/* ================= SIDEBAR ================= */}
+
 
       <aside
         className={`fixed lg:static z-40 top-0 left-0
@@ -103,7 +103,7 @@ const HODLayout = () => {
 
         <div className="flex-1 p-4 space-y-6 overflow-y-auto hide-scrollbar">
 
-          {/* USER INFO */}
+
 
           <div>
 
@@ -119,7 +119,7 @@ const HODLayout = () => {
 
           </div>
 
-          {/* DASHBOARD */}
+
 
           <div>
 
@@ -134,7 +134,7 @@ const HODLayout = () => {
 
           </div>
 
-          {/* EVENTS */}
+
 
           <div>
 
@@ -158,7 +158,7 @@ const HODLayout = () => {
 
           </div>
 
-          {/* PEOPLE */}
+
 
           <div>
 
@@ -188,7 +188,7 @@ const HODLayout = () => {
           </div>
 
 
-          {/* RESULTS */}
+
 
           <div>
 
@@ -208,9 +208,7 @@ const HODLayout = () => {
 
           </div>
 
-        </div>
-
-        {/* LOGOUT */}
+ </div>
 
         <div className="p-4 border-t border-slate-700">
 
@@ -226,7 +224,7 @@ const HODLayout = () => {
 
       </aside>
 
-      {/* ================= MAIN CONTENT ================= */}
+
 
       <div className="flex-1 flex flex-col">
 
@@ -247,7 +245,7 @@ const HODLayout = () => {
 
         </header>
 
-        {/* PAGE */}
+
 
         <main className="flex-1 overflow-y-auto p-6">
 

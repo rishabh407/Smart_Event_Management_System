@@ -12,7 +12,6 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  // 🔐 FORCE PASSWORD CHANGE FOR STUDENT
   if (
     user.role === "STUDENT" &&
     user.isFirstLogin === true &&

@@ -14,7 +14,7 @@ const Competitions = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  // ================= FETCH =================
+  
 
   const fetchCompetitions = async () => {
     try {
@@ -39,7 +39,7 @@ const Competitions = () => {
     return () => clearInterval(timer);
   }, [eventId]);
 
-  // ================= STATUS =================
+  
 
   const getCompetitionStatus = (comp) => {
     const now = currentTime;
@@ -53,7 +53,7 @@ const Competitions = () => {
     return "FINISHED";
   };
 
-  // ================= TIMER =================
+  
 
   const getTimeRemaining = (targetDate) => {
     const diff = new Date(targetDate) - currentTime;
@@ -67,7 +67,7 @@ const Competitions = () => {
     return `${hours}h ${minutes}m ${seconds}s`;
   };
 
-  // ================= SEARCH + FILTER =================
+  
 
   const filteredCompetitions = useMemo(() => {
     return competitions.filter((comp) => {
@@ -85,7 +85,7 @@ const Competitions = () => {
     });
   }, [competitions, search, filter, currentTime]);
 
-  // ================= LOADING =================
+  
 
   if (loading) {
     return (
@@ -101,7 +101,7 @@ const Competitions = () => {
   return (
     <div className="p-4 sm:p-6 space-y-6">
 
-      {/* ================= HEADER ================= */}
+
 
       <div>
         <button
@@ -143,7 +143,7 @@ const Competitions = () => {
 
       </div>
 
-      {/* ================= EMPTY ================= */}
+
 
       {filteredCompetitions.length === 0 && (
         <div className="bg-white rounded-lg shadow p-10 text-center">
@@ -154,7 +154,7 @@ const Competitions = () => {
         </div>
       )}
 
-      {/* ================= GRID ================= */}
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
@@ -168,19 +168,19 @@ const Competitions = () => {
               className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 sm:p-6 border flex flex-col"
             >
 
-              {/* TITLE */}
+
 
               <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-900">
                 {comp.name}
               </h2>
 
-              {/* DESC */}
+
 
               <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                 {comp.shortDescription}
               </p>
 
-              {/* DETAILS */}
+
 
               <div className="text-sm text-gray-500 space-y-1 mb-3">
 
@@ -191,7 +191,7 @@ const Competitions = () => {
 
               </div>
 
-              {/* STATUS */}
+
 
               <div className="mb-3">
 
@@ -221,7 +221,7 @@ const Competitions = () => {
 
               </div>
 
-              {/* TIMER */}
+
 
               {status === "REG_OPEN" && (
                 <p className="text-xs text-gray-500 mb-2">
@@ -235,7 +235,7 @@ const Competitions = () => {
                 </p>
               )}
 
-              {/* BUTTON */}
+
 
               <button
                 disabled={status !== "REG_OPEN"}
@@ -268,7 +268,7 @@ const Competitions = () => {
   );
 };
 
-// ================= FILTER BUTTON =================
+
 
 const FilterBtn = ({ label, value, filter, setFilter }) => (
   <button

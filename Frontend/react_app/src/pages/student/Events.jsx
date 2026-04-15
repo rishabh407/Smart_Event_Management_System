@@ -262,7 +262,7 @@ const Events = () => {
   );
 };
 
-// ================= FILTER BUTTON COMPONENT =================
+
 
 const FilterButton = ({ label, value, filter, setFilter }) => {
   return (

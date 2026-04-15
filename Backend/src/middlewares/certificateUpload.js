@@ -3,11 +3,11 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-// Ensure we always save inside Backend/uploads/certificates
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Storage config
+
 const storage = multer.diskStorage({
 
   destination: (req, file, cb) => {
@@ -36,7 +36,7 @@ const storage = multer.diskStorage({
 
 });
 
-// Only allow image files that PDFKit supports as background (PNG/JPEG)
+
 const fileFilter = (req, file, cb) => {
 
   if (

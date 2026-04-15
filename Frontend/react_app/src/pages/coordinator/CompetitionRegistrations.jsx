@@ -34,8 +34,6 @@ const CompetitionRegistrations = () => {
     fetchData();
   }, [id]);
 
-  // ================= LOADING =================
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[250px]">
@@ -48,7 +46,6 @@ const CompetitionRegistrations = () => {
 
     <div className="max-w-6xl mx-auto bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-xl">
 
-      {/* ================= HEADER ================= */}
 
       <div className="mb-6">
 
@@ -72,8 +69,6 @@ const CompetitionRegistrations = () => {
 
       </div>
 
-      {/* ================= EMPTY STATE ================= */}
-
       {registrations.length === 0 ? (
 
         <div className="bg-gray-50 p-6 sm:p-8 rounded-lg text-center">
@@ -85,8 +80,6 @@ const CompetitionRegistrations = () => {
         </div>
 
       ) : (
-
-        /* ================= RESPONSIVE TABLE ================= */
 
         <div className="overflow-x-auto border rounded-lg">
 

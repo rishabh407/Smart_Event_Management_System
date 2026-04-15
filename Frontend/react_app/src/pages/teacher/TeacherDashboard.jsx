@@ -60,8 +60,6 @@ const TeacherDashboard = () => {
   return (
     <div className="space-y-6">
 
-      {/* ================= HEADER ================= */}
-
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Teacher Dashboard
@@ -70,8 +68,6 @@ const TeacherDashboard = () => {
           Overview of your assigned competitions and activities
         </p>
       </div>
-
-      {/* ================= STAT CARDS ================= */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
@@ -82,8 +78,6 @@ const TeacherDashboard = () => {
 
       </div>
 
-      {/* ================= SECOND ROW ================= */}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         <StatCard title="Total Registrations" value={stats?.totalRegistrations || 0} icon="👥" color="bg-indigo-500" />
@@ -92,8 +86,6 @@ const TeacherDashboard = () => {
         <StatCard title="Certificates Generated" value={stats?.certificatesGenerated || 0} icon="🎓" color="bg-yellow-500" />
 
       </div>
-
-      {/* ================= QUICK ACTIONS ================= */}
 
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
 
@@ -111,8 +103,6 @@ const TeacherDashboard = () => {
         </div>
 
       </div>
-
-      {/* ================= CHARTS ================= */}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -168,8 +158,6 @@ const TeacherDashboard = () => {
   );
 };
 
-// ================= STAT CARD =================
-
 const StatCard = ({ title, value, icon, color }) => (
   <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition">
     <div className="flex items-center justify-between">
@@ -183,8 +171,6 @@ const StatCard = ({ title, value, icon, color }) => (
     </div>
   </div>
 );
-
-// ================= ACTION BUTTON =================
 
 const ActionButton = ({ label, onClick, color }) => {
 

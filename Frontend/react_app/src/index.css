@@ -1,5 +1,4 @@
 @import "tailwindcss";
-/* Hide scrollbar but allow scrolling */
 
 .sidebar-scroll::-webkit-scrollbar {
   display: none;
@@ -10,7 +9,6 @@
   scrollbar-width: none;
 }
 
-/* Hide scrollbar but allow scrolling */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }

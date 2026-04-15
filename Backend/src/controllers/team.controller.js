@@ -7,24 +7,24 @@ export const createTeam = async (req, res) => {
 
     const { competitionId, teamName } = req.body;
 
-    // ✅ Validate input
+    
     if (!competitionId || !teamName) {
       return res.status(400).json({
         message: "Required fields missing"
       });
     }
 
-    // ✅ Normalize team name (case-insensitive)
+    
     const normalizedTeamName = teamName.trim().toLowerCase();
 
-    // ✅ Only students allowed
+    
     if (req.user.role !== "STUDENT") {
       return res.status(403).json({
         message: "Only students can create teams"
       });
     }
 
-    // ✅ Check competition
+    
     const competition = await Competition.findById(competitionId);
 
     if (!competition) {
@@ -45,7 +45,7 @@ export const createTeam = async (req, res) => {
       });
     }
 
-    // ✅ Prevent user joining multiple teams
+    
     const existingTeam = await Team.findOne({
       competitionId,
       members: req.user._id
@@ -57,7 +57,7 @@ export const createTeam = async (req, res) => {
       });
     }
 
-    // ✅ Check duplicate team name (case-insensitive)
+    
     const existingTeamName = await Team.findOne({
       competitionId,
       teamName: normalizedTeamName
@@ -69,7 +69,7 @@ export const createTeam = async (req, res) => {
       });
     }
 
-    // ✅ Generate unique join code
+    
     let joinCode;
     let exists = true;
 
@@ -79,9 +79,9 @@ export const createTeam = async (req, res) => {
       if (!check) exists = false;
     }
 
-    // ✅ Create team
+    
     const team = await Team.create({
-      teamName: normalizedTeamName, // stored in lowercase
+      teamName: normalizedTeamName, 
       joinCode,
       competitionId,
       leader: req.user._id,
@@ -96,7 +96,7 @@ export const createTeam = async (req, res) => {
 
   } catch (error) {
 
-    // ✅ Handle duplicate error (DB level safety)
+    
     if (error.code === 11000) {
       return res.status(400).json({
         message: "Team name already registered. Choose another name."
@@ -203,9 +203,9 @@ export const joinTeam = async (req, res) => {
 };
 
 
-// ============================
-// LEAVE TEAM
-// ============================
+
+
+
 
 export const leaveTeam = async (req, res) => {
   try {
@@ -227,7 +227,7 @@ export const leaveTeam = async (req, res) => {
       });
     }
 
-    // Leader cannot leave
+    
     if (team.leader.toString() === req.user._id.toString()) {
       return res.status(400).json({
         message: "Leader cannot leave team. Delete team instead.",
@@ -255,9 +255,9 @@ export const leaveTeam = async (req, res) => {
   }
 };
 
-// ============================
-// DELETE TEAM (Leader)
-// ============================
+
+
+
 
 export const deleteTeam = async (req, res) => {
   try {
@@ -343,7 +343,7 @@ export const getTeamsByUser = async (req, res) => {
       .populate("leader", "fullName")
       .populate("competitionId", "name registrationDeadline")
       .sort({ createdAt: -1 });
-      // if we use -1 then we see the newest records . And if we write 1 then we see the oldest records.
+      
     res.status(200).json({
       success: true,
       datateams: teams
@@ -356,9 +356,9 @@ export const getTeamsByUser = async (req, res) => {
   }
 };
 
-// =====================
-// JOIN CODE GENERATOR
-// =====================
+
+
+
 
 const generateJoinCode = () => {
 

@@ -14,7 +14,6 @@ import IndividualRegistration from "./pages/student/IndividualRegisteration";
 import TeamRegisteration from "./pages/student/TeamRegisteration";
 import ManageEvents from "./pages/hod/ManageEvents";
 import CreateEvent from "./pages/hod/CreateEvent";
-import HodDashboard from "./pages/hod/HodDashboard";
 import EditEvent from "./pages/hod/EditEvent";
 import HodLayout from "./layouts/HodLayout";
 import CoordinatorLayout from "./layouts/CoordinatorLayout";
@@ -44,14 +43,14 @@ import EventResults from "./pages/coordinator/EventResults";
 import DepartmentResults from "./pages/hod/DepartmentResults";
 import CompetitionHod from "./pages/hod/CompetitionHod";
 import HodTeachers from "./pages/hod/HodTeachers";
-import HodStudents from "./pages/hod/Hodstudents";
-import HodCoordinators from "./pages/hod/Hodcoordinators";
 import ExportReports from "./pages/teacher/ExportReports";
+import HodStudents from "./pages/hod/HodStudents";
+import HODDashboard from "./pages/hod/HodDashboard";
+import HodCoordinators from "./pages/hod/HodCoordinators";
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
 
         <Route path="/" element={<Login />} />
         <Route
@@ -62,7 +61,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        {/*===================== Student Dashboard ==============*/}
+
         <Route
           path="/student"
           element={
@@ -106,8 +105,6 @@ const App = () => {
           }
         />
 
-        {/* ================= Teacher PANEL ================= */}
-
         <Route
           path="/teacher"
           element={
@@ -136,8 +133,6 @@ const App = () => {
           <Route path="attendance/view/:id" element={<ViewAttendance />} />
           <Route path="registrations/:id" element={<ViewRegistrations />} />
         </Route>
-
-        {/* ================= COORDINATOR PANEL ================= */}
 
         <Route
           path="/coordinator"
@@ -176,8 +171,6 @@ const App = () => {
           <Route path="results" element={<EventResults />} />
         </Route>
 
-        {/*=============================== HOD PANEL ======================*/}
-
         <Route
           path="/hod"
           element={
@@ -187,7 +180,7 @@ const App = () => {
           }
         >
         <Route index element={<Navigate to="/hod/dashboard" />} />
-          <Route index path="/hod/dashboard" element={<HodDashboard />} />
+          <Route index path="/hod/dashboard" element={<HODDashboard />} />
           <Route path="/hod/manage-events" element={<ManageEvents />} />
           <Route path="/hod/events/create" element={<CreateEvent />} />
           <Route path="/hod/events/edit/:id" element={<EditEvent />} />

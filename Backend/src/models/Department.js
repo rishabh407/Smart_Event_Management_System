@@ -29,14 +29,14 @@ const departmentSchema = new mongoose.Schema(
       trim: true
     },
 
-    // ✅ Optional HOD (assigned later)
+    
     hod: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
 
-    // ✅ Optional: department status
+    
     isActive: {
       type: Boolean,
       default: true

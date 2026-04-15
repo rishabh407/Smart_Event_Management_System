@@ -27,14 +27,12 @@ const Results = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  // ================= FETCH ASSIGNED COMPETITIONS =================
 
   const fetchCompetitions = async () => {
     try {
       setLoading(true);
       const res = await getAllAssignedCompetitions();
 
-      // Filter only COMPLETED competitions immediately
       const completed = (res.data || []).filter(
         comp => new Date(comp.endTime) < new Date()
       );
@@ -53,13 +51,11 @@ const Results = () => {
     fetchCompetitions();
   }, []);
 
-  // ================= SEARCH FILTER =================
 
   const filteredCompetitions = competitions.filter(comp =>
     comp.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // ================= SELECT COMPETITION =================
 
   const handleSelectCompetition = async (competitionId) => {
     try {
@@ -88,7 +84,6 @@ const Results = () => {
     }
   };
 
-  // ================= WINNER CHANGE =================
 
   const handleWinnerChange = (index, participantId) => {
     const updated = [...winners];
@@ -96,7 +91,6 @@ const Results = () => {
     setWinners(updated);
   };
 
-  // ================= DUPLICATE CHECK =================
 
   const isAlreadySelected = (participantId, currentIndex) => {
     return winners.some(
@@ -106,7 +100,6 @@ const Results = () => {
     );
   };
 
-  // ================= DECLARE RESULTS =================
 
   const handleDeclareResults = async () => {
 
@@ -138,7 +131,6 @@ const Results = () => {
         }
       );
 
-      // Update local state instead of refetching
       setCompetitions(prev =>
         prev.map(c =>
           c._id === selectedCompetition._id
@@ -161,7 +153,6 @@ const Results = () => {
     }
   };
 
-  // ================= LOADING UI =================
 
   if (loading) {
     return (
@@ -176,13 +167,11 @@ const Results = () => {
   return (
     <div className="p-4 md:p-6">
 
-      {/* ================= HEADER ================= */}
 
       <h1 className="text-2xl md:text-3xl font-bold mb-4">
         Declare Results
       </h1>
 
-      {/* ================= SEARCH ================= */}
 
       {!selectedCompetition && (
         <input
@@ -194,7 +183,6 @@ const Results = () => {
         />
       )}
 
-      {/* ================= COMPETITION LIST ================= */}
 
       {!selectedCompetition && (
 
@@ -268,7 +256,6 @@ const Results = () => {
         )
       )}
 
-      {/* ================= RESULT FORM ================= */}
 
       {selectedCompetition && (
 

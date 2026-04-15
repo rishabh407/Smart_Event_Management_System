@@ -19,8 +19,6 @@ const HodCoordinators = () => {
     password: ""
   });
 
-  /* ================= FETCH COORDINATOR ================= */
-
   const fetchCoordinator = async () => {
 
     try {
@@ -45,7 +43,6 @@ const HodCoordinators = () => {
     fetchCoordinator();
   }, []);
 
-  /* ================= INPUT CHANGE ================= */
 
   const handleChange = (e) => {
 
@@ -56,7 +53,6 @@ const HodCoordinators = () => {
 
   };
 
-  /* ================= CREATE ================= */
 
   const handleCreate = async (e) => {
 
@@ -87,7 +83,6 @@ const HodCoordinators = () => {
 
   };
 
-  /* ================= UPDATE ================= */
 
   const handleUpdate = async (e) => {
 
@@ -111,7 +106,6 @@ const HodCoordinators = () => {
 
   };
 
-  /* ================= LOADING ================= */
 
   if (loading) {
 
@@ -123,7 +117,6 @@ const HodCoordinators = () => {
 
   }
 
-  /* ================= CREATE PAGE ================= */
 
   if (!coordinator) {
 
@@ -193,7 +186,7 @@ const HodCoordinators = () => {
 
   }
 
-  /* ================= COORDINATOR VIEW ================= */
+ 
 
   return (
 
@@ -205,7 +198,6 @@ const HodCoordinators = () => {
           Department Coordinator
         </h2>
 
-        {/* PROFILE */}
 
         {!editing ? (
 
@@ -243,7 +235,7 @@ const HodCoordinators = () => {
 
         ) : (
 
-          /* ================= EDIT FORM ================= */
+         
 
           <form onSubmit={handleUpdate} className="space-y-4">
 

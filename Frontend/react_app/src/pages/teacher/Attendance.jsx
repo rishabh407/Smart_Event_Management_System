@@ -13,7 +13,6 @@ const Attendance = () => {
 
   const [activeTab, setActiveTab] = useState("LIVE");
 
-  // ================= FETCH COMPETITIONS =================
 
   const fetchCompetitions = async () => {
 
@@ -34,7 +33,6 @@ const Attendance = () => {
 
   };
 
-  // ================= FETCH STATS =================
 
   const fetchStats = async (competitionId) => {
 
@@ -55,13 +53,11 @@ const Attendance = () => {
 
   };
 
-  // ================= INITIAL LOAD =================
 
   useEffect(() => {
     fetchCompetitions();
   }, []);
 
-  // ================= AUTO REFRESH STATS =================
 
   useEffect(() => {
 
@@ -85,13 +81,12 @@ const Attendance = () => {
 
     fetchAllStats();
 
-    const interval = setInterval(fetchAllStats, 30000); // 30 seconds refresh
+    const interval = setInterval(fetchAllStats, 30000); 
 
     return () => clearInterval(interval);
 
   }, [competitions]);
 
-  // ================= FILTER LOGIC =================
 
   const filteredCompetitions = competitions.filter(comp => {
 
@@ -115,7 +110,6 @@ const Attendance = () => {
 
   });
 
-  // ================= LOADING UI =================
 
   if (loading) {
     return (
@@ -130,13 +124,11 @@ const Attendance = () => {
   return (
     <div className="p-4 md:p-6">
 
-      {/* ================= HEADER ================= */}
 
       <h1 className="text-2xl md:text-3xl font-bold mb-4">
         Attendance Management
       </h1>
 
-      {/* ================= TABS ================= */}
 
       <div className="flex gap-3 mb-6">
 
@@ -159,7 +151,6 @@ const Attendance = () => {
 
       </div>
 
-      {/* ================= EMPTY STATE ================= */}
 
       {filteredCompetitions.length === 0 && (
 
@@ -171,7 +162,6 @@ const Attendance = () => {
 
       )}
 
-      {/* ================= GRID ================= */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 

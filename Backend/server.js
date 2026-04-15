@@ -28,7 +28,7 @@ const __dirname = path.dirname(__filename);
 
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:5173", // React URL
+  origin: "http://localhost:5173",
   credentials: true
 }));
 app.use(express.json());

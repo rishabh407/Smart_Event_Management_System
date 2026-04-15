@@ -28,7 +28,7 @@ import {
 } from "react-icons/fa";
 
 
-/* ================= HELPER : LAST MONTH RANGE ================= */
+
 
 const getLastMonthRange = () => {
 
@@ -54,7 +54,7 @@ const getLastMonthRange = () => {
 };
 
 
-/* ================= COMPONENT ================= */
+
 
 const HODDashboard = () => {
 
@@ -79,7 +79,7 @@ const HODDashboard = () => {
   const [loading, setLoading] = useState(true);
 
 
-  /* ================= FETCH DASHBOARD ================= */
+ 
 
   const fetchStats = async () => {
 
@@ -105,7 +105,7 @@ const HODDashboard = () => {
   };
 
 
-  /* ================= FETCH RANKING ================= */
+ 
 
   const fetchRanking = async () => {
 
@@ -124,7 +124,7 @@ const HODDashboard = () => {
   };
 
 
-  /* ================= INITIAL LOAD ================= */
+ 
 
   useEffect(() => {
 
@@ -134,7 +134,7 @@ const HODDashboard = () => {
   }, [dateFilter]);
 
 
-  /* ================= APPLY FILTER ================= */
+ 
 
   const handleApplyFilter = () => {
 
@@ -152,7 +152,7 @@ const HODDashboard = () => {
   };
 
 
-  /* ================= CLEAR FILTER ================= */
+ 
 
   const handleClearFilter = () => {
 
@@ -164,7 +164,7 @@ const HODDashboard = () => {
   };
 
 
-  /* ================= LOADING ================= */
+ 
 
   if (loading) {
 
@@ -185,7 +185,6 @@ const HODDashboard = () => {
 
     <div className="p-4 md:p-6 space-y-6">
 
-      {/* ================= HEADER ================= */}
 
       <div>
 
@@ -200,7 +199,6 @@ const HODDashboard = () => {
       </div>
 
 
-      {/* ================= DATE FILTER ================= */}
 
       <div className="bg-white p-4 md:p-6 rounded-lg shadow">
 
@@ -254,8 +252,7 @@ const HODDashboard = () => {
       </div>
 
 
-      {/* ================= STATS CARDS ================= */}
-
+      
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
         <StatCard title="Total Events" value={stats.total} icon={<FaChartBar />} />
@@ -269,11 +266,9 @@ const HODDashboard = () => {
       </div>
 
 
-      {/* ================= CHARTS ================= */}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* STATUS CHART */}
 
         <div className="bg-white p-4 rounded shadow h-[280px] md:h-[320px]">
 
@@ -310,7 +305,6 @@ const HODDashboard = () => {
         </div>
 
 
-        {/* MONTHLY TREND */}
 
         <div className="bg-white p-4 rounded shadow h-[280px] md:h-[320px]">
 
@@ -349,7 +343,6 @@ const HODDashboard = () => {
       </div>
 
 
-      {/* ================= EVENT PERFORMANCE ================= */}
 
       <div className="bg-white p-4 rounded shadow">
 
@@ -403,7 +396,7 @@ const HODDashboard = () => {
 };
 
 
-/* ================= STAT CARD ================= */
+
 
 const StatCard = ({ title, value, icon }) => {
 

@@ -3,10 +3,6 @@ import Event from "../models/Event.js";
 import Registration from "../models/Registration.js";
 import User from "../models/User.js";
 
-// ============================
-// CREATE COMPETITION (COORDINATOR ONLY)
-// ============================
-
 export const createCompetition = async (req, res) => {
   try {
 
@@ -26,7 +22,6 @@ export const createCompetition = async (req, res) => {
       assignedTeachers,
     } = req.body;
 
-    // ---------------- VALIDATION ----------------
 
     if (!eventId || !name || !shortDescription || !type || !registrationDeadline || !venue || !startTime || !endTime) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -36,7 +31,7 @@ export const createCompetition = async (req, res) => {
       return res.status(403).json({ message: "Only coordinator can create competitions" });
     }
 
-    // ---------------- EVENT CHECK ----------------
+
 
     const event = await Event.findById(eventId);
 
@@ -48,7 +43,7 @@ export const createCompetition = async (req, res) => {
       return res.status(403).json({ message: "You are not assigned to this event" });
     }
 
-    // ---------------- TEAM VALIDATION ----------------
+
 
     if (type === "team") {
       if (!minTeamSize || !maxTeamSize) {
@@ -60,7 +55,7 @@ export const createCompetition = async (req, res) => {
       }
     }
 
-    // ---------------- TEACHER VALIDATION ----------------
+
 
     if (assignedTeachers?.length > 0) {
 
@@ -78,7 +73,7 @@ export const createCompetition = async (req, res) => {
       }
     }
 
-    // ---------------- CREATE ----------------
+
 
 const competition = await Competition.create({
  eventId,
@@ -141,9 +136,8 @@ export const getCompetitionDetails = async (req, res) => {
   }
 };
 
-/* =====================================================
-   GET COMPETITIONS OF AN EVENT (COORDINATOR)
-   ===================================================== */
+
+
 
 export const getCompetitionsByEvent = async (req, res) => {
 
@@ -160,14 +154,14 @@ export const getCompetitionsByEvent = async (req, res) => {
    });
   }
 
-  // Only assigned coordinator can access
+
   if (event.coordinator.toString() !== req.user._id.toString()) {
    return res.status(403).json({
     message: "Access denied"
    });
   }
 
-  // Fetch competitions of event
+
   const competitions = await Competition.find({
    eventId,
    isDeleted: false
@@ -208,9 +202,8 @@ export const getPublicCompetitionsByEvent = async (req, res) => {
 };
 
 
-/* =====================================================
-   PUBLISH COMPETITION
-   ===================================================== */
+
+
 export const publishCompetition = async (req, res) => {
 
  try {
@@ -255,9 +248,8 @@ export const publishCompetition = async (req, res) => {
 
 
 
-/* =====================================================
-   UNPUBLISH COMPETITION
-   ===================================================== */
+
+
 
 export const unpublishCompetition = async (req, res) => {
 
@@ -334,7 +326,6 @@ export const updateCompetition = async (req, res) => {
       });
     }
 
-    // ================= PREVENT EDIT AFTER START =================
 
     if (new Date() >= competition.startTime) {
       return res.status(400).json({
@@ -342,7 +333,7 @@ export const updateCompetition = async (req, res) => {
       });
     }
 
-    // ================= ALLOWED FIELDS =================
+
 
     const allowedFields = [
       "name",
@@ -364,11 +355,11 @@ export const updateCompetition = async (req, res) => {
       }
     });
 
-    // ================= HANDLE TYPE CHANGE =================
+
 
     if (req.body.type === "individual") {
 
-      // remove team sizes for individual competition
+
       competition.minTeamSize = null;
       competition.maxTeamSize = null;
 
@@ -396,7 +387,7 @@ export const updateCompetition = async (req, res) => {
 
     }
 
-    // ================= DATE VALIDATION =================
+
 
     if (
       competition.registrationDeadline &&
@@ -418,7 +409,7 @@ export const updateCompetition = async (req, res) => {
       });
     }
 
-    // ================= SAVE =================
+
 
     await competition.save();
 
@@ -449,14 +440,14 @@ export const getCoordinatorDashboardStats = async (req, res) => {
    });
   }
 
-  // Get coordinator events
+
   const events = await Event.find({
    coordinator: req.user._id
   }).select("_id");
 
   const eventIds = events.map(e => e._id);
 
-  // Get competitions of those events
+
   const competitions = await Competition.find({
    eventId: { $in: eventIds },
    isDeleted: false
@@ -464,12 +455,12 @@ export const getCoordinatorDashboardStats = async (req, res) => {
 
   const competitionIds = competitions.map(c => c._id);
 
-  // Total registrations
+
   const totalRegistrations = await Registration.countDocuments({
    competition: { $in: competitionIds }
   });
 
-  // Active registrations
+
   const activeRegistrations = await Registration.countDocuments({
    competition: { $in: competitionIds },
    status: "registered"
@@ -513,7 +504,7 @@ export const toggleRegistrationStatus = async (req, res) => {
    });
   }
 
-  // Toggle
+
   competition.registrationOpen = !competition.registrationOpen;
 
   await competition.save();

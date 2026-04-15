@@ -15,7 +15,6 @@ const TeacherLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* ================= MOBILE TOP BAR ================= */}
 
       <div className="md:hidden fixed top-0 left-0 right-0 bg-indigo-900 text-white flex items-center justify-between px-4 py-3 z-50 shadow">
         <h2 className="font-bold">👨‍🏫 Teacher Panel</h2>
@@ -27,7 +26,6 @@ const TeacherLayout = () => {
         </div>
       </div>
 
-      {/* ================= SIDEBAR ================= */}
 
       <aside
         className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-indigo-900 text-white p-5 flex flex-col justify-between z-50 transform transition-transform duration-300 overflow-y-auto
@@ -99,7 +97,6 @@ const TeacherLayout = () => {
           </nav>
         </div>
 
-        {/* LOGOUT */}
 
         <button
           onClick={logout}
@@ -109,7 +106,6 @@ const TeacherLayout = () => {
         </button>
       </aside>
 
-      {/* ================= OVERLAY ================= */}
 
       {open && (
         <div
@@ -118,7 +114,6 @@ const TeacherLayout = () => {
         />
       )}
 
-      {/* ================= MAIN CONTENT ================= */}
 
       <main className="flex-1 min-h-screen bg-gray-50 p-4 md:p-6 pt-20 md:pt-6">
         <Outlet />

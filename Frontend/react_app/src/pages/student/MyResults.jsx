@@ -43,7 +43,7 @@ const MyResults = () => {
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
-      {/* HEADER */}
+      
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
           My Results
@@ -53,7 +53,6 @@ const MyResults = () => {
         </p>
       </div>
 
-      {/* SEARCH */}
       <div className="bg-white p-4 rounded-lg shadow">
         <input
           type="text"
@@ -64,7 +63,6 @@ const MyResults = () => {
         />
       </div>
 
-      {/* EMPTY STATE */}
       {filteredResults.length === 0 && (
         <div className="bg-white rounded-lg shadow-md p-10 text-center">
           <div className="text-5xl mb-3">🏆</div>
@@ -79,14 +77,14 @@ const MyResults = () => {
         </div>
       )}
 
-      {/* RESULTS LIST */}
+
       <div className="space-y-6">
         {filteredResults.map((item, idx) => (
           <div
             key={idx}
             className="bg-white rounded-lg shadow-md p-5 sm:p-6 border"
           >
-            {/* COMPETITION HEADER */}
+
             <div className="mb-4 pb-4 border-b">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                 {item.competition.name}
@@ -97,8 +95,6 @@ const MyResults = () => {
                 <span className="capitalize">👥 {item.competition.type}</span>
               </div>
             </div>
-
-            {/* MY POSITION HIGHLIGHT */}
             {item.myPosition && (
               <div className="mb-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg">
                 <p className="text-lg font-semibold text-gray-900">
@@ -114,7 +110,6 @@ const MyResults = () => {
               </div>
             )}
 
-            {/* RESULTS TABLE */}
             {item.results.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-left">

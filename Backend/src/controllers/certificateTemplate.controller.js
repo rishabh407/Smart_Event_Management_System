@@ -10,10 +10,10 @@ export const uploadTemplate = async (req, res) => {
       competitionId,
       participationPositions,
       winnerPositions,
-      isTeam // NEW: Add this
+      isTeam 
     } = req.body;
 
-    // Validate
+
     if (!competitionId) {
       return res.status(400).json({
         message: "Competition ID missing"
@@ -29,7 +29,7 @@ export const uploadTemplate = async (req, res) => {
       });
     }
 
-    // Prevent duplicate upload
+
     const existing = await CertificateTemplate.findOne({
       competition: competitionId
     });
@@ -49,7 +49,7 @@ export const uploadTemplate = async (req, res) => {
       winnerTemplate: winnerPath,
       participationPositions: JSON.parse(participationPositions),
       winnerPositions: JSON.parse(winnerPositions),
-      isTeam: isTeam === "true" || isTeam === true // NEW: Store team flag
+      isTeam: isTeam === "true" || isTeam === true 
     });
 
     res.status(201).json({
@@ -72,7 +72,7 @@ export const previewTemplate = async (req, res) => {
       participationPositions,
       winnerPositions,
       competitionName = "Sample Competition",
-      isTeam // NEW: Add this
+      isTeam 
     } = req.body;
 
     const isWinner = type === "winner";
@@ -108,11 +108,11 @@ export const previewTemplate = async (req, res) => {
     const pdfPath = await generateCertificatePDF({
       name: "Sample Student Name",
       teamName: isTeamCompetition ? "Sample Team Name" : null,
-      competitionName, // Passed but won't be rendered in PDF
+      competitionName,
       position: isWinner ? 1 : null,
       templatePath,
       textConfig,
-      isTeam: isTeamCompetition // NEW: Pass team flag to generator
+      isTeam: isTeamCompetition 
     });
 
     console.log("PDF GENERATED AT:", pdfPath);
@@ -133,7 +133,7 @@ export const previewTemplate = async (req, res) => {
         console.error("PREVIEW SEND FILE ERROR:", err);
       }
 
-      // Clean up temporary preview file after sending
+
       setTimeout(() => {
         fs.unlink(absolutePdfPath, (unlinkErr) => {
           if (unlinkErr) {

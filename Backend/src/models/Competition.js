@@ -82,7 +82,7 @@ isDeleted: {
   default: false
 }
 ,
-    // Teachers assigned to this competition
+    
     assignedTeachers: [
       {
         teacher: {
@@ -104,7 +104,7 @@ isDeleted: {
       default: "upcoming",
     },
  
-    // 🔐 RESULT LOCK
+    
     resultsDeclared: {
       type: Boolean,
       default: false,

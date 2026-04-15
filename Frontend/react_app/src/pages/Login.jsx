@@ -14,7 +14,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // ---------------- REDIRECT AFTER LOGIN ----------------
+
 
   useEffect(() => {
 
@@ -41,7 +41,7 @@ const Login = () => {
 
   }, [user, navigate]);
 
-  // ---------------- LOGIN HANDLER ----------------
+
 
   const submitHandler = async (e) => {
 
@@ -60,7 +60,7 @@ const Login = () => {
 
       await login(form);
 
-      // Redirect handled by useEffect
+
 
     } catch (err) {
 
@@ -87,7 +87,7 @@ const Login = () => {
 
         <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 border border-gray-100">
 
-          {/* HEADER */}
+
 
           <div className="text-center mb-6 sm:mb-8">
 
@@ -105,11 +105,11 @@ const Login = () => {
 
           </div>
 
-          {/* FORM */}
+
 
           <form onSubmit={submitHandler} className="space-y-5 sm:space-y-6">
 
-            {/* IDENTIFIER */}
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -129,7 +129,7 @@ const Login = () => {
               />
             </div>
 
-            {/* PASSWORD */}
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -149,7 +149,7 @@ const Login = () => {
               />
             </div>
 
-            {/* SUBMIT */}
+
 
             <button
               type="submit"
@@ -176,7 +176,7 @@ const Login = () => {
 
           </form>
 
-          {/* FOOTER */}
+
 
           <div className="mt-5 sm:mt-6 text-center">
 

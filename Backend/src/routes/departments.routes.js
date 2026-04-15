@@ -8,10 +8,10 @@ import {
 
 const router = express.Router();
 
-// HOD only
+
 router.post("/",createDepartment);
 
-// Public
+
 router.get("/", getAllDepartments);
 router.get("/:id", getDepartmentById);
 

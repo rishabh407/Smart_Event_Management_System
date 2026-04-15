@@ -33,7 +33,6 @@ const ViewRegistrations = () => {
     fetchRegistrations();
   }, []);
 
-  // ================= LOADING =================
 
   if (loading) {
     return (
@@ -48,7 +47,6 @@ const ViewRegistrations = () => {
   return (
     <div className="p-4 md:p-6">
 
-      {/* HEADER */}
 
       <div className="flex justify-between items-center mb-4">
 
@@ -65,7 +63,6 @@ const ViewRegistrations = () => {
 
       </div>
 
-      {/* EMPTY STATE */}
 
       {registrations.length === 0 && (
 
@@ -79,7 +76,6 @@ const ViewRegistrations = () => {
 
       )}
 
-      {/* TABLE */}
 
       {registrations.length > 0 && (
 
@@ -117,7 +113,6 @@ const ViewRegistrations = () => {
                       {index + 1}
                     </td>
 
-                    {/* NAME / TEAM */}
 
                     <td className="p-2 border font-medium">
                       {isTeam
@@ -125,7 +120,6 @@ const ViewRegistrations = () => {
                         : reg.student?.fullName}
                     </td>
 
-                    {/* ROLL NO */}
 
                     <td className="p-2 border">
                       {isTeam
@@ -133,7 +127,6 @@ const ViewRegistrations = () => {
                         : reg.student?.rollNumber}
                     </td>
 
-                    {/* EMAIL */}
 
                     <td className="p-2 border">
                       {isTeam
@@ -141,7 +134,6 @@ const ViewRegistrations = () => {
                         : reg.student?.email || "N/A"}
                     </td>
 
-                    {/* TYPE */}
 
                     <td className="p-2 border text-center">
 
@@ -156,8 +148,6 @@ const ViewRegistrations = () => {
                       </span>
 
                     </td>
-
-                    {/* TIME */}
 
                     <td className="p-2 border">
                       {new Date(reg.createdAt).toLocaleString()}

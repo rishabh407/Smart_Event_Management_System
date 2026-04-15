@@ -41,7 +41,7 @@ const DepartmentResults = () => {
 
   }, []);
 
-  /* ================= GROUP EVENTS ================= */
+
 
   const groupedByEvent = resultsData.reduce((acc, item) => {
 
@@ -66,7 +66,7 @@ const DepartmentResults = () => {
 
   const eventsArray = Object.values(groupedByEvent);
 
-  /* ================= FILTER ================= */
+
 
   const filteredByStatus =
     filter === "all"
@@ -80,7 +80,7 @@ const DepartmentResults = () => {
     )
   );
 
-  /* ================= EXPAND ================= */
+
 
   const toggleEvent = (eventId) => {
 
@@ -97,7 +97,7 @@ const DepartmentResults = () => {
 
   };
 
-  /* ================= STATUS COLOR ================= */
+
 
   const getStatusColor = (status) => {
 
@@ -107,7 +107,7 @@ const DepartmentResults = () => {
 
   };
 
-  /* ================= LOADING ================= */
+
 
   if (loading) {
 
@@ -123,7 +123,7 @@ const DepartmentResults = () => {
 
     <div className="p-6 space-y-8">
 
-      {/* HEADER */}
+
 
       <div>
 
@@ -137,7 +137,7 @@ const DepartmentResults = () => {
 
       </div>
 
-      {/* FILTER BUTTONS */}
+
 
       <div className="flex flex-wrap gap-3">
 
@@ -159,7 +159,7 @@ const DepartmentResults = () => {
 
       </div>
 
-      {/* SEARCH */}
+
 
       <div className="bg-white p-4 rounded-xl shadow">
 
@@ -173,7 +173,7 @@ const DepartmentResults = () => {
 
       </div>
 
-      {/* EMPTY */}
+
 
       {filteredEvents.length === 0 && (
 
@@ -183,7 +183,7 @@ const DepartmentResults = () => {
 
       )}
 
-      {/* EVENT CARDS */}
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
@@ -205,7 +205,7 @@ const DepartmentResults = () => {
               className="bg-white rounded-xl shadow border overflow-hidden flex flex-col hover:shadow-lg transition"
             >
 
-              {/* EVENT IMAGE */}
+
 
               <div className="h-40 w-full bg-gray-200">
 
@@ -224,7 +224,7 @@ const DepartmentResults = () => {
 
               </div>
 
-              {/* CONTENT */}
+
 
               <div className="p-4 flex flex-col gap-3 flex-1">
 
@@ -251,7 +251,7 @@ const DepartmentResults = () => {
 
                 </p>
 
-                {/* STATS */}
+
 
                 <div className="flex gap-3 mt-2">
 
@@ -286,7 +286,7 @@ const DepartmentResults = () => {
 
       </div>
 
-      {/* EXPANDED RESULTS */}
+
 
       {filteredEvents.map((eventData) => {
 

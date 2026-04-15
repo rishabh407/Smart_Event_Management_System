@@ -16,8 +16,6 @@ const ManageCompetitions = () => {
   const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ================= FETCH =================
-
   const fetchCompetitions = async () => {
     try {
       setLoading(true);
@@ -35,8 +33,6 @@ const ManageCompetitions = () => {
     fetchCompetitions();
   }, [eventId]);
 
-  // ================= STATUS LOGIC =================
-
   const getStatus = (startTime, endTime) => {
 
     const now = new Date();
@@ -48,8 +44,6 @@ const ManageCompetitions = () => {
 
     return "COMPLETED";
   };
-
-  // ================= ACTION HANDLERS =================
 
   const handlePublish = async (id) => {
     try {
@@ -88,8 +82,6 @@ const ManageCompetitions = () => {
     }
   };
 
-  // ================= LOADING =================
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
@@ -106,13 +98,9 @@ const ManageCompetitions = () => {
   return (
     <div className="space-y-6">
 
-      {/* ================= HEADER ================= */}
-
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
         <div>
-
-          {/* BACK BUTTON */}
           <button
             onClick={() => navigate("/coordinator/events")}
             className="text-blue-600 hover:text-blue-800 mb-2 flex items-center gap-2"
@@ -141,8 +129,6 @@ const ManageCompetitions = () => {
 
       </div>
 
-      {/* ================= EMPTY STATE ================= */}
-
       {competitions.length === 0 && (
 
         <div className="bg-white rounded-lg shadow-md p-10 text-center">
@@ -152,8 +138,6 @@ const ManageCompetitions = () => {
         </div>
 
       )}
-
-      {/* ================= GRID ================= */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
@@ -168,8 +152,6 @@ const ManageCompetitions = () => {
               key={comp._id}
               className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-5 border flex flex-col"
             >
-
-              {/* TITLE + STATUS */}
 
               <div className="flex justify-between items-start gap-2 mb-2">
 
@@ -191,8 +173,6 @@ const ManageCompetitions = () => {
 
               </div>
 
-              {/* META */}
-
               <div className="text-sm text-gray-600 space-y-1 mb-4">
 
                 <p>📍 {comp.venue}</p>
@@ -202,8 +182,6 @@ const ManageCompetitions = () => {
                 </p>
 
               </div>
-
-              {/* ACTIONS */}
 
               <div className="mt-auto space-y-2">
 

@@ -8,7 +8,6 @@ const ScanAttendance = () => {
 
   const navigate = useNavigate();
 
-  // Prevent multiple scans
   const scannedRef = useRef(false);
 
   useEffect(() => {
@@ -26,16 +25,13 @@ const ScanAttendance = () => {
 
     async function onScanSuccess(decodedText) {
 
-      // STOP DOUBLE SCANS
       if (scannedRef.current) return;
 
       scannedRef.current = true;
 
       try {
 
-        // Expected QR Format:
-        // http://localhost:5173/student/scan/{competitionId}
-
+    
         if (!decodedText.includes("/student/scan/")) {
           toast.error("Invalid attendance QR");
           scannedRef.current = false;
@@ -52,7 +48,6 @@ const ScanAttendance = () => {
 
         await scanner.clear();
 
-        // CALL BACKEND
         await markAttendanceByQR({ competitionId });
 
         toast.success("Attendance marked successfully ✅");
@@ -73,7 +68,7 @@ const ScanAttendance = () => {
     }
 
     function onScanError(error) {
-      // ignore scanning noise
+      
     }
 
     return () => {

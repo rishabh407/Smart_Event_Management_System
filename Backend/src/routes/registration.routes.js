@@ -17,12 +17,12 @@ import { allowRoles,studentOnly } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
-// Student registers for individual competition
+
 router.post("/individual", protect, registerIndividual);
 
 router.get("/my",protect,getMyRegistrations);
 router.get("/student/dashboard-stats", protect, studentOnly, getStudentDashboardStats);
-// Team leader registers team
+
 router.post("/team", protect, registerTeam);
 
 router.patch("/:id/cancel", protect, cancelRegistration);

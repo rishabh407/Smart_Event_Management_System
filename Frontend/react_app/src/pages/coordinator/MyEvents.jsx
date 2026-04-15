@@ -7,11 +7,10 @@ const MyEvents = () => {
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("ALL"); // NEW
+  const [filter, setFilter] = useState("ALL"); 
 
   const navigate = useNavigate();
 
-  // ================= FETCH EVENTS =================
 
   const fetchEvents = async () => {
     try {
@@ -36,7 +35,6 @@ const MyEvents = () => {
     fetchEvents();
   }, []);
 
-  // ================= STATUS LOGIC =================
 
   const getEventStatus = (startDate, endDate) => {
 
@@ -50,7 +48,6 @@ const MyEvents = () => {
     return "COMPLETED";
   };
 
-  // ================= FILTER LOGIC =================
 
   const filteredEvents = events.filter((event) => {
 
@@ -61,7 +58,6 @@ const MyEvents = () => {
 
   });
 
-  // ================= LOADING =================
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
@@ -78,7 +74,6 @@ const MyEvents = () => {
   return (
     <div className="space-y-6">
 
-      {/* ================= HEADER ================= */}
 
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
@@ -90,7 +85,6 @@ const MyEvents = () => {
         </p>
       </div>
 
-      {/* ================= FILTER BAR ================= */}
 
       <div className="flex flex-wrap gap-2">
 
@@ -112,7 +106,6 @@ const MyEvents = () => {
 
       </div>
 
-      {/* ================= EMPTY ================= */}
 
       {filteredEvents.length === 0 && (
 
@@ -128,7 +121,6 @@ const MyEvents = () => {
 
       )}
 
-      {/* ================= EVENTS GRID ================= */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
@@ -146,7 +138,6 @@ const MyEvents = () => {
               className="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 flex flex-col"
             >
 
-              {/* BANNER */}
 
               <div className="h-36 md:h-40 bg-gradient-to-br from-green-400 to-emerald-600">
 
@@ -168,11 +159,9 @@ const MyEvents = () => {
 
               </div>
 
-              {/* CONTENT */}
 
               <div className="p-4 md:p-5 flex flex-col flex-1">
 
-                {/* TITLE + STATUS */}
 
                 <div className="flex justify-between items-start gap-2 mb-2">
 
@@ -194,13 +183,11 @@ const MyEvents = () => {
 
                 </div>
 
-                {/* DESCRIPTION */}
 
                 <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                   {event.shortDescription}
                 </p>
 
-                {/* DETAILS */}
 
                 <div className="text-sm text-gray-500 space-y-1 mb-4">
 
@@ -218,7 +205,6 @@ const MyEvents = () => {
 
                 </div>
 
-                {/* BUTTON */}
 
                 <button
                   disabled={status === "COMPLETED"}

@@ -34,7 +34,7 @@ const attendanceSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// 🔥 Prevent duplicate attendance (Database Level Safety)
+
 attendanceSchema.index(
   { competition: 1, student: 1 },
   { unique: true }

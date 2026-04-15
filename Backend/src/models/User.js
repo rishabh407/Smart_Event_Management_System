@@ -18,15 +18,23 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      sparse: true, // allows multiple docs with null email
+      sparse: true, 
       lowercase: true,
       trim: true
     },
-
+// email: {
+//   type: String,
+//   unique: true,
+//   sparse: true,
+//   lowercase: true,
+//   trim: true,
+//   default: undefined // ✅ KEY FIX
+// }
+// ,
     password: {
       type: String,
       required: true,
-      select: false // hide password by default
+      select: false 
     },
 
     role: {
@@ -34,10 +42,6 @@ const userSchema = new mongoose.Schema(
       enum: ["STUDENT", "TEACHER", "HOD", "COORDINATOR"],
       required: true
     },
-
-    // =====================
-    // STUDENT FIELDS
-    // =====================
 
     rollNumber: {
       type: String,
@@ -60,18 +64,10 @@ const userSchema = new mongoose.Schema(
       trim: true
     },
 
-    // =====================
-    // LOGIN CONTROL
-    // =====================
-
     isFirstLogin: {
       type: Boolean,
       default: false
     },
-
-    // =====================
-    // COMMON FIELDS
-    // =====================
 
     departmentId: {
       type: mongoose.Schema.Types.ObjectId,

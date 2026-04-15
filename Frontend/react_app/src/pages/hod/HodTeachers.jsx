@@ -24,7 +24,7 @@ const HodTeachers = () => {
     password: ""
   });
 
-  /* ================= FETCH TEACHERS ================= */
+ 
 
   const fetchTeachers = async () => {
 
@@ -52,7 +52,7 @@ const HodTeachers = () => {
     fetchTeachers();
   }, []);
 
-  /* ================= SEARCH FILTER ================= */
+ 
 
   const filteredTeachers = useMemo(() => {
 
@@ -62,7 +62,7 @@ const HodTeachers = () => {
 
   }, [teachers, search]);
 
-  /* ================= STATUS COLOR ================= */
+ 
 
   const getStatusColor = (active) => {
 
@@ -72,7 +72,7 @@ const HodTeachers = () => {
 
   };
 
-  /* ================= FORMAT DATE ================= */
+ 
 
   const formatDate = (date) => {
 
@@ -82,7 +82,7 @@ const HodTeachers = () => {
 
   };
 
-  /* ================= TOGGLE STATUS ================= */
+ 
 
   const handleToggleStatus = async (teacherId) => {
 
@@ -114,7 +114,7 @@ const HodTeachers = () => {
 
   };
 
-  /* ================= OPEN ADD MODAL ================= */
+ 
 
   const handleAddTeacher = () => {
 
@@ -131,7 +131,7 @@ const HodTeachers = () => {
 
   };
 
-  /* ================= OPEN EDIT MODAL ================= */
+ 
 
   const handleEditTeacher = (teacher) => {
 
@@ -148,7 +148,7 @@ const HodTeachers = () => {
 
   };
 
-  /* ================= HANDLE INPUT ================= */
+ 
 
   const handleChange = (e) => {
 
@@ -159,7 +159,7 @@ const HodTeachers = () => {
 
   };
 
-  /* ================= SUBMIT FORM ================= */
+ 
 
   const handleSubmit = async (e) => {
 
@@ -202,7 +202,7 @@ const HodTeachers = () => {
 
   };
 
-  /* ================= LOADING ================= */
+ 
 
   if (loading) {
 
@@ -218,7 +218,7 @@ const HodTeachers = () => {
 
     <div className="p-4 md:p-6">
 
-      {/* HEADER */}
+
 
       <div className="flex justify-between items-center mb-6">
 
@@ -240,7 +240,7 @@ const HodTeachers = () => {
 
       </div>
 
-      {/* SEARCH */}
+
 
       <div className="mb-5">
 
@@ -254,7 +254,7 @@ const HodTeachers = () => {
 
       </div>
 
-      {/* TABLE */}
+
 
       <div className="bg-white rounded shadow overflow-x-auto">
 
@@ -343,7 +343,7 @@ const HodTeachers = () => {
 
       </div>
 
-      {/* ================= MODAL ================= */}
+
 
       {modalOpen && (
 

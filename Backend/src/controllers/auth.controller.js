@@ -3,160 +3,83 @@ import { v4 as uuidv4 } from "uuid";
 import User from "../models/User.js";
 import { generateAccessToken, generateRefreshToken, generateToken } from "../utils/jwt.js";
 
-// ================================
-// REGISTER STUDENT (PUBLIC)
-// ================================
-
 export const registerStudent = async (req, res) => {
 
- try {
+  try {
 
-  const { fullName, rollNumber, course, year, section } = req.body;
+    const { fullName, rollNumber, course, year, section } = req.body;
 
-  // 1. Validation
-  if (!fullName || !rollNumber || !course || !year || !section) {
-   return res.status(400).json({
-    message: "All student fields required"
-   });
+
+    if (!fullName || !rollNumber || !course || !year || !section) {
+      return res.status(400).json({
+        message: "All student fields required"
+      });
+    }
+    if (!["HOD", "COORDINATOR"].includes(req.user.role)) {
+      return res.status(403).json({
+        message: "Only staff can create students"
+      });
+    }
+
+
+    const existingStudent = await User.findOne({ rollNumber });
+
+    if (existingStudent) {
+      return res.status(400).json({
+        message: "Roll number already exists"
+      });
+    }
+
+
+    const hashedPassword = await bcrypt.hash(rollNumber, 10);
+
+
+    const student = await User.create({
+
+      userId: uuidv4(),
+
+      fullName,
+      rollNumber,
+      course,
+      year,
+      section,
+
+      password: hashedPassword,
+
+      role: "STUDENT",
+
+
+      departmentId: req.user.departmentId,
+
+      isFirstLogin: true
+
+    });
+
+
+    res.status(201).json({
+
+      message: "Student registered successfully",
+
+      student: {
+        id: student._id,
+        fullName: student.fullName,
+        rollNumber: student.rollNumber,
+        role: student.role,
+        isFirstLogin: student.isFirstLogin
+      }
+
+    });
+
+  } catch (error) {
+
+    console.error("STUDENT REGISTER ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
   }
-     if (!["HOD", "COORDINATOR"].includes(req.user.role)) {
-  return res.status(403).json({
-    message: "Only staff can create students"
-  });
-}
-
-  // 2. Check existing roll number
-  const existingStudent = await User.findOne({ rollNumber });
-
-  if (existingStudent) {
-   return res.status(400).json({
-    message: "Roll number already exists"
-   });
-  }
-
-  // 3. Default password = rollNumber (hashed)
-  const hashedPassword = await bcrypt.hash(rollNumber, 10);
-
-  // 4. Create student
-  const student = await User.create({
-
-   userId: uuidv4(),
-
-   fullName,
-   rollNumber,
-   course,
-   year,
-   section,
-
-   password: hashedPassword,
-
-   role: "STUDENT",
-  
-   // Auto assign department
-  departmentId: req.user.departmentId,
-
-   isFirstLogin: true   // 🔥 FORCE PASSWORD CHANGE
-
-  });
-
-  // 5. Send response (NO TOKEN HERE)
-  res.status(201).json({
-
-   message: "Student registered successfully",
-
-   student: {
-    id: student._id,
-    fullName: student.fullName,
-    rollNumber: student.rollNumber,
-    role: student.role,
-    isFirstLogin: student.isFirstLogin
-   }
-
-  });
-
- } catch (error) {
-
-  console.error("STUDENT REGISTER ERROR:", error);
-
-  res.status(500).json({
-   message: "Server error"
-  });
-
- }
 };
-
-
-// export const registerStudent = async (req, res) => {
-//   try {
-//     const { fullName, rollNumber, course, year, section } = req.body;
-
-//     // ✅ 1. Role check
-//     if (!["HOD", "COORDINATOR"].includes(req.user.role)) {
-//       return res.status(403).json({
-//         message: "Only staff can create students"
-//       });
-//     }
-
-//     // ✅ 2. Validation
-//     if (!fullName || !rollNumber || !course || !year || !section) {
-//       return res.status(400).json({
-//         message: "All student fields required"
-//       });
-//     }
-
-//     // ✅ 3. Duplicate check (STRICT)
-//     const existingStudent = await User.findOne({
-//       rollNumber,
-//       role: "STUDENT"
-//     });
-
-//     if (existingStudent) {
-//       return res.status(400).json({
-//         message: "Student already exists with this roll number"
-//       });
-//     }
-
-//     // ✅ 4. Default password = rollNumber
-//     const hashedPassword = await bcrypt.hash(rollNumber, 10);
-
-//     // ✅ 5. Create student (NO email, NO userId input)
-//     const student = await User.create({
-//       userId: uuidv4(), // internal use only
-//       fullName,
-//       rollNumber,
-//       course,
-//       year,
-//       section,
-//       password: hashedPassword,
-//       role: "STUDENT",
-//       departmentId: req.user.departmentId,
-//       isFirstLogin: true
-//     });
-
-//     // ✅ 6. Response
-//     res.status(201).json({
-//       message: "Student registered successfully",
-//       student: {
-//         id: student._id,
-//         fullName: student.fullName,
-//         rollNumber: student.rollNumber,
-//         role: student.role,
-//         isFirstLogin: student.isFirstLogin
-//       }
-//     });
-
-//   } catch (error) {
-//     console.error("STUDENT REGISTER ERROR:", error);
-
-//     res.status(500).json({
-//       message: "Server error"
-//     });
-//   }
-// };
-
-// ================================
-// REGISTER STAFF (HOD ONLY)
-// ================================
 
 export const registerStaff = async (req, res) => {
   try {
@@ -170,25 +93,25 @@ export const registerStaff = async (req, res) => {
       return res.status(400).json({ message: "All staff fields required" });
     }
 
-// Validation
-if (!["TEACHER", "COORDINATOR"].includes(role)) {
-  return res.status(400).json({ message: "Invalid staff role" });
-}
 
-// 🔥 ADD DUPLICATE CHECK HERE
-const existingTeacher = await User.findOne({
-  email,
-  role: { $in: ["TEACHER", "COORDINATOR"] }
-});
+    if (!["TEACHER", "COORDINATOR"].includes(role)) {
+      return res.status(400).json({ message: "Invalid staff role" });
+    }
 
-if (existingTeacher) {
-  return res.status(400).json({
-    message: "Teacher already exists with this email"
-  });
-}
 
-// THEN HASH PASSWORD
-const hashedPassword = await bcrypt.hash(password, 10);
+    const existingTeacher = await User.findOne({
+      email,
+      role: { $in: ["TEACHER", "COORDINATOR"] }
+    });
+
+    if (existingTeacher) {
+      return res.status(400).json({
+        message: "Teacher already exists with this email"
+      });
+    }
+
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const staff = await User.create({
       userId: uuidv4(),
       fullName,
@@ -214,110 +137,76 @@ const hashedPassword = await bcrypt.hash(password, 10);
   }
 };
 
-
-
 export const login = async (req, res) => {
-
- try {
-
-  const { identifier, password } = req.body;
-
-// 1. Find user
-
-//  $or operator =>
-
-  // Find user where email = identifier OR rollNumber = identifier
-  const user = await User.findOne({
-    $or: [
-      { email: identifier },
-      { rollNumber: identifier }
-    ]
-  }).select("+password");
-
-  // console.log(user);
-  //this line means provide only password of particular roll no or email for next verifications.
-
-  if (!user) {
-  return res.status(401).json({ message: "Invalid credentials" });
-}
-
-// ✅ ADD THIS BLOCK
-if (!user.isActive) {
-  return res.status(403).json({
-    message: "Your account is deactivated. Contact admin."
-  });
-}
-
-  // 2. Compare password
-  const isMatch = await bcrypt.compare(password, user.password);
-
-  if (!isMatch) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-
-  // 3. Generate tokens
-  const accessToken = generateAccessToken({
-    id: user._id,
-    role: user.role
-  });
-
-  const refreshToken = generateRefreshToken({
-    id: user._id
-  });
-
-  // 4. Set cookies (LOCALHOST CONFIG)
-
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: false,       // true in production
-    sameSite: "lax",     // IMPORTANT
-    maxAge: 15 * 60 * 1000
-  });
-
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000
-  });
-
-  // 5. Send response
-  res.status(200).json({
-    message: "Login successful",
-    user: {
-      id: user._id,
-      fullName: user.fullName,
-      role: user.role,
-      isFirstLogin: user.isFirstLogin
+  try {
+    const { identifier, password } = req.body;
+    const user = await User.findOne({
+      $or: [
+        { email: identifier },
+        { rollNumber: identifier }
+      ]
+    }).select("+password");
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
-  });
-
-// 🧠 FINAL MENTAL MODEL (REMEMBER THIS)
-
-// Option	    Protects from	Who enforces it
-
-// httpOnly	 JavaScript hackers (XSS)	       Browser
-// secure	   Wi-Fi / network hackers	       Browser
-// sameSite   Fake requests (CSRF)	           Browser
-// maxAge	   Long-term damage	               Browser
 
 
- } catch (error) {
+    if (!user.isActive) {
+      return res.status(403).json({
+        message: "Your account is deactivated. Contact admin."
+      });
+    }
 
-  console.error("LOGIN ERROR:", error);
 
-  res.status(500).json({
-    message: "Server error"
-  });
+    const isMatch = await bcrypt.compare(password, user.password);
 
- }
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+
+    const accessToken = generateAccessToken({
+      id: user._id,
+      role: user.role
+    });
+
+    const refreshToken = generateRefreshToken({
+      id: user._id
+    });
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        role: user.role,
+        isFirstLogin: user.isFirstLogin
+      }
+    });
+
+  } catch (error) {
+
+    console.error("LOGIN ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
+  }
 };
-
-
-
-// ================================
-// CHANGE PASSWORD (PROTECTED)
-// ================================
 
 export const changePassword = async (req, res) => {
   try {
@@ -381,7 +270,7 @@ export const refreshToken = (req, res) => {
 };
 
 export const logout = (req, res) => {
-  // console.log("User logout Successfully");
+
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
   res.json({ message: "Logged out successfully" });
@@ -390,7 +279,7 @@ export const logout = (req, res) => {
 export const getMe = async (req, res) => {
   try {
 
-    // protect middleware already attached user
+
     const userdata = req.user;
 
     res.json({
@@ -399,7 +288,7 @@ export const getMe = async (req, res) => {
         fullName: userdata.fullName,
         role: userdata.role,
         email: userdata.email,
-        isFirstLogin: userdata.isFirstLogin // ✅ ADD THIS LINE
+        isFirstLogin: userdata.isFirstLogin
       }
     });
 

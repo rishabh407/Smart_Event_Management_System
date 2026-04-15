@@ -8,9 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ========================
-  // LOAD USER SESSION
-  // ========================
 
   const loadUser = async () => {
     try {
@@ -29,21 +26,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ========================
-  // LOGIN HANDLER
-  // ========================
 
   const login = async (credentials) => {
 
     await loginUser(credentials);
 
-    // Reload session from cookie
     await loadUser();
   };
-
-  // ========================
-  // LOGOUT HANDLER
-  // ========================
 
   const logout = async () => {
 
@@ -51,10 +40,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
 
   };
-
-  // ========================
-  // AUTO LOAD ON APP START
-  // ========================
 
   useEffect(() => {
     loadUser();
@@ -76,9 +61,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ========================
-// CUSTOM HOOK
-// ========================
 
 export const useAuth = () => {
   return useContext(AuthContext);

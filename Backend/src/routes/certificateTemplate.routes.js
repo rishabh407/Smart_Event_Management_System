@@ -17,7 +17,7 @@ router.post(
   uploadTemplate
 );
 
-// One‑off preview endpoint – does NOT persist templates in DB
+
 router.post(
   "/preview",
   protect,

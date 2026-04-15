@@ -12,14 +12,12 @@ export const scanAttendance = async (req, res) => {
       });
     }
 
-    // Only teacher allowed
     if (req.user.role !== "TEACHER") {
       return res.status(403).json({
         message: "Only teachers can mark attendance",
       });
     }
 
-    // Parse QR payload
     let payload;
 
     try {
@@ -38,7 +36,6 @@ export const scanAttendance = async (req, res) => {
       });
     }
 
-    // Find registration
     let registration;
 
     if (type === "individual") {
@@ -63,14 +60,12 @@ export const scanAttendance = async (req, res) => {
       });
     }
 
-    // Prevent double attendance
     if (registration.status === "attended") {
       return res.status(400).json({
         message: "Attendance already marked",
       });
     }
 
-    // Verify teacher is INCHARGE of this competition
     const competition = await Competition.findById(competitionId);
 
     const isIncharge = competition.assignedTeachers.some(
@@ -85,7 +80,6 @@ export const scanAttendance = async (req, res) => {
       });
     }
 
-    // Mark attendance
     registration.status = "attended";
     await registration.save();
 
@@ -102,14 +96,12 @@ export const scanAttendance = async (req, res) => {
 export const markAttendance = async (req, res) => {
   try {
 
-    // ✅ SAFETY: check login first
     if (!req.user) {
       return res.status(401).json({
         message: "Unauthorized"
       });
     }
 
-    // ✅ ONLY STUDENT CAN MARK QR ATTENDANCE
     if (req.user.role !== "STUDENT") {
       return res.status(403).json({
         message: "Only students can mark attendance"
@@ -118,7 +110,6 @@ export const markAttendance = async (req, res) => {
 
     const { competitionId, method } = req.body;
 
-    // ✅ REQUIRED FIELD CHECK
     if (!competitionId) {
       return res.status(400).json({
         message: "competitionId required"
@@ -127,7 +118,6 @@ export const markAttendance = async (req, res) => {
 
     const studentId = req.user._id;
 
-    // ✅ Validate competition
     const competition = await Competition.findById(competitionId);
 
     if (!competition) {
@@ -136,7 +126,6 @@ export const markAttendance = async (req, res) => {
       });
     }
 
-    // ✅ Duplicate prevention
     const existing = await Attendance.findOne({
       competition: competitionId,
       student: studentId
@@ -148,10 +137,8 @@ export const markAttendance = async (req, res) => {
       });
     }
 
-    // ✅ Get assigned teacher
     const teacher = competition.assignedTeachers?.[0]?.teacher;
 
-    // ✅ Save attendance
     const attendance = await Attendance.create({
       competition: competitionId,
       student: studentId,
@@ -178,7 +165,6 @@ export const markAttendance = async (req, res) => {
 export const getCompetitionAttendance = async (req, res) => {
   try {
 
-    // Only teacher can view attendance
     if (req.user.role !== "TEACHER") {
       return res.status(403).json({
         message: "Only teachers can view attendance"

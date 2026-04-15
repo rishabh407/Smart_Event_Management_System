@@ -14,7 +14,7 @@ export const declareResults = async (req, res) => {
       });
     }
 
-    // Only TEACHER allowed
+    
     if (req.user.role !== "TEACHER") {
       return res.status(403).json({
         message: "Only teachers can declare results",
@@ -29,7 +29,7 @@ export const declareResults = async (req, res) => {
       });
     }
 
-    // Check INCHARGE teacher
+    
     const isIncharge = competition.assignedTeachers.some(
       (t) =>
         t.teacher.toString() === req.user._id.toString() &&
@@ -53,7 +53,7 @@ export const declareResults = async (req, res) => {
         });
       }
 
-      // Attendance validation
+      
       let attendance;
 
       if (competition.type === "individual") {
@@ -91,9 +91,9 @@ export const declareResults = async (req, res) => {
       const result = await Result.create(resultData);
       savedResults.push(result);
     }
-    // ========================
-    // 🔐 LOCK COMPETITION
-    // ========================
+    
+    
+    
 
     competition.resultsDeclared = true;
     await competition.save();
@@ -106,7 +106,7 @@ export const declareResults = async (req, res) => {
   } catch (error) {
     console.error("Result declaration error:", error);
 
-    // Duplicate position or duplicate winner error
+    
     if (error.code === 11000) {
       return res.status(400).json({
         message: "Result already declared for this position or participant"
@@ -139,9 +139,9 @@ export const getCompetitionResults = async (req, res) => {
       });
     }
 
-    // ================= ROLE-BASED ACCESS CONTROL =================
     
-    // STUDENT: Can only see results if they registered/attended
+    
+    
     if (user.role === "STUDENT") {
       const registration = await Registration.findOne({
         competition: competitionId,
@@ -159,7 +159,7 @@ export const getCompetitionResults = async (req, res) => {
       }
     }
 
-    // TEACHER: Can only see results for assigned competitions
+    
     if (user.role === "TEACHER") {
       const isAssigned = competition.assignedTeachers.some(
         t => t.teacher.toString() === user._id.toString()
@@ -172,7 +172,7 @@ export const getCompetitionResults = async (req, res) => {
       }
     }
 
-    // COORDINATOR: Can only see results for competitions in their events
+    
     if (user.role === "COORDINATOR") {
       if (competition.eventId.coordinator.toString() !== user._id.toString()) {
         return res.status(403).json({
@@ -181,7 +181,7 @@ export const getCompetitionResults = async (req, res) => {
       }
     }
 
-    // HOD: Can only see results for competitions in their department's events
+    
     if (user.role === "HOD") {
       if (competition.eventId.departmentId.toString() !== user.departmentId.toString()) {
         return res.status(403).json({
@@ -215,14 +215,14 @@ export const getCompetitionResults = async (req, res) => {
   }
 };
 
-// GET /api/results/my (Student: Get all competitions they participated in with results)
+
 export const getMyResults = async (req, res) => {
   try {
     if (req.user.role !== "STUDENT") {
       return res.status(403).json({ message: "Students only" });
     }
 
-    // Find all registrations where student attended
+    
     const registrations = await Registration.find({
       $or: [
         { student: req.user._id },
@@ -231,12 +231,12 @@ export const getMyResults = async (req, res) => {
       status: "attended"
     }).populate("competition", "name type venue startTime endTime resultsDeclared eventId");
 
-    // Filter competitions that have results declared
+    
     const competitionsWithResults = registrations
       .map(r => r.competition)
       .filter(c => c && c.resultsDeclared && !c.isDeleted);
 
-    // Get results for each competition
+    
     const resultsData = await Promise.all(
       competitionsWithResults.map(async (comp) => {
         const results = await Result.find({ competition: comp._id })
@@ -244,12 +244,12 @@ export const getMyResults = async (req, res) => {
           .populate("team", "teamName members")
           .sort({ position: 1 });
 
-        // Check if student won
+        
         const myResult = results.find(r => {
           if (comp.type === "individual") {
             return r.student?._id.toString() === req.user._id.toString();
           } else {
-            // For team, check if user is in the team
+            
             return r.team?.members?.some(
               m => m.toString() === req.user._id.toString()
             );
@@ -283,14 +283,14 @@ export const getMyResults = async (req, res) => {
   }
 };
 
-// GET /api/results/coordinator/my (Coordinator: Get results for all competitions in their events)
+
 export const getCoordinatorResults = async (req, res) => {
   try {
     if (req.user.role !== "COORDINATOR") {
       return res.status(403).json({ message: "Coordinators only" });
     }
 
-    // Get coordinator's events
+    
     const myEvents = await Event.find({
       coordinator: req.user._id,
       isDeleted: false
@@ -298,14 +298,14 @@ export const getCoordinatorResults = async (req, res) => {
 
     const eventIds = myEvents.map(e => e._id);
 
-    // Get competitions under these events that have results
+    
     const competitions = await Competition.find({
       eventId: { $in: eventIds },
       isDeleted: false,
       resultsDeclared: true
     }).populate("eventId", "title");
 
-    // Get results for each competition
+    
     const resultsData = await Promise.all(
       competitions.map(async (comp) => {
         const results = await Result.find({ competition: comp._id })
@@ -346,7 +346,7 @@ export const getHodResults = async (req, res) => {
       return res.status(403).json({ message: "HOD only" });
     }
 
-    // 1️⃣ Get HOD's events
+    
     const myEvents = await Event.find({
       createdBy: req.user._id,
       isDeleted: false
@@ -356,7 +356,7 @@ export const getHodResults = async (req, res) => {
 
     const eventIds = myEvents.map(e => e._id);
 
-    // 2️⃣ Get competitions under these events
+    
     const competitions = await Competition.find({
       eventId: { $in: eventIds },
       isDeleted: false,
@@ -371,7 +371,7 @@ export const getHodResults = async (req, res) => {
       }
     });
 
-    // 3️⃣ Get results for each competition
+    
     const resultsData = await Promise.all(
       competitions.map(async (comp) => {
         const results = await Result.find({ competition: comp._id })
@@ -387,7 +387,7 @@ export const getHodResults = async (req, res) => {
             venue: comp.venue,
             startTime: comp.startTime,
             endTime: comp.endTime,
-            event: comp.eventId // 🔥 FULL EVENT OBJECT NOW
+            event: comp.eventId 
           },
           results
         };

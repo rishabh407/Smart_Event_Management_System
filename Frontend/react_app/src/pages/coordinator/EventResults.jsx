@@ -9,7 +9,7 @@ const EventResults = () => {
   const [resultsData, setResultsData] = useState([]);
   const [search, setSearch] = useState("");
 
-  /* ================= FETCH RESULTS ================= */
+ 
   useEffect(() => {
     const fetchResults = async () => {
       try {
@@ -27,7 +27,7 @@ const EventResults = () => {
     fetchResults();
   }, []);
 
-  /* ================= FILTER ================= */
+ 
   const filteredResults = resultsData.filter(
     (item) =>
       item.competition.name
@@ -38,7 +38,7 @@ const EventResults = () => {
         .includes(search.toLowerCase())
   );
 
-  /* ================= LOADING ================= */
+ 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
@@ -54,7 +54,7 @@ const EventResults = () => {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      {/* ================= HEADER ================= */}
+
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
           Event Results
@@ -64,7 +64,6 @@ const EventResults = () => {
         </p>
       </div>
 
-      {/* ================= SEARCH ================= */}
       <div className="bg-white p-4 rounded-lg shadow">
         <input
           type="text"
@@ -76,7 +75,6 @@ const EventResults = () => {
         />
       </div>
 
-      {/* ================= EMPTY STATE ================= */}
       {filteredResults.length === 0 && (
         <div className="bg-white rounded-lg shadow-md p-8 sm:p-10 text-center">
           <div className="text-5xl mb-3">🏆</div>
@@ -91,14 +89,12 @@ const EventResults = () => {
         </div>
       )}
 
-      {/* ================= RESULTS LIST ================= */}
       <div className="space-y-6">
         {filteredResults.map((item, idx) => (
           <div
             key={idx}
             className="bg-white rounded-lg shadow-md p-4 sm:p-6 border"
           >
-            {/* HEADER */}
             <div className="mb-4 pb-4 border-b">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
                 <div>
@@ -137,7 +133,6 @@ const EventResults = () => {
               </div>
             </div>
 
-            {/* ================= RESULTS TABLE ================= */}
             {item.results.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[520px] text-left text-sm">

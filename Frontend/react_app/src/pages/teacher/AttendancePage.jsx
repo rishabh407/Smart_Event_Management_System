@@ -17,7 +17,6 @@ const AttendancePage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
 
-      {/* HEADER */}
 
       <div className="w-full max-w-md flex justify-between items-center mb-4">
 
@@ -34,7 +33,6 @@ const AttendancePage = () => {
 
       </div>
 
-      {/* CARD */}
 
       <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-5 flex flex-col items-center">
 
@@ -42,7 +40,6 @@ const AttendancePage = () => {
           Ask students to scan this QR code to mark attendance
         </p>
 
-        {/* QR CODE */}
 
         <div className="bg-white p-3 rounded border">
 
@@ -58,13 +55,11 @@ const AttendancePage = () => {
 
         </div>
 
-        {/* LINK */}
 
         <p className="text-xs text-gray-500 text-center mt-3 break-all">
           {qrValue}
         </p>
 
-        {/* ACTION BUTTONS */}
 
         <div className="flex gap-3 w-full mt-4">
 

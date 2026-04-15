@@ -17,9 +17,6 @@ const ExportReports = () => {
   fetchCompetitions();
  }, []);
 
- /* ===============================
-    FETCH ASSIGNED COMPETITIONS
- =============================== */
 
  const fetchCompetitions = async () => {
 
@@ -44,9 +41,6 @@ const ExportReports = () => {
 
  };
 
- /* ===============================
-    DOWNLOAD FILE FUNCTION
- =============================== */
 
  const downloadFile = (data, filename) => {
 
@@ -60,16 +54,12 @@ const ExportReports = () => {
   document.body.appendChild(link);
   link.click();
 
-  /* cleanup */
 
   link.remove();
   window.URL.revokeObjectURL(url);
 
  };
 
- /* ===============================
-    EXPORT ATTENDANCE
- =============================== */
 
  const handleExportAttendance = async () => {
 
@@ -93,9 +83,6 @@ const ExportReports = () => {
 
  };
 
- /* ===============================
-    EXPORT RESULTS
- =============================== */
 
  const handleExportResults = async () => {
 
@@ -119,9 +106,6 @@ const ExportReports = () => {
 
  };
 
- /* ===============================
-    EXPORT PARTICIPANTS
- =============================== */
 
  const handleExportParticipants = async () => {
 
@@ -157,9 +141,6 @@ const ExportReports = () => {
 
    <div className="bg-white shadow rounded p-6 space-y-5">
 
-    {/* ===============================
-        SELECT COMPETITION
-    =============================== */}
 
     <div>
 
@@ -193,9 +174,6 @@ const ExportReports = () => {
 
     </div>
 
-    {/* ===============================
-        EXPORT BUTTONS
-    =============================== */}
 
     <div className="flex flex-wrap gap-3">
 

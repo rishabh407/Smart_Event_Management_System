@@ -4,9 +4,6 @@ import Registration from "../models/Registration.js";
 import User from "../models/User.js";
 import mongoose from "mongoose";
 
-// ============================
-// CREATE EVENT (HOD ONLY)
-// ============================
 export const createEvent = async (req, res) => {
 
   try {
@@ -20,8 +17,6 @@ export const createEvent = async (req, res) => {
       venueOverview,
       coordinatorId
     } = req.body;
-
-    // ---------- BASIC VALIDATION ----------
 
     if (
       !title ||
@@ -37,15 +32,13 @@ export const createEvent = async (req, res) => {
       });
     }
 
-    // ---------- ROLE CHECK ----------
-
+    
     if (req.user.role !== "HOD") {
       return res.status(403).json({
         message: "Only HOD can create events"
       });
     }
 
-    // ---------- DATE VALIDATION ----------
 
     if (new Date(startDate) >= new Date(endDate)) {
       return res.status(400).json({
@@ -53,13 +46,10 @@ export const createEvent = async (req, res) => {
       });
     }
 
-    // ---------- IMAGE ----------
-
     const bannerImage = req.file
       ? `/uploads/events/${req.file.filename}`
       : "";
 
-    // ---------- COORDINATOR VALIDATION ----------
 
     const coordinator = await User.findById(coordinatorId);
 
@@ -68,8 +58,6 @@ export const createEvent = async (req, res) => {
         message: "Invalid coordinator"
       });
     }
-
-    // ---------- DEPARTMENT SECURITY ----------
 
     if (
       coordinator.departmentId.toString() !==
@@ -80,7 +68,6 @@ export const createEvent = async (req, res) => {
       });
     }
 
-    // ---------- CREATE EVENT ----------
 
     const event = await Event.create({
 
@@ -127,7 +114,7 @@ export const getAllEvents = async (req, res) => {
       isDeleted: false
     })
 
-      .populate("coordinator", "fullName")   // IMPORTANT LINE
+      .populate("coordinator", "fullName")   
 
       .select("-__v")
 
@@ -145,10 +132,6 @@ export const getAllEvents = async (req, res) => {
   }
 };
 
-
-// ============================
-// STUDENT EVENTS (DEPARTMENT)
-// ============================
 
 export const getStudentEvents = async (req, res) => {
 
@@ -191,8 +174,6 @@ export const getMyEvents = async (req, res) => {
       createdBy: req.user._id,
       isDeleted: false
     })
-
-      // THIS WAS MISSING
       .populate("coordinator", "fullName")
 
       .sort({ createdAt: -1 });
@@ -228,8 +209,6 @@ export const updateEvent = async (req, res) => {
       coordinatorId
     } = req.body;
 
-    // ---------------- FIND EVENT ----------------
-
     const event = await Event.findById(id);
 
     if (!event) {
@@ -238,30 +217,27 @@ export const updateEvent = async (req, res) => {
       });
     }
 
-    // ---------------- SECURITY ----------------
-
-    // Only creator HOD
     if (event.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         message: "Not authorized to edit this event"
       });
     }
 
-    // Cannot edit deleted event
+    
     if (event.isDeleted) {
       return res.status(400).json({
         message: "Cannot edit deleted event"
       });
     }
 
-    // Cannot edit after event started
+    
     if (new Date() >= event.startDate) {
       return res.status(400).json({
         message: "Cannot edit event after it has started"
       });
     }
 
-    // ---------------- DATE VALIDATION ----------------
+    
 
     if (startDate && endDate) {
       if (new Date(startDate) >= new Date(endDate)) {
@@ -271,7 +247,7 @@ export const updateEvent = async (req, res) => {
       }
     }
 
-    // ---------------- COORDINATOR CHECK ----------------
+    
 
     if (coordinatorId) {
 
@@ -295,13 +271,13 @@ export const updateEvent = async (req, res) => {
       event.coordinator = coordinatorId;
     }
 
-    // ---------------- IMAGE UPDATE ----------------
+    
 
     if (req.file) {
       event.bannerImage = `/uploads/events/${req.file.filename}`;
     }
 
-    // ---------------- FIELD UPDATE ----------------
+    
 
     if (title) event.title = title;
     if (shortDescription) event.shortDescription = shortDescription;
@@ -368,7 +344,7 @@ export const deleteEvent = async (req, res) => {
       });
     }
 
-    // ---------------- BLOCK DELETE IF ONGOING OR COMPLETED ----------------
+    
 
     const now = new Date();
 
@@ -378,7 +354,7 @@ export const deleteEvent = async (req, res) => {
       });
     }
 
-    // ---------------- SOFT DELETE ----------------
+    
 
     event.isDeleted = true;
     await event.save();
@@ -447,8 +423,8 @@ export const getEventById = async (req, res) => {
       });
     }
 
-    // Only HOD who created it OR same department HOD
-// Allow only HOD & COORDINATOR of same department
+    
+
 if (
   !["HOD", "COORDINATOR"].includes(req.user.role) ||
   event.departmentId.toString() !== req.user.departmentId.toString()
@@ -485,7 +461,7 @@ export const getHodDashboardStats = async (req, res) => {
       isDeleted: false
     };
 
-    /* ================= DATE FILTER ================= */
+   
 
     if (from && to) {
 
@@ -503,7 +479,7 @@ export const getHodDashboardStats = async (req, res) => {
 
     const events = await Event.find(filter);
 
-    /* ================= BASIC STATS ================= */
+   
 
     const total = events.length;
 
@@ -519,7 +495,7 @@ export const getHodDashboardStats = async (req, res) => {
       e => e.liveStatus === "completed"
     ).length;
 
-    /* ================= MONTHLY TREND ================= */
+   
 
     const monthlyStats = {};
 
@@ -541,7 +517,7 @@ export const getHodDashboardStats = async (req, res) => {
     }));
 
 
-    /* ================= RESPONSE ================= */
+   
 
     res.status(200).json({
 
@@ -586,7 +562,7 @@ export const getEventPerformanceRanking = async (req, res) => {
 
     const ranking = await Registration.aggregate([
 
-      /* STEP 1: Registration → Competition */
+     
 
       {
         $lookup: {
@@ -599,7 +575,7 @@ export const getEventPerformanceRanking = async (req, res) => {
 
       { $unwind: "$competitionData" },
 
-      /* STEP 2: Competition → Event */
+     
 
       {
         $lookup: {
@@ -612,7 +588,7 @@ export const getEventPerformanceRanking = async (req, res) => {
 
       { $unwind: "$eventData" },
 
-      /* STEP 3: Filter by Department */
+     
 
       {
         $match: {
@@ -620,7 +596,7 @@ export const getEventPerformanceRanking = async (req, res) => {
         }
       },
 
-      /* STEP 4: Group by Event */
+     
 
       {
         $group: {
@@ -687,9 +663,9 @@ export const getCoordinatorEvents = async (req, res) => {
 
 export const getDepartmentCoordinators = async (req, res) => {
   try {
-    // if (req.user.role !== "HOD") {
-    //   return res.status(403).json({ message: "Access denied" });
-    // }
+    
+    
+    
     const coordinators = await User.find({
       role: "COORDINATOR",
       departmentId: req.user.departmentId

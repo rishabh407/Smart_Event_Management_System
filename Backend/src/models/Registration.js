@@ -8,47 +8,47 @@ const registrationSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Individual registration
+    
     student: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
 
-    // Team registration
+    
     team: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
       default: null,
     },
 
-    // Who submitted registration
+    
     registeredBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    // QR code image (used by student panel display)
+    
     qrCode: {
       type: String,
       default: null,
     },
 
-    // Registration + Attendance Status
+    
     status: {
       type: String,
       enum: ["registered", "attended", "cancelled"],
       default: "registered",
     },
 
-    // Attendance Flag (IMPORTANT)
+    
     attended: {
       type: Boolean,
       default: false,
     },
 
-    // Attendance Time (IMPORTANT)
+    
     attendedAt: {
       type: Date,
       default: null,
@@ -65,9 +65,9 @@ const registrationSchema = new mongoose.Schema(
 
 
 
-// ================= PREVENT DUPLICATES =================
 
-// Individual duplicate prevention
+
+
 registrationSchema.index(
   { competition: 1, student: 1 },
   {
@@ -78,7 +78,7 @@ registrationSchema.index(
   }
 );
 
-// Team duplicate prevention
+
 registrationSchema.index(
   { competition: 1, team: 1 },
   {

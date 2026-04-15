@@ -1,9 +1,7 @@
 import Registration from "../models/Registration.js";
 import Result from "../models/Result.js";
 
-/* =========================================
-   EXPORT ATTENDANCE
-========================================= */
+
 
 export const exportAttendance = async (req, res) => {
  try {
@@ -52,9 +50,7 @@ export const exportAttendance = async (req, res) => {
 
 
 
-/* =========================================
-   EXPORT PARTICIPANTS
-========================================= */
+
 
 export const exportParticipants = async (req, res) => {
 
@@ -105,9 +101,7 @@ export const exportParticipants = async (req, res) => {
 
 
 
-/* =========================================
-   EXPORT RESULTS
-========================================= */
+
 
 export const exportResults = async (req, res) => {
 

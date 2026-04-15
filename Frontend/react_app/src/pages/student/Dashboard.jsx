@@ -199,7 +199,7 @@ const Dashboard = () => {
   );
 };
 
-// ================= STAT CARD COMPONENT =================
+
 
 const StatCard = ({ title, value, icon, color }) => {
   return (

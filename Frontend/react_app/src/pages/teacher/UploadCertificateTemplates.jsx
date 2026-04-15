@@ -13,11 +13,11 @@ const UploadCertificateTemplates = () => {
   const [previewing, setPreviewing] = useState(false);
   const [selectedCompetition, setSelectedCompetition] = useState("");
 
-  // Form data
+
   const [participationTemplate, setParticipationTemplate] = useState(null);
   const [winnerTemplate, setWinnerTemplate] = useState(null);
 
-  // Text positioning for participation certificate
+
   const [participationPositions, setParticipationPositions] = useState({
     nameX: 400,
     nameY: 300,
@@ -25,7 +25,7 @@ const UploadCertificateTemplates = () => {
     teamY: 340,
   });
 
-  // Text positioning for winner certificate
+
   const [winnerPositions, setWinnerPositions] = useState({
     nameX: 400,
     nameY: 300,
@@ -35,7 +35,7 @@ const UploadCertificateTemplates = () => {
     positionY: 380,
   });
 
-  // ================= FETCH ASSIGNED COMPETITIONS =================
+
 
   const fetchCompetitions = async () => {
     try {
@@ -59,16 +59,16 @@ const UploadCertificateTemplates = () => {
     [competitions, selectedCompetition],
   );
 
-  // Check if selected competition is team-based
+
   const isTeamCompetition = useMemo(() => {
     if (!selectedCompetitionObj) return false;
-    // Adjust this condition based on your competition object structure
+
     return selectedCompetitionObj.competitionType === "team" || 
            selectedCompetitionObj.isTeam === true ||
            selectedCompetitionObj.type === "team";
   }, [selectedCompetitionObj]);
 
-  // ================= HANDLE FILE CHANGES =================
+
 
   const handleParticipationFileChange = (e) => {
     const file = e.target.files[0];
@@ -100,7 +100,7 @@ const UploadCertificateTemplates = () => {
     }
   };
 
-  // ================= HANDLE POSITION CHANGES =================
+
 
   const handleParticipationPositionChange = (field, value) => {
     setParticipationPositions((prev) => ({
@@ -116,7 +116,7 @@ const UploadCertificateTemplates = () => {
     }));
   };
 
-  // ================= PREVIEW HANDLER =================
+
 
   const handlePreview = async (type) => {
     const isWinner = type === "winner";
@@ -169,7 +169,7 @@ const UploadCertificateTemplates = () => {
 
       window.open(fileURL);
 
-      // Best‑effort cleanup
+
       setTimeout(() => {
         window.URL.revokeObjectURL(fileURL);
       }, 60_000);
@@ -188,7 +188,7 @@ const UploadCertificateTemplates = () => {
     }
   };
 
-  // ================= UPLOAD HANDLER =================
+
 
   const handleUpload = async () => {
     if (!selectedCompetition) {
@@ -229,7 +229,7 @@ const UploadCertificateTemplates = () => {
     }
   };
 
-  // ================= LOADING UI =================
+
 
   if (loading) {
     return (
@@ -244,7 +244,7 @@ const UploadCertificateTemplates = () => {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
-      {/* ================= HEADER ================= */}
+
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">
           Upload Certificate Templates
@@ -253,7 +253,7 @@ const UploadCertificateTemplates = () => {
           Upload image templates and configure text positioning for certificates
         </p>
       </div>
-      {/* ================= MAIN FORM ================= */}
+
       <div className="bg-white rounded-lg shadow-md p-5 md:p-6">
         {/* COMPETITION SELECTION */}
 
@@ -281,10 +281,9 @@ const UploadCertificateTemplates = () => {
           )}
         </div>
 
-        {/* TEMPLATES UPLOAD SECTION */}
+
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
-          {/* PARTICIPATION CERTIFICATE */}
 
           <div className="border rounded-lg p-4">
             <h3 className="font-semibold mb-3 text-green-700">
@@ -323,11 +322,11 @@ const UploadCertificateTemplates = () => {
                 : "👀 Preview Sample (Participation)"}
             </button>
 
-            {/* TEXT POSITIONING */}
+
             <div className="space-y-3">
               <h4 className="font-medium text-sm">Text Positioning (pixels)</h4>
 
-              {/* Student name - Always shown for participation */}
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">Name X</label>
@@ -353,7 +352,7 @@ const UploadCertificateTemplates = () => {
                 </div>
               </div>
 
-              {/* Team name - ONLY for team competitions in participation */}
+
               {isTeamCompetition && (
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -383,7 +382,7 @@ const UploadCertificateTemplates = () => {
             </div>
           </div>
 
-          {/* WINNER CERTIFICATE */}
+
 
           <div className="border rounded-lg p-4">
             <h3 className="font-semibold mb-3 text-yellow-700">
@@ -422,11 +421,11 @@ const UploadCertificateTemplates = () => {
                 : "👀 Preview Sample (Winner)"}
             </button>
 
-            {/* TEXT POSITIONING */}
+
             <div className="space-y-3">
               <h4 className="font-medium text-sm">Text Positioning (pixels)</h4>
 
-              {/* Student name - Always shown for winners */}
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">Name X</label>
@@ -452,7 +451,7 @@ const UploadCertificateTemplates = () => {
                 </div>
               </div>
 
-              {/* Team name - ONLY for team competitions in winner */}
+
               {isTeamCompetition && (
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -480,7 +479,7 @@ const UploadCertificateTemplates = () => {
                 </div>
               )}
 
-              {/* Position - Always shown for winners */}
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs text-gray-600">
@@ -513,7 +512,7 @@ const UploadCertificateTemplates = () => {
           </div>
         </div>
 
-        {/* ACTION BUTTONS */}
+
 
         <div className="flex flex-col sm:flex-row gap-4">
           <button
@@ -546,7 +545,7 @@ const UploadCertificateTemplates = () => {
         </div>
       </div>
 
-      {/* ================= INFO SECTION ================= */}
+
 
       <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h3 className="font-semibold mb-2">ℹ Important Information</h3>

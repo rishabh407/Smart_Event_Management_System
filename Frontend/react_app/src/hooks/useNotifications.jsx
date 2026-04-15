@@ -20,7 +20,7 @@ export const useNotifications = () => {
   useEffect(() => {
     fetchNotifications();
 
-    const id = setInterval(fetchNotifications, 60 * 1000); // refresh every 1 min
+    const id = setInterval(fetchNotifications, 60 * 1000); 
     return () => clearInterval(id);
   }, []);
 
