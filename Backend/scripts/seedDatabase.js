@@ -1,10 +1,3 @@
-/**
- * Database Seeding Script
- * Run this script to create initial data for testing
- * 
- * Usage: node scripts/seedDatabase.js
- */
-
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
@@ -21,13 +14,6 @@ async function seedDatabase() {
     console.log("🔌 Connecting to MongoDB...");
     await mongoose.connect(MONGODB_URI);
     console.log("✅ Connected to MongoDB\n");
-
-    // Clear existing data (optional - comment out if you want to keep existing data)
-    // await User.deleteMany({});
-    // await Department.deleteMany({});
-    // console.log("🗑️  Cleared existing data\n");
-
-    // 1. Create Department
     console.log("📁 Creating Department...");
     let department = await Department.findOne({ shortName: "CS" });
     
@@ -43,7 +29,6 @@ async function seedDatabase() {
       console.log("ℹ️  Department already exists:", department.name);
     }
 
-    // 2. Create HOD
     console.log("\n👔 Creating HOD User...");
     let hod = await User.findOne({ email: "hod@college.edu" });
     
@@ -65,12 +50,10 @@ async function seedDatabase() {
     } else {
       console.log("ℹ️  HOD already exists:", hod.fullName);
     }
-
-    // Update department with HOD
     department.hod = hod._id;
     await department.save();
 
-    // 3. Create Coordinator
+    
     console.log("\n👨‍💼 Creating Coordinator User...");
     let coordinator = await User.findOne({ email: "coordinator@college.edu" });
     
@@ -93,7 +76,7 @@ async function seedDatabase() {
       console.log("ℹ️  Coordinator already exists:", coordinator.fullName);
     }
 
-    // 4. Create Teacher
+    
     console.log("\n👨‍🏫 Creating Teacher User...");
     let teacher = await User.findOne({ email: "teacher@college.edu" });
     
@@ -116,7 +99,7 @@ async function seedDatabase() {
       console.log("ℹ️  Teacher already exists:", teacher.fullName);
     }
 
-    // 5. Create Student
+    
     console.log("\n👨‍🎓 Creating Student User...");
     let student = await User.findOne({ rollNumber: "STU001" });
     
@@ -140,7 +123,7 @@ async function seedDatabase() {
       console.log("   Password: STU001 (must change on first login)");
     } else {
       console.log("ℹ️  Student already exists:", student.fullName);
-    }
+    } 
 
     console.log("\n" + "=".repeat(50));
     console.log("🎉 Database seeding completed!");
@@ -149,7 +132,7 @@ async function seedDatabase() {
     console.log("   HOD:        hod@college.edu / hod123");
     console.log("   Coordinator: coordinator@college.edu / coordinator123");
     console.log("   Teacher:    teacher@college.edu / teacher123");
-    console.log("   Student:   STU001 / STU001\n");
+    console.log("   Student:   STU001 / STU001\n"); 
 
     process.exit(0);
   } catch (error) {

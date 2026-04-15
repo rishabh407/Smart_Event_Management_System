@@ -7,18 +7,24 @@ export const createTeam = async (req, res) => {
 
     const { competitionId, teamName } = req.body;
 
+    // ✅ Validate input
     if (!competitionId || !teamName) {
       return res.status(400).json({
         message: "Required fields missing"
       });
     }
 
+    // ✅ Normalize team name (case-insensitive)
+    const normalizedTeamName = teamName.trim().toLowerCase();
+
+    // ✅ Only students allowed
     if (req.user.role !== "STUDENT") {
       return res.status(403).json({
         message: "Only students can create teams"
       });
     }
 
+    // ✅ Check competition
     const competition = await Competition.findById(competitionId);
 
     if (!competition) {
@@ -39,7 +45,7 @@ export const createTeam = async (req, res) => {
       });
     }
 
-    // Prevent multiple teams
+    // ✅ Prevent user joining multiple teams
     const existingTeam = await Team.findOne({
       competitionId,
       members: req.user._id
@@ -51,7 +57,19 @@ export const createTeam = async (req, res) => {
       });
     }
 
-    // Generate unique join code
+    // ✅ Check duplicate team name (case-insensitive)
+    const existingTeamName = await Team.findOne({
+      competitionId,
+      teamName: normalizedTeamName
+    });
+
+    if (existingTeamName) {
+      return res.status(400).json({
+        message: "Team name already registered. Choose another name."
+      });
+    }
+
+    // ✅ Generate unique join code
     let joinCode;
     let exists = true;
 
@@ -61,15 +79,16 @@ export const createTeam = async (req, res) => {
       if (!check) exists = false;
     }
 
+    // ✅ Create team
     const team = await Team.create({
-      teamName: teamName.trim(),
+      teamName: normalizedTeamName, // stored in lowercase
       joinCode,
       competitionId,
       leader: req.user._id,
       members: [req.user._id],
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Team created successfully",
       team
@@ -77,14 +96,18 @@ export const createTeam = async (req, res) => {
 
   } catch (error) {
 
-    res.status(500).json({
+    // ✅ Handle duplicate error (DB level safety)
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Team name already registered. Choose another name."
+      });
+    }
+
+    return res.status(500).json({
       message: error.message
     });
-
   }
 };
-
-
 export const joinTeam = async (req, res) => {
 
   try {

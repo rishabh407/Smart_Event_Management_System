@@ -45,9 +45,5 @@ const teamSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-teamSchema.index(
-  { competitionId: 1, teamName: 1 },
-  { unique: true }
-);
-
+teamSchema.index({ competitionId: 1, teamName: 1 }, { unique: true });
 export default mongoose.model("Team", teamSchema);
