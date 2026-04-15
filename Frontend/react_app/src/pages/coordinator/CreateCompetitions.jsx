@@ -344,12 +344,12 @@ const CreateCompetitions = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Max Participants
+              {formData.type=="team"?"Max Teams":"Max Participants"}
             </label>
             <input
               type="number"
               name="maxParticipants"
-              placeholder="Maximum participants"
+              placeholder={formData.type=="team"?"Max Teams":"Max Participants"}
               min="1"
               value={formData.maxParticipants}
               onChange={handleChange}
