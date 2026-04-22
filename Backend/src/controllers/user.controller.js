@@ -1143,6 +1143,107 @@ export const uploadStudents = async (req, res) => {
   }
 };
 
+// export const uploadStudents = async (req, res) => {
+//   try {
+//     if (!req.file) {
+//       return res.status(400).json({ message: "Excel file required" });
+//     }
+ 
+//     const workbook = XLSX.readFile(req.file.path);
+//     const sheet = workbook.Sheets[workbook.SheetNames[0]];
+//     const rows = XLSX.utils.sheet_to_json(sheet);
+ 
+//     if (!rows.length) {
+//       return res.status(400).json({ message: "Excel file is empty" });
+//     }
+ 
+//     const departmentId = req.user.departmentId;
+ 
+//     /* Fetch ALL existing rollNumbers once (only unique identifier now) */
+//     const existingUsers = await User.find({}, { rollNumber: 1 }).lean();
+//     const existingRollNumbers = new Set(existingUsers.map(u => u.rollNumber).filter(Boolean));
+ 
+//     /* Track duplicates within the Excel file itself */
+//     const excelRollNumbers = new Set();
+ 
+//     const inserted = [];
+//     const errors = [];
+ 
+//     for (let i = 0; i < rows.length; i++) {
+//       const row = rows[i];
+//       const rowNum = i + 2; // Excel row number (1-indexed + header)
+ 
+//       /* Convert all values safely, treat blank as undefined */
+//       const fullName   = row.fullName   ? String(row.fullName).trim()   : "";
+//       const rollNumber = row.rollNumber ? String(row.rollNumber).trim() : "";
+ 
+//       // Optional fields
+//       const course  = row.course  ? String(row.course).trim()  : undefined;
+//       const year    = row.year    ? Number(row.year)            : undefined;
+//       const section = row.section ? String(row.section).trim() : undefined;
+ 
+//       /* ===== REQUIRED FIELD VALIDATION ===== */
+//       if (!fullName || !rollNumber) {
+//         errors.push({ row: rowNum, message: "Missing required fields: fullName, rollNumber" });
+//         continue;
+//       }
+ 
+//       /* ===== DUPLICATE CHECK WITHIN EXCEL ===== */
+//       if (excelRollNumbers.has(rollNumber)) {
+//         errors.push({ row: rowNum, message: `Duplicate rollNumber "${rollNumber}" in Excel` });
+//         continue;
+//       }
+ 
+//       /* ===== DUPLICATE CHECK IN DATABASE ===== */
+//       if (existingRollNumbers.has(rollNumber)) {
+//         errors.push({ row: rowNum, message: `rollNumber "${rollNumber}" already exists in DB` });
+//         continue;
+//       }
+ 
+//       /* ===== HASH PASSWORD (default: rollNumber as password) ===== */
+//       const hashedPassword = await bcrypt.hash(rollNumber, 10);
+ 
+//       inserted.push({
+//         fullName,
+//         rollNumber,
+//         course,
+//         year,
+//         section,
+//         password: hashedPassword,
+//         role: "STUDENT",
+//         departmentId,
+//         isActive: true,
+//         isFirstLogin: true
+//       });
+ 
+//       /* Track to catch duplicates in remaining rows */
+//       excelRollNumbers.add(rollNumber);
+//     }
+ 
+//     /* insertMany with ordered: false so one failure doesn't block the rest */
+//     if (inserted.length) {
+//       await User.insertMany(inserted, { ordered: false });
+//     }
+ 
+//     res.json({
+//       insertedCount: inserted.length,
+//       errorCount: errors.length,
+//       errors
+//     });
+//   } catch (error) {
+//     console.error("Upload students error:", error);
+ 
+//     if (error.name === "BulkWriteError" || error.code === 11000) {
+//       return res.status(400).json({
+//         message: "Some students could not be inserted due to duplicate data",
+//         detail: error.message
+//       });
+//     }
+ 
+//     res.status(500).json({ message: "Upload failed" });
+//   }
+// };
+
 /* ================= CREATE COORDINATOR ================= */
 
 export const createCoordinator = async (req, res) => {
